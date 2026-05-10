@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title data-i18n="mod2PageTitle">Module 2 — How Panels Work</title>
+  <link rel="stylesheet" href="../css/styles.css" />
+  <link rel="stylesheet" href="../css/module2.css" />
+</head>
+<body>
+
+  <!-- ══ NAVBAR ══════════════════════════════════════════════ -->
+  <header class="navbar" role="banner">
+    <div class="navbar__inner">
+      <button class="btn--icon" id="menuBtn" aria-label="Open menu" aria-expanded="false">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+          <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+      </button>
+      <a href="../index.html" class="navbar__brand">
+        <span class="navbar__logo" aria-hidden="true">☀️</span>
+        <span data-i18n="brandName">Solar Course</span>
+      </a>
+      <span class="navbar__spacer"></span>
+      <div class="navbar__actions">
+        <div class="lang-toggle" role="group" aria-label="Language">
+          <button class="lang-toggle__btn lang-toggle__btn--active" id="langEn" data-lang="en" aria-pressed="true">EN</button>
+          <span class="lang-toggle__sep" aria-hidden="true"></span>
+          <button class="lang-toggle__btn" id="langEs" data-lang="es" aria-pressed="false">ES</button>
+        </div>
+        <button class="btn--icon" aria-label="Notifications">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+          </svg>
+        </button>
+        <button class="btn--icon" aria-label="User account">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div class="navbar__progress" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" id="navProgress" aria-label="Course progress">
+      <div class="navbar__progress-fill" id="progressFill"></div>
+    </div>
+  </header>
+
+  <!-- ══ LAYOUT ══════════════════════════════════════════════ -->
+  <div class="layout">
+
+    <!-- SIDEBAR (desktop) -->
+    <aside class="sidebar" id="sidebar" aria-label="Course navigation">
+      <p class="sidebar__section-label" data-i18n="sidebarLabel">Modules</p>
+      <ul class="sidebar__list" role="list">
+        <li><a href="module1.html" class="sidebar__item" data-module="1"><span class="sidebar__item-text" data-i18n="mod1Title">1. Intro to solar energy</span></a></li>
+        <li><a href="module2.html" class="sidebar__item sidebar__item--active" data-module="2"><span class="sidebar__item-text" data-i18n="mod2Title">2. How panels work</span><span class="pill pill--active sidebar__item-pill" data-i18n="pillActive">Active</span></a></li>
+        <li><a href="module3.html" class="sidebar__item" data-module="3"><span class="sidebar__item-text" data-i18n="mod3Title">3. DC circuits</span></a></li>
+        <li><a href="module4.html" class="sidebar__item module-card--locked" data-module="4" aria-disabled="true"><span class="sidebar__item-text" data-i18n="mod4Title">4. AC &amp; inverters</span><span class="pill pill--locked sidebar__item-pill">🔒</span></a></li>
+        <li><a href="module5.html" class="sidebar__item module-card--locked" data-module="5" aria-disabled="true"><span class="sidebar__item-text" data-i18n="mod5Title">5. System design</span><span class="pill pill--locked sidebar__item-pill">🔒</span></a></li>
+        <li><a href="module6.html" class="sidebar__item module-card--locked" data-module="6" aria-disabled="true"><span class="sidebar__item-text" data-i18n="mod6Title">6. Maintenance</span><span class="pill pill--locked sidebar__item-pill">🔒</span></a></li>
+      </ul>
+    </aside>
+
+    <!-- Mobile sidebar overlay -->
+    <aside class="sidebar sidebar--mobile" id="mobileSidebar" aria-label="Course navigation" aria-hidden="true">
+      <p class="sidebar__section-label" data-i18n="sidebarLabel">Modules</p>
+      <ul class="sidebar__list" role="list">
+        <li><a href="module1.html" class="sidebar__item"><span data-i18n="mod1Title">1. Intro to solar energy</span></a></li>
+        <li><a href="module2.html" class="sidebar__item sidebar__item--active"><span data-i18n="mod2Title">2. How panels work</span><span class="pill pill--active" data-i18n="pillActive">Active</span></a></li>
+        <li><a href="module3.html" class="sidebar__item"><span data-i18n="mod3Title">3. DC circuits</span></a></li>
+        <li><a href="module4.html" class="sidebar__item module-card--locked" aria-disabled="true"><span data-i18n="mod4Title">4. AC &amp; inverters</span><span class="pill pill--locked">🔒</span></a></li>
+        <li><a href="module5.html" class="sidebar__item module-card--locked" aria-disabled="true"><span data-i18n="mod5Title">5. System design</span><span class="pill pill--locked">🔒</span></a></li>
+        <li><a href="module6.html" class="sidebar__item module-card--locked" aria-disabled="true"><span data-i18n="mod6Title">6. Maintenance</span><span class="pill pill--locked">🔒</span></a></li>
+      </ul>
+    </aside>
+    <div class="sidebar-overlay" id="sidebarOverlay" aria-hidden="true"></div>
+
+    <!-- MAIN ══════════════════════════════════════════════════ -->
+    <main class="main" id="main">
+      <div class="lesson-wrap">
+
+        <!-- ── Lesson header ─────────────────────────── -->
+        <header class="lesson-header">
+          <p class="lesson-header__eyebrow" data-i18n="mod2Eyebrow">Module 2 · Technology</p>
+          <h1 class="lesson-header__title" data-i18n="mod2Title">2. How panels work</h1>
+          <div class="lesson-header__meta">
+            <span>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="display:inline;vertical-align:-1px"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              40 min
+            </span>
+            <span data-i18n="mod2Prereq">Requires Module 1</span>
+            <span class="pill pill--active" data-i18n="pillActive">Active</span>
+          </div>
+        </header>
+
+        <!-- ── Section 1: The PV cell ────────────────── -->
+        <section class="content-block">
+          <h2 data-i18n="m2s1Title">The photovoltaic cell</h2>
+          <p data-i18n="m2s1p1">
+            A solar panel is built from many small <strong>photovoltaic (PV) cells</strong>.
+            Each cell is a thin slice of semiconductor material — most commonly <em>crystalline silicon</em> —
+            treated to have two distinct layers: a negatively-charged <strong>n-type</strong> layer
+            on top and a positively-charged <strong>p-type</strong> layer below.
+            The interface between these layers is called the <strong>p-n junction</strong>.
+          </p>
+          <p data-i18n="m2s1p2">
+            When a photon of light strikes the cell with enough energy, it knocks an electron loose
+            from the silicon lattice. The built-in electric field at the p-n junction pushes
+            the free electron toward the n-type side and the corresponding "hole" toward the p-type side.
+            This charge separation creates a voltage — typically around 0.5–0.6 V per cell —
+            that drives current through an external circuit.
+          </p>
+        </section>
+
+        <!-- ── p-n Junction Canvas ───────────────────── -->
+        <div class="layer-canvas-wrap" aria-label="Interactive p-n junction diagram">
+          <p class="layer-canvas-wrap__title" data-i18n="m2canvasTitle">p-n junction — interactive diagram</p>
+          <canvas id="pnCanvas" height="220" aria-label="Diagram of the p-n junction inside a solar cell showing photon absorption and electron movement"></canvas>
+          <div class="canvas-section__controls" style="margin-top:var(--sp-3)">
+            <button class="btn btn--ghost-amber btn--sm" id="btnAnimate" data-i18n="btnAnimate">Animate photon</button>
+            <button class="btn btn--ghost-amber btn--sm" id="btnReset" data-i18n="btnReset">Reset</button>
+          </div>
+        </div>
+
+        <!-- ── Section 2: Step-by-step conversion ────── -->
+        <section class="content-block">
+          <h2 data-i18n="m2s2Title">Step-by-step: light to electricity</h2>
+          <div class="step-list">
+            <div class="step-item">
+              <div class="step-num" aria-hidden="true">1</div>
+              <div class="step-body">
+                <strong data-i18n="m2step1h">Photon absorption</strong>
+                <p data-i18n="m2step1p">A photon from the sun strikes the silicon surface. If its energy exceeds the bandgap (~1.1 eV for silicon), it excites an electron to the conduction band.</p>
+              </div>
+            </div>
+            <div class="step-item">
+              <div class="step-num" aria-hidden="true">2</div>
+              <div class="step-body">
+                <strong data-i18n="m2step2h">Charge separation</strong>
+                <p data-i18n="m2step2p">The built-in electric field at the p-n junction sweeps the free electron to the n-side and the hole to the p-side, preventing immediate recombination.</p>
+              </div>
+            </div>
+            <div class="step-item">
+              <div class="step-num" aria-hidden="true">3</div>
+              <div class="step-body">
+                <strong data-i18n="m2step3h">Current collection</strong>
+                <p data-i18n="m2step3p">Metal contacts on the front (thin grid lines) and rear (full sheet) collect the electrons. The front grid is designed to be as thin as possible to minimise shading.</p>
+              </div>
+            </div>
+            <div class="step-item">
+              <div class="step-num" aria-hidden="true">4</div>
+              <div class="step-body">
+                <strong data-i18n="m2step4h">External circuit</strong>
+                <p data-i18n="m2step4p">Electrons flow out through the front contacts, through your load (lights, motors, etc.) and back in through the rear contact — that's usable DC electricity.</p>
+              </div>
+            </div>
+            <div class="step-item">
+              <div class="step-num" aria-hidden="true">5</div>
+              <div class="step-body">
+                <strong data-i18n="m2step5h">From cells to modules</strong>
+                <p data-i18n="m2step5p">Individual cells (~156 × 156 mm) are wired in series strings, encapsulated in EVA polymer, sandwiched between tempered glass and a backsheet, and framed in aluminium — that's the panel you install on a roof.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ── Section 3: Panel types ─────────────────── -->
+        <section class="content-block">
+          <h2 data-i18n="m2s3Title">Types of solar panels</h2>
+          <p data-i18n="m2s3p1">
+            Not all solar panels are the same. The three main commercial technologies differ
+            in efficiency, cost, appearance and best use case.
+          </p>
+          <div class="panel-grid" aria-label="Panel type comparison">
+
+            <!-- Monocrystalline -->
+            <div class="panel-card">
+              <span class="panel-card__badge panel-card__badge--mono">◆ <span data-i18n="m2monoLabel">Monocrystalline</span></span>
+              <p class="panel-card__name" data-i18n="m2monoName">Mono-Si</p>
+              <div class="panel-card__stat-row">
+                <div class="panel-card__stat">
+                  <span data-i18n="m2effLabel">Efficiency</span>
+                  <strong>20–24 %</strong>
+                </div>
+                <div class="eff-bar-wrap"><div class="eff-bar eff-bar--mono" style="width:88%"></div></div>
+                <div class="panel-card__stat">
+                  <span data-i18n="m2costLabel">Relative cost</span>
+                  <strong data-i18n="m2monoCost">Higher</strong>
+                </div>
+                <div class="panel-card__stat">
+                  <span data-i18n="m2lifeLabel">Lifespan</span>
+                  <strong>25–30 yr</strong>
+                </div>
+              </div>
+              <p class="panel-card__stat" style="margin-top:var(--sp-2);font-size:var(--fs-xs);color:var(--clr-text-3)" data-i18n="m2monoNote">Best efficiency, uniform black look, ideal for limited roof space.</p>
+            </div>
+
+            <!-- Polycrystalline -->
+            <div class="panel-card">
+              <span class="panel-card__badge panel-card__badge--poly">◈ <span data-i18n="m2polyLabel">Polycrystalline</span></span>
+              <p class="panel-card__name" data-i18n="m2polyName">Poly-Si</p>
+              <div class="panel-card__stat-row">
+                <div class="panel-card__stat">
+                  <span data-i18n="m2effLabel">Efficiency</span>
+                  <strong>15–18 %</strong>
+                </div>
+                <div class="eff-bar-wrap"><div class="eff-bar eff-bar--poly" style="width:65%"></div></div>
+                <div class="panel-card__stat">
+                  <span data-i18n="m2costLabel">Relative cost</span>
+                  <strong data-i18n="m2polyCost">Medium</strong>
+                </div>
+                <div class="panel-card__stat">
+                  <span data-i18n="m2lifeLabel">Lifespan</span>
+                  <strong>20–25 yr</strong>
+                </div>
+              </div>
+              <p class="panel-card__stat" style="margin-top:var(--sp-2);font-size:var(--fs-xs);color:var(--clr-text-3)" data-i18n="m2polyNote">Blue speckled look, lower cost, slightly lower efficiency than mono.</p>
+            </div>
+
+            <!-- Thin-film -->
+            <div class="panel-card">
+              <span class="panel-card__badge panel-card__badge--thin">▣ <span data-i18n="m2thinLabel">Thin-film</span></span>
+              <p class="panel-card__name" data-i18n="m2thinName">CdTe / CIS / a-Si</p>
+              <div class="panel-card__stat-row">
+                <div class="panel-card__stat">
+                  <span data-i18n="m2effLabel">Efficiency</span>
+                  <strong>10–13 %</strong>
+                </div>
+                <div class="eff-bar-wrap"><div class="eff-bar eff-bar--thin" style="width:44%"></div></div>
+                <div class="panel-card__stat">
+                  <span data-i18n="m2costLabel">Relative cost</span>
+                  <strong data-i18n="m2thinCost">Lower</strong>
+                </div>
+                <div class="panel-card__stat">
+                  <span data-i18n="m2lifeLabel">Lifespan</span>
+                  <strong>10–20 yr</strong>
+                </div>
+              </div>
+              <p class="panel-card__stat" style="margin-top:var(--sp-2);font-size:var(--fs-xs);color:var(--clr-text-3)" data-i18n="m2thinNote">Flexible, performs better in high heat &amp; low light, lower efficiency.</p>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ── Section 4: Efficiency losses ──────────────────── -->
+        <section class="content-block">
+          <h2 data-i18n="m2s4Title">Why real output is lower than the rating</h2>
+          <p data-i18n="m2s4p1">
+            The nameplate wattage printed on a panel assumes Standard Test Conditions (STC).
+            In practice, several factors reduce output. Understanding them helps you design
+            a system that actually meets your energy needs.
+          </p>
+
+          <div class="callout callout--info">
+            <span aria-hidden="true">🌡️</span>
+            <span data-i18n="m2s4callout">
+              <strong>Temperature coefficient.</strong>
+              Silicon panels lose roughly <strong>0.35–0.5 % of power per °C above 25 °C</strong>.
+              On a hot roof where cell temperature reaches 65 °C, output drops by ~14–20 %
+              compared to the STC rating.
+            </span>
+          </div>
+
+          <table class="compare-table" aria-label="Derating factors table">
+            <thead>
+              <tr>
+                <th data-i18n="m2tblFactor">Factor</th>
+                <th data-i18n="m2tblLoss">Typical loss</th>
+                <th data-i18n="m2tblNote">Notes</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td data-i18n="m2tblF1">Temperature</td>
+                <td>10–20 %</td>
+                <td data-i18n="m2tblN1">Higher cell temp → lower Voc and power</td>
+              </tr>
+              <tr>
+                <td data-i18n="m2tblF2">Shading</td>
+                <td>0–50 %+</td>
+                <td data-i18n="m2tblN2">Even partial shading on one cell affects whole string</td>
+              </tr>
+              <tr>
+                <td data-i18n="m2tblF3">Soiling / dust</td>
+                <td>1–25 %</td>
+                <td data-i18n="m2tblN3">Worse in arid climates; regular cleaning helps</td>
+              </tr>
+              <tr>
+                <td data-i18n="m2tblF4">Wiring losses</td>
+                <td>1–3 %</td>
+                <td data-i18n="m2tblN4">Use correct cable gauge to minimise resistance</td>
+              </tr>
+              <tr>
+                <td data-i18n="m2tblF5">Inverter losses</td>
+                <td>2–5 %</td>
+                <td data-i18n="m2tblN5">Modern inverters are 95–98 % efficient</td>
+              </tr>
+              <tr>
+                <td data-i18n="m2tblF6">Panel degradation</td>
+                <td>0.5 % / yr</td>
+                <td data-i18n="m2tblN6">Panels lose ~0.5 % output per year (LID + aging)</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <!-- ── Section 5: Key electrical parameters ───────────── -->
+        <section class="content-block">
+          <h2 data-i18n="m2s5Title">Key electrical parameters on the datasheet</h2>
+          <p data-i18n="m2s5p1">
+            Every panel ships with a datasheet. Knowing what each parameter means lets you
+            size wiring, inverters and charge controllers correctly.
+          </p>
+          <ul>
+            <li data-i18n="m2s5li1"><strong>Pmax (Wp)</strong> — Peak power at STC. Example: 400 Wp.</li>
+            <li data-i18n="m2s5li2"><strong>Voc</strong> — Open-circuit voltage. The voltage with no load connected. Used to size inverter input and avoid over-voltage.</li>
+            <li data-i18n="m2s5li3"><strong>Vmp</strong> — Voltage at maximum power point. Typically ~80 % of Voc. This is the operating voltage for maximum output.</li>
+            <li data-i18n="m2s5li4"><strong>Isc</strong> — Short-circuit current. The maximum current the panel can produce. Used to size fuses and wiring.</li>
+            <li data-i18n="m2s5li5"><strong>Imp</strong> — Current at maximum power point. Combined with Vmp: Pmax = Vmp × Imp.</li>
+            <li data-i18n="m2s5li6"><strong>η (eta)</strong> — Efficiency. Ratio of electrical output to incident solar power × panel area.</li>
+          </ul>
+
+          <div class="callout callout--tip">
+            <span aria-hidden="true">💡</span>
+            <span data-i18n="m2s5callout">
+              <strong>Design tip.</strong>
+              Always use <em>Voc</em> (not Vmp) when checking the maximum input voltage of your inverter or charge controller —
+              it's the highest voltage the panel will ever produce.
+            </span>
+          </div>
+        </section>
+
+        <!-- ── Quiz ──────────────────────────────────────────── -->
+        <section class="content-block">
+          <h2 data-i18n="m2quizTitle">Quick check</h2>
+
+          <!-- Q1 -->
+          <div class="quiz-block" id="quiz1">
+            <p class="quiz-block__question" data-i18n="m2q1text">
+              1. What creates the voltage in a solar cell?
+            </p>
+            <div class="quiz-options" role="radiogroup" aria-label="Quiz question 1">
+              <label class="quiz-option" data-answer="wrong">
+                <span class="quiz-option__letter" aria-hidden="true">A</span>
+                <span data-i18n="m2q1a">Heat from the sun warming the metal contacts</span>
+              </label>
+              <label class="quiz-option" data-answer="correct">
+                <span class="quiz-option__letter" aria-hidden="true">B</span>
+                <span data-i18n="m2q1b">The electric field at the p-n junction separating electron-hole pairs</span>
+              </label>
+              <label class="quiz-option" data-answer="wrong">
+                <span class="quiz-option__letter" aria-hidden="true">C</span>
+                <span data-i18n="m2q1c">Chemical reactions in the silicon</span>
+              </label>
+              <label class="quiz-option" data-answer="wrong">
+                <span class="quiz-option__letter" aria-hidden="true">D</span>
+                <span data-i18n="m2q1d">Magnetic fields induced by sunlight</span>
+              </label>
+            </div>
+            <p class="quiz-feedback" id="quiz1-fb" aria-live="polite"></p>
+          </div>
+
+          <!-- Q2 -->
+          <div class="quiz-block" id="quiz2">
+            <p class="quiz-block__question" data-i18n="m2q2text">
+              2. Which panel type typically achieves the highest efficiency?
+            </p>
+            <div class="quiz-options" role="radiogroup" aria-label="Quiz question 2">
+              <label class="quiz-option" data-answer="wrong">
+                <span class="quiz-option__letter" aria-hidden="true">A</span>
+                <span data-i18n="m2q2a">Thin-film (CdTe)</span>
+              </label>
+              <label class="quiz-option" data-answer="wrong">
+                <span class="quiz-option__letter" aria-hidden="true">B</span>
+                <span data-i18n="m2q2b">Polycrystalline silicon</span>
+              </label>
+              <label class="quiz-option" data-answer="correct">
+                <span class="quiz-option__letter" aria-hidden="true">C</span>
+                <span data-i18n="m2q2c">Monocrystalline silicon</span>
+              </label>
+              <label class="quiz-option" data-answer="wrong">
+                <span class="quiz-option__letter" aria-hidden="true">D</span>
+                <span data-i18n="m2q2d">Amorphous silicon</span>
+              </label>
+            </div>
+            <p class="quiz-feedback" id="quiz2-fb" aria-live="polite"></p>
+          </div>
+
+          <!-- Q3 -->
+          <div class="quiz-block" id="quiz3">
+            <p class="quiz-block__question" data-i18n="m2q3text">
+              3. You need to check that a panel string won't exceed your inverter's maximum input voltage.
+                 Which datasheet value should you use?
+            </p>
+            <div class="quiz-options" role="radiogroup" aria-label="Quiz question 3">
+              <label class="quiz-option" data-answer="wrong">
+                <span class="quiz-option__letter" aria-hidden="true">A</span>
+                <span data-i18n="m2q3a">Vmp (voltage at max power)</span>
+              </label>
+              <label class="quiz-option" data-answer="correct">
+                <span class="quiz-option__letter" aria-hidden="true">B</span>
+                <span data-i18n="m2q3b">Voc (open-circuit voltage)</span>
+              </label>
+              <label class="quiz-option" data-answer="wrong">
+                <span class="quiz-option__letter" aria-hidden="true">C</span>
+                <span data-i18n="m2q3c">Isc (short-circuit current)</span>
+              </label>
+              <label class="quiz-option" data-answer="wrong">
+                <span class="quiz-option__letter" aria-hidden="true">D</span>
+                <span data-i18n="m2q3d">Pmax (peak power)</span>
+              </label>
+            </div>
+            <p class="quiz-feedback" id="quiz3-fb" aria-live="polite"></p>
+          </div>
+        </section>
+
+        <!-- ── Mark complete ──────────────────────────────────── -->
+        <button class="complete-btn" id="completeBtn" aria-pressed="false">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+          <span id="completeBtnLabel" data-i18n="markDone">Mark as complete</span>
+        </button>
+
+        <!-- ── Lesson nav ─────────────────────────────────────── -->
+        <nav class="lesson-nav" aria-label="Lesson navigation">
+          <a href="module1.html" class="btn btn--ghost-amber btn--md" data-i18n="lessonPrev">← Previous</a>
+          <a href="module3.html" class="btn btn--amber btn--md" data-i18n="lessonNext">Next →</a>
+        </nav>
+
+      </div><!-- /lesson-wrap -->
+    </main>
+  </div><!-- /layout -->
+
+  <!-- ══ BOTTOM NAV (mobile) ═════════════════════════════════ -->
+  <nav class="bottom-nav" aria-label="Main navigation" role="navigation">
+    <a href="../index.html" class="bottom-nav__item" aria-label="Course">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+      </svg>
+      <span data-i18n="navCourse">Course</span>
+    </a>
+    <button class="bottom-nav__item bottom-nav__item--active" aria-label="Simulator" aria-current="page">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+      </svg>
+      <span data-i18n="navSimulator">Simulator</span>
+    </button>
+    <button class="bottom-nav__item" aria-label="Calculator">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="12" y2="14"/>
+      </svg>
+      <span data-i18n="navCalc">Calc</span>
+    </button>
+    <button class="bottom-nav__item" aria-label="Profile">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+      </svg>
+      <span data-i18n="navProfile">Profile</span>
+    </button>
+  </nav>
+
+  <script src="../js/i18n.js"></script>
+  <script src="../js/app.js"></script>
+  <script>
+  /* ── Module-2 page scripts ────────────────────────── */
+  (function () {
+    'use strict';
+
+    /* ─────────────────────────────────────────────────────────
+       p-n Junction Canvas
+       Layers (top → bottom): Glass | AR coating | n-type Si |
+                               p-n junction | p-type Si | Back contact
+       Animation: photon ray enters from top, hits junction,
+                  electron arrow flies up, hole arrow flies down.
+    ───────────────────────────────────────────────────────── */
+    const LAYERS = [
+      { label: 'Glass',        h: 0.10, bg: '#D6EBF8', fg: '#0E3B6A' },
+      { label: 'AR Coating',   h: 0.06, bg: '#E8F4D0', fg: '#2A4D0A' },
+      { label: 'n-type Si',    h: 0.22, bg: '#C5DCF7', fg: '#0E3B6A' },
+      { label: 'p-n junction', h: 0.06, bg: '#FAEEDA', fg: '#854F0B' },
+      { label: 'p-type Si',    h: 0.22, bg: '#F7D6C5', fg: '#7A2900' },
+      { label: 'Back contact', h: 0.10, bg: '#C8C8C8', fg: '#333'    },
+      { label: 'Backsheet',    h: 0.08, bg: '#EBEBEB', fg: '#555'    },
+    ];
+
+    let animFrame   = null;
+    let animRunning = false;
+    let photonY     = 0;
+    let phase       = 'idle'; /* 'photon' | 'charge' | 'done' | 'idle' */
+    let elecY       = 0;
+    let holeY       = 0;
+    const JUNCTION_FRAC = LAYERS.slice(0, 3).reduce((s, l) => s + l.h, 0) + LAYERS[3].h / 2;
+
+    function drawStatic(ctx, W, H) {
+      let y = 0;
+      LAYERS.forEach(layer => {
+        const lh = layer.h * H;
+        ctx.fillStyle = layer.bg;
+        ctx.fillRect(0, y, W, lh);
+        /* label */
+        ctx.fillStyle    = layer.fg;
+        ctx.font         = `${Math.round(H * 0.045)}px system-ui, sans-serif`;
+        ctx.textAlign    = 'left';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(layer.label, 10, y + lh / 2);
+        /* separator */
+        ctx.strokeStyle = 'rgba(0,0,0,.06)';
+        ctx.lineWidth   = 1;
+        ctx.beginPath(); ctx.moveTo(0, y + lh); ctx.lineTo(W, y + lh); ctx.stroke();
+        y += lh;
+      });
+
+      /* Electric field arrow at junction */
+      const jY = JUNCTION_FRAC * H;
+      ctx.strokeStyle = '#EF9F27';
+      ctx.lineWidth   = 1.5;
+      ctx.setLineDash([4, 3]);
+      ctx.beginPath(); ctx.moveTo(W - 90, jY); ctx.lineTo(W - 20, jY); ctx.stroke();
+      ctx.setLineDash([]);
+      /* arrowhead */
+      ctx.fillStyle = '#EF9F27';
+      ctx.beginPath();
+      ctx.moveTo(W - 14, jY);
+      ctx.lineTo(W - 24, jY - 5);
+      ctx.lineTo(W - 24, jY + 5);
+      ctx.closePath(); ctx.fill();
+      ctx.fillStyle    = '#854F0B';
+      ctx.font         = `${Math.round(H * 0.042)}px system-ui, sans-serif`;
+      ctx.textAlign    = 'right';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('E-field →', W - 26, jY);
+    }
+
+    function drawPhoton(ctx, W, H, py) {
+      /* Wavy yellow line from top to py */
+      ctx.strokeStyle = '#FFD700';
+      ctx.lineWidth   = 2.5;
+      ctx.shadowColor = '#FFD700';
+      ctx.shadowBlur  = 6;
+      ctx.beginPath();
+      const cx = W / 2;
+      for (let y = 0; y <= py; y += 2) {
+        const x = cx + Math.sin(y * 0.3) * 8;
+        y === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+
+      /* Photon dot */
+      ctx.fillStyle = '#FFD700';
+      ctx.beginPath();
+      ctx.arc(cx + Math.sin(py * 0.3) * 8, py, 5, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    function drawCharges(ctx, W, H, ey, hy) {
+      const jY  = JUNCTION_FRAC * H;
+      const cx  = W / 2;
+      const r   = 7;
+
+      /* Electron (blue, goes up) */
+      ctx.fillStyle = '#185FA5';
+      ctx.beginPath(); ctx.arc(cx - 20, ey, r, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#fff';
+      ctx.font      = 'bold 10px system-ui';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText('e⁻', cx - 20, ey);
+
+      /* Arrow up */
+      ctx.strokeStyle = '#185FA5';
+      ctx.lineWidth   = 1.5;
+      ctx.beginPath(); ctx.moveTo(cx - 20, ey - r - 2); ctx.lineTo(cx - 20, jY - 30); ctx.stroke();
+      if (ey < jY - 40) {
+        ctx.fillStyle = '#185FA5';
+        ctx.beginPath();
+        ctx.moveTo(cx - 20, jY - 40);
+        ctx.lineTo(cx - 25, jY - 28);
+        ctx.lineTo(cx - 15, jY - 28);
+        ctx.closePath(); ctx.fill();
+      }
+
+      /* Hole (orange, goes down) */
+      ctx.fillStyle   = '#EF9F27';
+      ctx.strokeStyle = '#EF9F27';
+      ctx.lineWidth   = 2;
+      ctx.beginPath(); ctx.arc(cx + 20, hy, r, 0, Math.PI * 2); ctx.stroke();
+      ctx.fillStyle = '#854F0B';
+      ctx.font      = 'bold 10px system-ui';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText('h⁺', cx + 20, hy);
+
+      /* Arrow down */
+      ctx.strokeStyle = '#EF9F27';
+      ctx.lineWidth   = 1.5;
+      ctx.beginPath(); ctx.moveTo(cx + 20, hy + r + 2); ctx.lineTo(cx + 20, jY + 30); ctx.stroke();
+      if (hy > jY + 40) {
+        ctx.fillStyle = '#EF9F27';
+        ctx.beginPath();
+        ctx.moveTo(cx + 20, jY + 40);
+        ctx.lineTo(cx + 15, jY + 28);
+        ctx.lineTo(cx + 25, jY + 28);
+        ctx.closePath(); ctx.fill();
+      }
+    }
+
+    function renderCanvas() {
+      const canvas = document.getElementById('pnCanvas');
+      if (!canvas) return;
+      const W = canvas.offsetWidth;
+      const H = canvas.offsetHeight || 220;
+      canvas.width = W; canvas.height = H;
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, W, H);
+      drawStatic(ctx, W, H);
+
+      if (phase === 'photon') {
+        drawPhoton(ctx, W, H, photonY);
+      } else if (phase === 'charge' || phase === 'done') {
+        drawCharges(ctx, W, H, elecY, holeY);
+      }
+    }
+
+    function startAnimation() {
+      if (animRunning) return;
+      animRunning = true;
+      phase       = 'photon';
+      photonY     = 0;
+
+      const canvas = document.getElementById('pnCanvas');
+      if (!canvas) return;
+      const H     = canvas.offsetHeight || 220;
+      const juncY = JUNCTION_FRAC * H;
+
+      function step() {
+        if (phase === 'photon') {
+          photonY += 3;
+          if (photonY >= juncY) {
+            phase = 'charge';
+            elecY = juncY;
+            holeY = juncY;
+          }
+          renderCanvas();
+          animFrame = requestAnimationFrame(step);
+        } else if (phase === 'charge') {
+          elecY -= 2;
+          holeY += 2;
+          renderCanvas();
+          if (elecY > H * 0.05 || holeY < H * 0.92) {
+            animFrame = requestAnimationFrame(step);
+          } else {
+            phase       = 'done';
+            animRunning = false;
+            renderCanvas();
+          }
+        }
+      }
+      animFrame = requestAnimationFrame(step);
+    }
+
+    function resetCanvas() {
+      if (animFrame) cancelAnimationFrame(animFrame);
+      animRunning = false;
+      phase       = 'idle';
+      renderCanvas();
+    }
+
+    /* ── Init ───────────────────────────────────────── */
+    document.addEventListener('DOMContentLoaded', () => {
+      renderCanvas();
+
+      const ro = new ResizeObserver(renderCanvas);
+      const canvas = document.getElementById('pnCanvas');
+      if (canvas) ro.observe(canvas.parentElement);
+
+      document.getElementById('btnAnimate')?.addEventListener('click', () => {
+        resetCanvas();
+        setTimeout(startAnimation, 80);
+      });
+      document.getElementById('btnReset')?.addEventListener('click', resetCanvas);
+
+      /* ── Quiz logic ──────────────────────────── */
+      const quizFeedback = {
+        correct: { en: '✓ Correct!', es: '✓ ¡Correcto!' },
+        wrong:   { en: '✗ Not quite — try again.', es: '✗ No es correcto — intenta de nuevo.' },
+      };
+
+      [1, 2, 3].forEach(n => {
+        const block = document.getElementById(`quiz${n}`);
+        if (!block) return;
+        const fb = document.getElementById(`quiz${n}-fb`);
+        block.querySelectorAll('.quiz-option').forEach(opt => {
+          opt.addEventListener('click', () => {
+            if (block.dataset.answered) return;
+            const isCorrect = opt.dataset.answer === 'correct';
+            opt.classList.add(isCorrect ? 'quiz-option--correct' : 'quiz-option--wrong');
+            if (isCorrect) {
+              block.dataset.answered = 'true';
+              block.querySelectorAll('.quiz-option').forEach(o => {
+                if (o.dataset.answer === 'correct') o.classList.add('quiz-option--correct');
+              });
+            }
+            const lang = window.SolarLearn?.currentLang || 'en';
+            fb.textContent = quizFeedback[isCorrect ? 'correct' : 'wrong'][lang];
+            fb.className   = 'quiz-feedback ' + (isCorrect ? 'quiz-feedback--ok' : 'quiz-feedback--err');
+          });
+        });
+      });
+
+      /* ── Complete button ─────────────────────── */
+      const btn = document.getElementById('completeBtn');
+      const lbl = document.getElementById('completeBtnLabel');
+
+      if (window.SolarLearn?.isModuleDone(2)) {
+        btn.classList.add('complete-btn--done');
+        btn.setAttribute('aria-pressed', 'true');
+        btn.disabled = true;
+        if (lbl) lbl.textContent = window.SolarLearn.currentLang === 'es' ? '✓ Completado' : '✓ Completed';
+      }
+
+      btn.addEventListener('click', () => {
+        if (btn.dataset.done) return;
+        btn.dataset.done = 'true';
+        btn.classList.add('complete-btn--done');
+        btn.setAttribute('aria-pressed', 'true');
+        btn.disabled = true;
+        const lang = window.SolarLearn?.currentLang || 'en';
+        if (lbl) lbl.textContent = lang === 'es' ? '✓ Completado' : '✓ Completed';
+        window.SolarLearn?.markModuleDone(2);
+      });
+    });
+  })();
+  </script>
+</body>
+</html>
