@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="es" data-i18n-base="..">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title data-i18n="mod3PageTitle">Module 3 — DC Circuits</title>
+  <link rel="stylesheet" href="../css/styles.css" />
+  <style>
+    /* ── Module-3 local styles ─────────────────────── */
+
+    /* Formula display */
+    .formula-box {
+      background: var(--clr-amber-bg);
+      border: 1.5px solid var(--clr-amber);
+      border-radius: var(--r-lg);
+      padding: var(--sp-5);
+      margin-bottom: var(--sp-5);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--sp-4);
+    }
+    .formula-box__eq {
+      font-size: var(--fs-xl);
+      font-weight: var(--fw-medium);
+      color: var(--clr-amber-text);
+      letter-spacing: 0.04em;
+    }
+    .formula-box__vars {
+      display: flex;
+      gap: var(--sp-5);
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .formula-box__var {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--sp-1);
+    }
+    .formula-box__sym {
+      font-size: var(--fs-md);
+      font-weight: var(--fw-medium);
+      color: var(--clr-amber-text);
+    }
+    .formula-box__desc {
+      font-size: var(--fs-xs);
+      color: var(--clr-text-3);
+      text-align: center;
+    }
+    .formula-box__divider {
+      width: 100%;
+      height: 1px;
+      background: var(--clr-amber);
+      opacity: 0.3;
+    }
+
+    /* Series / parallel comparison */
+    .wiring-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--sp-4);
+      margin-bottom: var(--sp-5);
+    }
+    @media (max-width: 520px) { .wiring-grid { grid-template-columns: 1fr; } }
+
+    .wiring-card {
+      background: var(--clr-surface);
+      border: .5px solid var(--clr-border-card);
+      border-radius: var(--r-lg);
+      padding: var(--sp-4);
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-3);
+    }
+    .wiring-card--series  { border-top: 3px solid #185FA5; }
+    .wiring-card--parallel { border-top: 3px solid #1D9E75; }
+
+    .wiring-card__title {
+      font-size: var(--fs-sm);
+      font-weight: var(--fw-medium);
+      color: var(--clr-text);
+    }
+    .wiring-card--series  .wiring-card__title { color: #185FA5; }
+    .wiring-card--parallel .wiring-card__title { color: #1D9E75; }
+
+    .wiring-card__rule {
+      font-size: var(--fs-xs);
+      font-weight: var(--fw-medium);
+      padding: var(--sp-2) var(--sp-3);
+      border-radius: var(--r-sm);
+      font-family: monospace;
+      line-height: var(--lh-snug);
+    }
+    .wiring-card--series  .wiring-card__rule { background: #EBF2FC; color: #0E3B6A; }
+    .wiring-card--parallel .wiring-card__rule { background: #E6F7F2; color: #0A4F38; }
+
+    .wiring-card__list {
+      padding-left: var(--sp-4);
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-1);
+    }
+    .wiring-card__list li {
+      font-size: var(--fs-xs);
+      color: var(--clr-text-2);
+      line-height: var(--lh-snug);
+    }
+
+    /* Calculation example block */
+    .calc-example {
+      background: var(--clr-surface);
+      border-left: 3px solid var(--clr-amber);
+      border-radius: 0 var(--r-md) var(--r-md) 0;
+      padding: var(--sp-3) var(--sp-4);
+      margin-bottom: var(--sp-4);
+      font-size: var(--fs-sm);
+      color: var(--clr-text-2);
+      line-height: var(--lh-snug);
+    }
+
+    /* Key terms (reused from module 1 pattern) */
+    .key-terms {
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-3);
+      margin-bottom: var(--sp-6);
+    }
+    .term-row {
+      display: flex;
+      gap: var(--sp-4);
+      align-items: flex-start;
+    }
+    .term-row__name {
+      min-width: 130px;
+      font-size: var(--fs-sm);
+      font-weight: var(--fw-medium);
+      color: var(--clr-amber-text);
+      flex-shrink: 0;
+    }
+    .term-row__def {
+      font-size: var(--fs-sm);
+      color: var(--clr-text-2);
+      line-height: var(--lh-snug);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ══ NAVBAR ══════════════════════════════════════════════ -->
+  <header class="navbar" role="banner">
+    <div class="navbar__inner">
+      <button type="button" class="btn--icon" id="menuBtn" aria-label="Open menu" aria-expanded="false">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+          <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+      </button>
+      <a href="../index.html" class="navbar__brand">
+        <span class="navbar__logo" aria-hidden="true">☀️</span>
+        <span data-i18n="brandName">Solar Course</span>
+      </a>
+      <span class="navbar__spacer"></span>
+      <div class="navbar__actions">
+        <div class="lang-toggle" role="group" aria-label="Language">
+          <button type="button" class="lang-toggle__btn" id="langEn" data-lang="en" aria-pressed="false">EN</button>
+          <span class="lang-toggle__sep" aria-hidden="true"></span>
+          <button type="button" class="lang-toggle__btn lang-toggle__btn--active" id="langEs" data-lang="es" aria-pressed="true">ES</button>
+        </div>
+        <button type="button" class="btn--icon" aria-label="Notifications">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+          </svg>
+        </button>
+        <button type="button" class="btn--icon" aria-label="User account">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div class="navbar__progress" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" id="navProgress" aria-label="Course progress">
+      <div class="navbar__progress-fill" id="progressFill"></div>
+    </div>
+  </header>
+
+  <!-- ══ LAYOUT ══════════════════════════════════════════════ -->
+  <div class="layout">
+
+    <!-- SIDEBAR (desktop) -->
+    <aside class="sidebar" id="sidebar" aria-label="Course navigation">
+      <p class="sidebar__section-label" data-i18n="sidebarLabel">Modules</p>
+      <ul class="sidebar__list" role="list">
+        <li><a href="module1.html" class="sidebar__item" data-module="1"><span class="sidebar__item-text" data-i18n="mod1Title">1. Intro to solar energy</span></a></li>
+        <li><a href="module2.html" class="sidebar__item" data-module="2"><span class="sidebar__item-text" data-i18n="mod2Title">2. How panels work</span></a></li>
+        <li><a href="module3.html" class="sidebar__item sidebar__item--active" data-module="3"><span class="sidebar__item-text" data-i18n="mod3Title">3. DC circuits</span><span class="pill pill--active sidebar__item-pill" data-i18n="pillActive">Active</span></a></li>
+        <li><a href="module4.html" class="sidebar__item" data-module="4"><span class="sidebar__item-text" data-i18n="mod4Title">4. AC &amp; inverters</span></a></li>
+        <li><a href="module5.html" class="sidebar__item" data-module="5"><span class="sidebar__item-text" data-i18n="mod5Title">5. System design</span></a></li>
+        <li><a href="module6.html" class="sidebar__item" data-module="6"><span class="sidebar__item-text" data-i18n="mod6Title">6. Maintenance</span></a></li>
+      </ul>
+    </aside>
+
+    <!-- Mobile sidebar overlay -->
+    <aside class="sidebar sidebar--mobile" id="mobileSidebar" aria-label="Course navigation" aria-hidden="true">
+      <p class="sidebar__section-label" data-i18n="sidebarLabel">Modules</p>
+      <ul class="sidebar__list" role="list">
+        <li><a href="module1.html" class="sidebar__item"><span data-i18n="mod1Title">1. Intro to solar energy</span></a></li>
+        <li><a href="module2.html" class="sidebar__item"><span data-i18n="mod2Title">2. How panels work</span></a></li>
+        <li><a href="module3.html" class="sidebar__item sidebar__item--active"><span data-i18n="mod3Title">3. DC circuits</span><span class="pill pill--active" data-i18n="pillActive">Active</span></a></li>
+        <li><a href="module4.html" class="sidebar__item"><span data-i18n="mod4Title">4. AC &amp; inverters</span></a></li>
+        <li><a href="module5.html" class="sidebar__item"><span data-i18n="mod5Title">5. System design</span></a></li>
+        <li><a href="module6.html" class="sidebar__item"><span data-i18n="mod6Title">6. Maintenance</span></a></li>
+      </ul>
+    </aside>
+    <div class="sidebar-overlay" id="sidebarOverlay" aria-hidden="true"></div>
+
+    <!-- MAIN ══════════════════════════════════════════════════ -->
+    <main class="main" id="main">
+      <div class="lesson-wrap">
+
+        <!-- ── Lesson header ─────────────────────────── -->
+        <header class="lesson-header">
+          <p class="lesson-header__eyebrow" data-i18n="mod3Eyebrow">Module 3 · Electrical fundamentals</p>
+          <h1 class="lesson-header__title" data-i18n="mod3Title">3. DC circuits</h1>
+          <div class="lesson-header__meta">
+            <span>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="display:inline;vertical-align:-1px"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              40 min
+            </span>
+            <span data-i18n="mod3Prereq">Requires Module 2</span>
+            <span class="pill pill--active" data-i18n="pillActive">Active</span>
+          </div>
+        </header>
+
+        <!-- ── Section 1: What is DC? ────────────────── -->
+        <section class="content-block">
+          <h2 data-i18n="m3s1Title">What is direct current?</h2>
+          <p data-i18n="m3s1p1">
+            Direct current (DC) is the flow of electric charge in a single direction — unlike
+            alternating current (AC), which reverses direction 50 or 60 times per second.
+            Solar panels, batteries and charge controllers all operate on DC.
+            Understanding DC circuits is the core of any solar installation.
+          </p>
+          <p data-i18n="m3s1p2">
+            In a DC circuit, electrons flow out of the negative terminal of the source,
+            through the loads, and back to the positive terminal. Voltage (V) drives that flow;
+            resistance (Ω) opposes it; and current (A) describes how many coulombs pass per second.
+          </p>
+          <div class="callout callout--info">
+            <span aria-hidden="true">💡</span>
+            <span data-i18n="m3s1callout">
+              <strong>Key insight.</strong>
+              PV panels generate DC. To power AC appliances or feed the grid you need an inverter
+              that converts the system's DC into 120 V or 230 V AC.
+            </span>
+          </div>
+        </section>
+
+        <!-- ── Section 2: Ohm's Law ──────────────────── -->
+        <section class="content-block">
+          <h2 data-i18n="m3s2Title">Ohm's Law: V = I × R</h2>
+          <p data-i18n="m3s2p1">
+            Ohm's Law is the fundamental equation of any electric circuit. It relates three quantities:
+            voltage (V), current (I) and resistance (R). If you know any two, you can always find the third.
+          </p>
+
+          <div class="formula-box" aria-label="Ohm's Law formula">
+            <span class="formula-box__eq">V = I × R</span>
+            <div class="formula-box__divider"></div>
+            <div class="formula-box__vars">
+              <div class="formula-box__var">
+                <span class="formula-box__sym">V</span>
+                <span class="formula-box__desc">Voltage<br>(volts)</span>
+              </div>
+              <div class="formula-box__var">
+                <span class="formula-box__sym">I</span>
+                <span class="formula-box__desc">Current<br>(amperes)</span>
+              </div>
+              <div class="formula-box__var">
+                <span class="formula-box__sym">R</span>
+                <span class="formula-box__desc">Resistance<br>(ohms)</span>
+              </div>
+            </div>
+          </div>
+
+          <p data-i18n="m3s2p2">
+            Rearrange it as needed: <strong>I = V / R</strong> for current;
+            <strong>R = V / I</strong> for resistance. This simple formula governs your panel wiring,
+            cable losses and inverter behaviour.
+          </p>
+          <div class="calc-example" data-i18n="m3s2ex">
+            Practical example: a string delivers 48 V and feeds a 5.3 Ω load.
+            Current = 48 / 5.3 ≈ 9.1 A; power = 48 × 9.1 ≈ 437 W.
+          </div>
+        </section>
+
+        <!-- ── Section 3: Power ───────────────────────── -->
+        <section class="content-block">
+          <h2 data-i18n="m3s3Title">Power in DC circuits</h2>
+          <p data-i18n="m3s3p1">
+            Power (P, in watts) describes how fast energy is transferred.
+            In DC it combines directly with Ohm's Law:
+          </p>
+
+          <div class="formula-box" aria-label="Power formulas">
+            <span class="formula-box__eq">P = V × I</span>
+            <div class="formula-box__divider"></div>
+            <div class="formula-box__vars">
+              <div class="formula-box__var">
+                <span class="formula-box__sym">P</span>
+                <span class="formula-box__desc">Power<br>(watts)</span>
+              </div>
+              <div class="formula-box__var">
+                <span class="formula-box__sym">V</span>
+                <span class="formula-box__desc">Voltage<br>(volts)</span>
+              </div>
+              <div class="formula-box__var">
+                <span class="formula-box__sym">I</span>
+                <span class="formula-box__desc">Current<br>(amperes)</span>
+              </div>
+            </div>
+          </div>
+
+          <ul>
+            <li data-i18n="m3s3li1"><strong>P = V × I</strong> — the basic power formula.</li>
+            <li data-i18n="m3s3li2"><strong>P = I² × R</strong> — useful for calculating cable losses when you know the current.</li>
+            <li data-i18n="m3s3li3"><strong>P = V² / R</strong> — useful when you know voltage and resistance.</li>
+          </ul>
+          <div class="callout callout--tip">
+            <span aria-hidden="true">⚡</span>
+            <span data-i18n="m3s3callout">
+              <strong>Energy vs. power.</strong>
+              Power (W) is an instantaneous rate. Energy (Wh) is power × time.
+              A 1 000 W array running for 5 peak-sun hours produces 5 000 Wh = 5 kWh.
+            </span>
+          </div>
+        </section>
+
+        <!-- ── Section 4: Series wiring ──────────────── -->
+        <section class="content-block">
+          <h2 data-i18n="m3s4Title">Series wiring</h2>
+          <p data-i18n="m3s4p1">
+            Wiring panels in series — positive of one to the negative of the next — forms a string.
+            Voltages accumulate while current stays the same as a single panel.
+          </p>
+
+          <div class="wiring-grid">
+            <div class="wiring-card wiring-card--series">
+              <span class="wiring-card__title">Series string</span>
+              <div class="wiring-card__rule">
+                Vtotal = V₁ + V₂ + …<br>
+                Itotal = I (unchanged)
+              </div>
+              <ul class="wiring-card__list">
+                <li data-i18n="m3s4li1">Vtotal = V₁ + V₂ + V₃ + …</li>
+                <li data-i18n="m3s4li2">Itotal = I of one panel (unchanged).</li>
+                <li data-i18n="m3s4li3">Example: 4 × 40 V / 10 A → 160 V, 10 A, 1 600 W.</li>
+              </ul>
+            </div>
+            <div class="wiring-card wiring-card--parallel" style="visibility:hidden" aria-hidden="true">
+              <!-- placeholder to keep grid balanced on this section -->
+            </div>
+          </div>
+
+          <div class="callout callout--tip">
+            <span aria-hidden="true">⚠️</span>
+            <span data-i18n="m3s4callout">
+              <strong>Shading alert.</strong>
+              If a single cell in a string is shaded it acts as a resistor and can drag down
+              the whole string's output. Module optimisers or micro-inverters mitigate this effect.
+            </span>
+          </div>
+        </section>
+
+        <!-- ── Section 5: Parallel wiring ───────────── -->
+        <section class="content-block">
+          <h2 data-i18n="m3s5Title">Parallel wiring</h2>
+          <p data-i18n="m3s5p1">
+            Wiring strings in parallel — positive to positive, negative to negative — adds the
+            currents while keeping the voltage constant. This combining is done at a combiner box.
+          </p>
+
+          <div class="wiring-grid">
+            <div class="wiring-card wiring-card--series">
+              <span class="wiring-card__title">Series (recap)</span>
+              <div class="wiring-card__rule">
+                Vtotal = V₁ + V₂ + …<br>
+                Itotal = I (unchanged)
+              </div>
+              <ul class="wiring-card__list">
+                <li>Voltage ↑ — Current →</li>
+                <li>Higher voltage → longer cable runs</li>
+              </ul>
+            </div>
+            <div class="wiring-card wiring-card--parallel">
+              <span class="wiring-card__title">Parallel</span>
+              <div class="wiring-card__rule">
+                Vtotal = V (unchanged)<br>
+                Itotal = I₁ + I₂ + …
+              </div>
+              <ul class="wiring-card__list">
+                <li data-i18n="m3s5li1">Vtotal = voltage of one string (unchanged).</li>
+                <li data-i18n="m3s5li2">Itotal = I₁ + I₂ + I₃ + …</li>
+                <li data-i18n="m3s5li3">Example: 2 × 160 V / 10 A → 160 V, 20 A, 3 200 W.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="callout callout--info">
+            <span aria-hidden="true">🔒</span>
+            <span data-i18n="m3s5callout">
+              <strong>Blocking diodes.</strong>
+              In parallel circuits, blocking diodes prevent a shaded string from consuming
+              power from the others.
+            </span>
+          </div>
+        </section>
+
+        <!-- ── Section 6: Voltage drop ───────────────── -->
+        <section class="content-block">
+          <h2 data-i18n="m3s6Title">Voltage drop in wiring</h2>
+          <p data-i18n="m3s6p1">
+            Every cable has electrical resistance. When current flows through it, voltage is lost:
+            <strong>Vdrop = I × Rcable</strong>. This loss heats the cable and reduces the power
+            available at the inverter.
+          </p>
+          <p data-i18n="m3s6p2">
+            For solar systems, the standard recommendation is to keep voltage drop below
+            <strong>2–3 %</strong> of the string voltage. Use larger-gauge cable for longer runs
+            or higher currents.
+          </p>
+          <div class="callout callout--tip">
+            <span aria-hidden="true">📐</span>
+            <span data-i18n="m3s6callout">
+              <strong>Quick rule.</strong>
+              Doubling the cable's cross-section halves its resistance and therefore halves the
+              voltage drop. A 6 mm² cable has half the resistance of a 3 mm² cable.
+            </span>
+          </div>
+        </section>
+
+        <!-- ── Canvas: live DC circuit ────────────────── -->
+        <section class="canvas-section" aria-label="Live DC circuit diagram">
+          <p class="canvas-section__title" data-i18n="m3canvasTitle">Live DC circuit diagram</p>
+          <canvas id="circuitCanvas" width="760" height="200" aria-label="Solar panel to battery to load DC circuit"></canvas>
+          <div class="canvas-section__controls">
+            <button type="button" class="btn btn--amber btn--sm" id="canvasDC" data-i18n="btnDC">DC diagram</button>
+            <button type="button" class="btn btn--ghost-amber btn--sm" id="canvasAC" data-i18n="btnAC">AC diagram</button>
+            <button type="button" class="btn btn--ghost-amber btn--sm" id="canvasClear" data-i18n="btnClear">Clear</button>
+          </div>
+        </section>
+
+        <!-- ── Section 7: Key terms ────────────────────── -->
+        <section class="content-block">
+          <h2 data-i18n="m3s7Title">Key terms</h2>
+          <div class="key-terms">
+            <div class="term-row">
+              <span class="term-row__name" data-i18n="m3t1Name">Voltage (V)</span>
+              <span class="term-row__def" data-i18n="m3t1Def">Potential difference between two points, in volts (V). Drives current flow.</span>
+            </div>
+            <div class="term-row">
+              <span class="term-row__name" data-i18n="m3t2Name">Current (A)</span>
+              <span class="term-row__def" data-i18n="m3t2Def">Rate of electric charge flow, in amperes (A). 1 A = 1 coulomb per second.</span>
+            </div>
+            <div class="term-row">
+              <span class="term-row__name" data-i18n="m3t3Name">Resistance (Ω)</span>
+              <span class="term-row__def" data-i18n="m3t3Def">Opposition to current flow, in ohms (Ω). R = V / I by Ohm's Law.</span>
+            </div>
+            <div class="term-row">
+              <span class="term-row__name" data-i18n="m3t4Name">Power (W)</span>
+              <span class="term-row__def" data-i18n="m3t4Def">Rate of energy transfer, in watts (W). P = V × I in DC circuits.</span>
+            </div>
+            <div class="term-row">
+              <span class="term-row__name" data-i18n="m3t5Name">Series</span>
+              <span class="term-row__def" data-i18n="m3t5Def">Components wired end-to-end: current flows through each in sequence; voltages add up.</span>
+            </div>
+            <div class="term-row">
+              <span class="term-row__name" data-i18n="m3t6Name">Parallel</span>
+              <span class="term-row__def" data-i18n="m3t6Def">Components wired between the same two nodes: currents add; voltage is the same.</span>
+            </div>
+            <div class="term-row">
+              <span class="term-row__name" data-i18n="m3t7Name">Voltage drop</span>
+              <span class="term-row__def" data-i18n="m3t7Def">Voltage lost across cable resistance: Vdrop = I × Rcable.</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- ── Quiz trigger ─────────────────────────────── -->
+        <section class="content-block">
+          <button type="button" class="quiz-trigger" id="openQuizBtn" aria-haspopup="dialog">
+            <span class="quiz-trigger__icon" aria-hidden="true">📝</span>
+            <span class="quiz-trigger__content">
+              <strong data-i18n="quizTitle">Comprueba lo aprendido</strong>
+              <span class="quiz-trigger__sub">4 preguntas</span>
+            </span>
+            <span class="quiz-trigger__arrow" aria-hidden="true">›</span>
+          </button>
+        </section>
+
+        <!-- ── Mark complete ──────────────────────────────── -->
+        <button type="button" class="complete-btn" id="completeBtn" aria-pressed="false">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+          <span id="completeBtnLabel" data-i18n="markDone">Mark as complete</span>
+        </button>
+
+        <!-- ── Lesson nav ───────────────────────────────── -->
+        <nav class="lesson-nav" aria-label="Lesson navigation">
+          <a href="module2.html" class="btn btn--ghost-amber btn--md" data-i18n="lessonPrev">← Previous</a>
+          <a href="module4.html" class="btn btn--amber btn--md" data-i18n="lessonNext">Next →</a>
+        </nav>
+
+      </div><!-- /lesson-wrap -->
+    </main>
+  </div><!-- /layout -->
+
+  <!-- ══ BOTTOM NAV (mobile) ═════════════════════════════════ -->
+  <nav class="bottom-nav" aria-label="Main navigation" role="navigation">
+    <a href="../index.html" class="bottom-nav__item" aria-label="Course">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+      </svg>
+      <span data-i18n="navCourse">Course</span>
+    </a>
+    <a href="simulator.html" class="bottom-nav__item" aria-label="Simulator">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+      </svg>
+      <span data-i18n="navSimulator">Simulator</span>
+    </a>
+    <button type="button" class="bottom-nav__item" aria-label="Calculator">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="12" y2="14"/>
+      </svg>
+      <span data-i18n="navCalc">Calc</span>
+    </button>
+    <button type="button" class="bottom-nav__item" aria-label="Profile">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+      </svg>
+      <span data-i18n="navProfile">Profile</span>
+    </button>
+  </nav>
+
+  <script src="../js/i18n.js"></script>
+  <script src="../js/app.js"></script>
+  <script src="../js/canvas.js"></script>
+  <script>
+  /* ── Module-3 page scripts ────────────────────────── */
+  (function () {
+    'use strict';
+
+    const QUIZ_DATA = [
+      { textKey: 'm3q1text', opts: [{ key: 'm3q1a', ok: false }, { key: 'm3q1b', ok: true  }, { key: 'm3q1c', ok: false }, { key: 'm3q1d', ok: false }] },
+      { textKey: 'm3q2text', opts: [{ key: 'm3q2a', ok: false }, { key: 'm3q2b', ok: true  }, { key: 'm3q2c', ok: false }, { key: 'm3q2d', ok: false }] },
+      { textKey: 'm3q3text', opts: [{ key: 'm3q3a', ok: false }, { key: 'm3q3b', ok: true  }, { key: 'm3q3c', ok: false }, { key: 'm3q3d', ok: false }] },
+      { textKey: 'm3q4text', opts: [{ key: 'm3q4a', ok: false }, { key: 'm3q4b', ok: false }, { key: 'm3q4c', ok: true  }, { key: 'm3q4d', ok: false }] },
+    ];
+
+    document.addEventListener('SolarLearnReady', () => {
+      SolarLearn.initQuizModal(QUIZ_DATA, 'openQuizBtn');
+
+      const btn = document.getElementById('completeBtn');
+      const lbl = document.getElementById('completeBtnLabel');
+
+      if (window.SolarLearn?.isModuleDone(3)) {
+        btn.classList.add('complete-btn--done');
+        btn.setAttribute('aria-pressed', 'true');
+        btn.disabled = true;
+        if (lbl) lbl.textContent = I18n.t(SolarLearn.currentLang, 'markedDone');
+      }
+
+      btn.addEventListener('click', () => {
+        if (btn.dataset.done) return;
+        btn.dataset.done = 'true';
+        btn.classList.add('complete-btn--done');
+        btn.setAttribute('aria-pressed', 'true');
+        btn.disabled = true;
+        if (lbl) lbl.textContent = I18n.t(SolarLearn.currentLang, 'markedDone');
+        window.SolarLearn?.markModuleDone(3);
+      });
+    });
+  })();
+  </script>
+</body>
+</html>

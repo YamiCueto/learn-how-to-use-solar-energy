@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="es" data-i18n-base="..">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title data-i18n="mod6PageTitle">Module 6 — Maintenance</title>
+  <link rel="stylesheet" href="../css/styles.css" />
+  <style>
+    /* ── Module-6 local styles ─────────────────────── */
+
+    /* Maintenance checklist cards */
+    .maint-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--sp-4);
+      margin-bottom: var(--sp-5);
+    }
+    @media (max-width: 640px) { .maint-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 900px) and (min-width: 641px) { .maint-grid { grid-template-columns: 1fr 1fr; } }
+
+    .maint-card {
+      background: var(--clr-surface);
+      border: .5px solid var(--clr-border-card);
+      border-radius: var(--r-lg);
+      padding: var(--sp-4);
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-2);
+    }
+    .maint-card--monthly   { border-top: 3px solid #1D9E75; }
+    .maint-card--quarterly { border-top: 3px solid #F59E0B; }
+    .maint-card--annual    { border-top: 3px solid #185FA5; }
+
+    .maint-card__label {
+      font-size: var(--fs-xs);
+      font-weight: var(--fw-medium);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .maint-card--monthly   .maint-card__label { color: #1D9E75; }
+    .maint-card--quarterly .maint-card__label { color: #c07a00; }
+    .maint-card--annual    .maint-card__label { color: #185FA5; }
+
+    .maint-card__name {
+      font-size: var(--fs-sm);
+      font-weight: var(--fw-medium);
+      color: var(--clr-text);
+    }
+    .maint-card__note {
+      font-size: var(--fs-xs);
+      color: var(--clr-text-2);
+      line-height: var(--lh-snug);
+    }
+
+    /* Monitoring metrics grid */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--sp-4);
+      margin-bottom: var(--sp-5);
+    }
+    @media (max-width: 600px) { .metrics-grid { grid-template-columns: 1fr 1fr; } }
+
+    .metric-card {
+      background: var(--clr-surface);
+      border: .5px solid var(--clr-border-card);
+      border-radius: var(--r-lg);
+      padding: var(--sp-4);
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-1);
+      align-items: flex-start;
+    }
+    .metric-card__value {
+      font-size: var(--fs-lg);
+      font-weight: var(--fw-medium);
+      color: var(--clr-amber-text);
+    }
+    .metric-card__label {
+      font-size: var(--fs-xs);
+      color: var(--clr-text-3);
+      line-height: var(--lh-snug);
+    }
+
+    /* Key terms */
+    .key-terms {
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-3);
+      margin-bottom: var(--sp-6);
+    }
+    .term-row {
+      display: flex;
+      gap: var(--sp-4);
+      align-items: flex-start;
+    }
+    .term-row__name {
+      min-width: 160px;
+      font-size: var(--fs-sm);
+      font-weight: var(--fw-medium);
+      color: var(--clr-amber-text);
+      flex-shrink: 0;
+    }
+    .term-row__def {
+      font-size: var(--fs-sm);
+      color: var(--clr-text-2);
+      line-height: var(--lh-snug);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ══ NAVBAR ══════════════════════════════════════════════ -->
+  <header class="navbar" role="banner">
+    <div class="navbar__inner">
+      <button type="button" class="btn--icon" id="menuBtn" aria-label="Open menu" aria-expanded="false">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+          <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+      </button>
+      <a href="../index.html" class="navbar__brand">
+        <span class="navbar__logo" aria-hidden="true">☀️</span>
+        <span data-i18n="brandName">Solar Course</span>
+      </a>
+      <span class="navbar__spacer"></span>
+      <div class="navbar__actions">
+        <div class="lang-toggle" role="group" aria-label="Language">
+          <button type="button" class="lang-toggle__btn" id="langEn" data-lang="en" aria-pressed="false">EN</button>
+          <span class="lang-toggle__sep" aria-hidden="true"></span>
+          <button type="button" class="lang-toggle__btn lang-toggle__btn--active" id="langEs" data-lang="es" aria-pressed="true">ES</button>
+        </div>
+        <button type="button" class="btn--icon" aria-label="Notifications">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+          </svg>
+        </button>
+        <button type="button" class="btn--icon" aria-label="User account">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div class="navbar__progress" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" id="navProgress" aria-label="Course progress">
+      <div class="navbar__progress-fill" id="progressFill"></div>
+    </div>
+  </header>
+
+  <!-- ══ LAYOUT ══════════════════════════════════════════════ -->
+  <div class="layout">
+
+    <!-- SIDEBAR (desktop) -->
+    <aside class="sidebar" id="sidebar" aria-label="Course navigation">
+      <p class="sidebar__section-label" data-i18n="sidebarLabel">Modules</p>
+      <ul class="sidebar__list" role="list">
+        <li><a href="module1.html" class="sidebar__item" data-module="1"><span class="sidebar__item-text" data-i18n="mod1Title">1. Intro to solar energy</span></a></li>
+        <li><a href="module2.html" class="sidebar__item" data-module="2"><span class="sidebar__item-text" data-i18n="mod2Title">2. How panels work</span></a></li>
+        <li><a href="module3.html" class="sidebar__item" data-module="3"><span class="sidebar__item-text" data-i18n="mod3Title">3. DC circuits</span></a></li>
+        <li><a href="module4.html" class="sidebar__item" data-module="4"><span class="sidebar__item-text" data-i18n="mod4Title">4. AC &amp; inverters</span></a></li>
+        <li><a href="module5.html" class="sidebar__item" data-module="5"><span class="sidebar__item-text" data-i18n="mod5Title">5. System design</span></a></li>
+        <li><a href="module6.html" class="sidebar__item sidebar__item--active" data-module="6"><span class="sidebar__item-text" data-i18n="mod6Title">6. Maintenance</span><span class="pill pill--active sidebar__item-pill" data-i18n="pillActive">Active</span></a></li>
+      </ul>
+    </aside>
+
+    <!-- Mobile sidebar overlay -->
+    <aside class="sidebar sidebar--mobile" id="mobileSidebar" aria-label="Course navigation" aria-hidden="true">
+      <p class="sidebar__section-label" data-i18n="sidebarLabel">Modules</p>
+      <ul class="sidebar__list" role="list">
+        <li><a href="module1.html" class="sidebar__item"><span data-i18n="mod1Title">1. Intro to solar energy</span></a></li>
+        <li><a href="module2.html" class="sidebar__item"><span data-i18n="mod2Title">2. How panels work</span></a></li>
+        <li><a href="module3.html" class="sidebar__item"><span data-i18n="mod3Title">3. DC circuits</span></a></li>
+        <li><a href="module4.html" class="sidebar__item"><span data-i18n="mod4Title">4. AC &amp; inverters</span></a></li>
+        <li><a href="module5.html" class="sidebar__item"><span data-i18n="mod5Title">5. System design</span></a></li>
+        <li><a href="module6.html" class="sidebar__item sidebar__item--active"><span data-i18n="mod6Title">6. Maintenance</span><span class="pill pill--active" data-i18n="pillActive">Active</span></a></li>
+      </ul>
+    </aside>
+    <div class="sidebar-overlay" id="sidebarOverlay" aria-hidden="true"></div>
+
+    <!-- MAIN ══════════════════════════════════════════════════ -->
+    <main class="main" id="main">
+      <div class="lesson-wrap">
+
+        <!-- ── Lesson header ─────────────────────────── -->
+        <header class="lesson-header">
+          <p class="lesson-header__eyebrow" data-i18n="mod6Eyebrow">Module 6 · Long-term performance</p>
+          <h1 class="lesson-header__title" data-i18n="mod6Title">6. Maintenance</h1>
+          <div class="lesson-header__meta">
+            <span>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="display:inline;vertical-align:-1px"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              40 min
+            </span>
+            <span data-i18n="mod6Prereq">Requires Module 5</span>
+            <span class="pill pill--active" data-i18n="pillActive">Active</span>
+          </div>
+        </header>
+
+        <!-- ── Section 1: Why maintenance matters ─────── -->
+        <section class="content-block">
+          <h2 data-i18n="m6s1Title">Why maintenance matters</h2>
+          <p data-i18n="m6s1p1">
+            A solar system is a long-term investment designed to operate for 25–30 years. Without
+            regular maintenance, energy yield degrades much faster than the manufacturer's warranty
+            assumes. Dust, dirt, bird droppings and leaf deposits on the panel surface can reduce
+            output by 10–30 % depending on climate and location.
+          </p>
+          <p data-i18n="m6s1p2">
+            Beyond soiling, the system's electrical connections, mounting hardware and inverter
+            components are exposed to weather and thermal cycling year-round. Proactive inspection
+            catches small problems — a loose connector, a cracked bypass diode, a corroding terminal —
+            before they become costly failures or safety hazards.
+          </p>
+          <div class="callout callout--info">
+            <span aria-hidden="true">📊</span>
+            <span data-i18n="m6s1callout">
+              <strong>Industry data.</strong>
+              A well-maintained system degrades at ~0.5 %/year; a neglected system at 1–2 %/year.
+              Over 25 years, the cumulative difference in energy production can exceed 15 %.
+            </span>
+          </div>
+        </section>
+
+        <!-- ── Section 2: Cleaning schedule ─────────────── -->
+        <section class="content-block">
+          <h2 data-i18n="m6s2Title">Cleaning schedule</h2>
+          <p data-i18n="m6s2p1">
+            Panel cleaning frequency depends on local conditions. In dry, dusty climates monthly
+            cleaning may be necessary. In wetter, windier climates with regular rainfall, quarterly
+            cleaning is often sufficient — rain acts as a natural rinse.
+          </p>
+
+          <div class="maint-grid">
+            <div class="maint-card maint-card--monthly">
+              <span class="maint-card__label" data-i18n="schedMonthlyLabel">Monthly</span>
+              <span class="maint-card__name" data-i18n="schedMonthlyName">Dusty / arid climates</span>
+              <p class="maint-card__note" data-i18n="schedMonthlyNote">Dry regions, near farmland or construction sites. Visible soiling accumulates quickly.</p>
+            </div>
+            <div class="maint-card maint-card--quarterly">
+              <span class="maint-card__label" data-i18n="schedQuarterlyLabel">Quarterly</span>
+              <span class="maint-card__name" data-i18n="schedQuarterlyName">Moderate climates</span>
+              <p class="maint-card__note" data-i18n="schedQuarterlyNote">Regular rainfall helps. Clean before and after wet season for best results.</p>
+            </div>
+            <div class="maint-card maint-card--annual">
+              <span class="maint-card__label" data-i18n="schedAnnualLabel">Annual</span>
+              <span class="maint-card__name" data-i18n="schedAnnualName">Wet / coastal climates</span>
+              <p class="maint-card__note" data-i18n="schedAnnualNote">High rainfall keeps panels relatively clean. Annual inspection still recommended.</p>
+            </div>
+          </div>
+
+          <p data-i18n="m6s2p2">
+            Always clean panels in the early morning or late afternoon when they are cool. Use
+            soft-bristle brushes or squeegees with de-ionised or low-mineral water to avoid leaving
+            mineral deposits.
+          </p>
+          <div class="callout callout--tip">
+            <span aria-hidden="true">⚠️</span>
+            <span data-i18n="m6s2callout">
+              <strong>Never use</strong> abrasive pads, high-pressure washers (above 35 bar) or harsh
+              detergents. These can scratch the anti-reflective coating and void the panel warranty.
+            </span>
+          </div>
+        </section>
+
+        <!-- ── Section 3: Electrical inspection ─────────── -->
+        <section class="content-block">
+          <h2 data-i18n="m6s3Title">Electrical inspection checklist</h2>
+          <p data-i18n="m6s3p1">
+            Perform a thorough electrical inspection at least once a year. The checklist covers:
+            panel connectors (MC4) — check for moisture ingress, corrosion and secure seating;
+            string combiner and junction boxes — inspect for overheating marks and insulation damage;
+            DC disconnect and AC breaker — verify operation and terminal torque; battery terminals —
+            clean corrosion, check electrolyte level; inverter — review fault log, check cooling fan.
+          </p>
+          <p data-i18n="m6s3p2">
+            Use a clamp meter to verify that each string's short-circuit current matches the expected
+            datasheet value. A string producing significantly less current than its neighbours may
+            have a failed panel, shading issue or a degraded connector.
+          </p>
+          <div class="callout callout--tip">
+            <span aria-hidden="true">⚠️</span>
+            <span data-i18n="m6s3callout">
+              <strong>Safety.</strong>
+              DC circuits can carry lethal voltage even at night due to charged batteries.
+              Always use appropriate PPE, insulated tools and a voltage tester before touching any
+              DC conductor.
+            </span>
+          </div>
+        </section>
+
+        <!-- ── Canvas: AC / DC diagram ────────────────── -->
+        <section class="canvas-section" aria-label="Solar system diagram">
+          <p class="canvas-section__title" data-i18n="m4canvasTitle">AC sine wave — live diagram</p>
+          <canvas id="circuitCanvas" width="760" height="200" aria-label="Solar system electrical diagram"></canvas>
+          <div class="canvas-section__controls">
+            <button type="button" class="btn btn--amber btn--sm" id="canvasAC" data-i18n="btnSineAC">AC waveform</button>
+            <button type="button" class="btn btn--ghost-amber btn--sm" id="canvasDC" data-i18n="btnSineDC">DC system</button>
+            <button type="button" class="btn btn--ghost-amber btn--sm" id="canvasClear" data-i18n="btnClear">Clear</button>
+          </div>
+        </section>
+
+        <!-- ── Section 4: Shading analysis ──────────────── -->
+        <section class="content-block">
+          <h2 data-i18n="m6s4Title">Shading analysis</h2>
+          <p data-i18n="m6s4p1">
+            Shading is one of the most insidious performance losses because it can be partial,
+            seasonal and hard to detect without monitoring data. A shadow on a single cell reduces
+            the output of the entire string it belongs to if no bypass diodes or power optimisers
+            are present.
+          </p>
+          <p data-i18n="m6s4p2">
+            Common shading sources include trees that have grown since installation, new construction
+            on neighbouring properties, satellite dishes, chimneys and seasonal changes in the sun's
+            path. Use a solar pathfinder, a smartphone app, or monitoring software to identify
+            shading periods.
+          </p>
+          <div class="callout callout--info">
+            <span aria-hidden="true">🌡️</span>
+            <span data-i18n="m6s4callout">
+              <strong>Thermal imaging</strong> is the gold standard for diagnosing shading and cell
+              defects. A thermal camera reveals hot spots caused by mismatched or damaged cells,
+              allowing targeted replacement before the defect causes fire or connector failure.
+            </span>
+          </div>
+        </section>
+
+        <!-- ── Section 5: Long-term monitoring ──────────── -->
+        <section class="content-block">
+          <h2 data-i18n="m6s5Title">Long-term monitoring</h2>
+          <p data-i18n="m6s5p1">
+            Modern inverters include built-in data loggers accessible via Wi-Fi or a manufacturer's
+            cloud portal. Monitor these key metrics daily:
+          </p>
+
+          <div class="metrics-grid">
+            <div class="metric-card">
+              <span class="metric-card__value">kWh</span>
+              <span class="metric-card__label" data-i18n="metricDaily">Daily energy yield</span>
+            </div>
+            <div class="metric-card">
+              <span class="metric-card__value">kWh/kWp</span>
+              <span class="metric-card__label" data-i18n="metricSpecific">Specific yield vs irradiance</span>
+            </div>
+            <div class="metric-card">
+              <span class="metric-card__value">&gt;75 %</span>
+              <span class="metric-card__label" data-i18n="metricPR">Performance ratio (PR)</span>
+            </div>
+            <div class="metric-card">
+              <span class="metric-card__value">°C</span>
+              <span class="metric-card__label" data-i18n="metricTemp">Inverter temperature</span>
+            </div>
+            <div class="metric-card">
+              <span class="metric-card__value">A / V</span>
+              <span class="metric-card__label" data-i18n="metricString">String currents &amp; voltages</span>
+            </div>
+            <div class="metric-card">
+              <span class="metric-card__value">SoC</span>
+              <span class="metric-card__label" data-i18n="metricSoc">Battery state of charge</span>
+            </div>
+          </div>
+
+          <p data-i18n="m6s5p2">
+            Set up automated alerts for: yield below 80 % of the rolling 30-day average; any
+            inverter fault code; battery state-of-charge below minimum threshold. Early detection
+            of a 5–8 % drop in specific yield can point to soiling, shading or a failed string.
+          </p>
+          <div class="callout callout--info">
+            <span aria-hidden="true">📋</span>
+            <span data-i18n="m6s5callout">
+              <strong>Keep a logbook</strong> — digital or paper — recording each inspection date,
+              cleaning performed, faults observed and corrective actions. This record is invaluable
+              for warranty claims and long-term health tracking.
+            </span>
+          </div>
+        </section>
+
+        <!-- ── Section 6: Key terms ──────────────────────── -->
+        <section class="content-block">
+          <h2 data-i18n="m6s6Title">Key terms</h2>
+          <div class="key-terms">
+            <div class="term-row">
+              <span class="term-row__name" data-i18n="m6t1Name">Soiling loss</span>
+              <span class="term-row__def" data-i18n="m6t1Def">Energy loss due to dirt, dust or debris on the panel surface. Can reach 10–30 % without regular cleaning.</span>
+            </div>
+            <div class="term-row">
+              <span class="term-row__name" data-i18n="m6t2Name">Degradation rate</span>
+              <span class="term-row__def" data-i18n="m6t2Def">Annual percentage decline in panel power output. Well-maintained panels degrade at ~0.5 %/year.</span>
+            </div>
+            <div class="term-row">
+              <span class="term-row__name" data-i18n="m6t3Name">Performance ratio (PR)</span>
+              <span class="term-row__def" data-i18n="m6t3Def">Ratio of actual energy output to theoretical maximum given local irradiance. A healthy system targets PR > 75 %.</span>
+            </div>
+            <div class="term-row">
+              <span class="term-row__name" data-i18n="m6t4Name">Hot spot</span>
+              <span class="term-row__def" data-i18n="m6t4Def">Localised overheating in a cell caused by partial shading or damage. Detectable via thermal imaging.</span>
+            </div>
+            <div class="term-row">
+              <span class="term-row__name" data-i18n="m6t5Name">Specific yield</span>
+              <span class="term-row__def" data-i18n="m6t5Def">Annual energy produced per installed kilowatt-peak (kWh/kWp). The key metric for comparing system performance.</span>
+            </div>
+            <div class="term-row">
+              <span class="term-row__name" data-i18n="m6t6Name">Bypass diode</span>
+              <span class="term-row__def" data-i18n="m6t6Def">Diode integrated in the junction box that routes current around a shaded or faulty cell string within the panel.</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- ── Quiz trigger ─────────────────────────────── -->
+        <section class="content-block">
+          <button type="button" class="quiz-trigger" id="openQuizBtn" aria-haspopup="dialog">
+            <span class="quiz-trigger__icon" aria-hidden="true">📝</span>
+            <span class="quiz-trigger__content">
+              <strong data-i18n="quizTitle">Quick check</strong>
+              <span class="quiz-trigger__sub">4 <span data-i18n="quizQuestions">questions</span></span>
+            </span>
+            <span class="quiz-trigger__arrow" aria-hidden="true">›</span>
+          </button>
+        </section>
+
+        <!-- ── Mark complete ──────────────────────────────── -->
+        <button type="button" class="complete-btn" id="completeBtn" aria-pressed="false">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+          <span id="completeBtnLabel" data-i18n="markDone">Mark as complete</span>
+        </button>
+
+        <!-- ── Lesson nav (final module — only ← back) ─── -->
+        <nav class="lesson-nav" aria-label="Lesson navigation">
+          <a href="module5.html" class="btn btn--ghost-amber btn--md" data-i18n="lessonPrev">← Previous</a>
+          <a href="../index.html" class="btn btn--amber btn--md" data-i18n="navCourse">Course home</a>
+        </nav>
+
+      </div><!-- /lesson-wrap -->
+    </main>
+  </div><!-- /layout -->
+
+  <!-- ══ BOTTOM NAV (mobile) ═════════════════════════════════ -->
+  <nav class="bottom-nav" aria-label="Main navigation" role="navigation">
+    <a href="../index.html" class="bottom-nav__item" aria-label="Course">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+      </svg>
+      <span data-i18n="navCourse">Course</span>
+    </a>
+    <a href="simulator.html" class="bottom-nav__item" aria-label="Simulator">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+      </svg>
+      <span data-i18n="navSimulator">Simulator</span>
+    </a>
+    <button type="button" class="bottom-nav__item" aria-label="Calculator">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="12" y2="14"/>
+      </svg>
+      <span data-i18n="navCalc">Calc</span>
+    </button>
+    <button type="button" class="bottom-nav__item" aria-label="Profile">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+      </svg>
+      <span data-i18n="navProfile">Profile</span>
+    </button>
+  </nav>
+
+  <script src="../js/i18n.js"></script>
+  <script src="../js/app.js"></script>
+  <script src="../js/canvas.js"></script>
+  <script>
+  /* ── Module-6 page scripts ────────────────────────── */
+  (function () {
+    'use strict';
+
+    /* q1→c, q2→b, q3→c, q4→b */
+    const QUIZ_DATA = [
+      { textKey: 'm6q1text', opts: [{ key: 'm6q1a', ok: false }, { key: 'm6q1b', ok: false }, { key: 'm6q1c', ok: true  }, { key: 'm6q1d', ok: false }] },
+      { textKey: 'm6q2text', opts: [{ key: 'm6q2a', ok: false }, { key: 'm6q2b', ok: true  }, { key: 'm6q2c', ok: false }, { key: 'm6q2d', ok: false }] },
+      { textKey: 'm6q3text', opts: [{ key: 'm6q3a', ok: false }, { key: 'm6q3b', ok: false }, { key: 'm6q3c', ok: true  }, { key: 'm6q3d', ok: false }] },
+      { textKey: 'm6q4text', opts: [{ key: 'm6q4a', ok: false }, { key: 'm6q4b', ok: true  }, { key: 'm6q4c', ok: false }, { key: 'm6q4d', ok: false }] },
+    ];
+
+    document.addEventListener('SolarLearnReady', () => {
+      SolarLearn.initQuizModal(QUIZ_DATA, 'openQuizBtn');
+
+      /* Canvas: AC waveform by default */
+      const canvasAC    = document.getElementById('canvasAC');
+      const canvasDC    = document.getElementById('canvasDC');
+      const canvasClear = document.getElementById('canvasClear');
+
+      if (window.SolarCanvas) {
+        SolarCanvas.drawAC();
+        canvasAC.addEventListener('click',    () => SolarCanvas.drawAC());
+        canvasDC.addEventListener('click',    () => SolarCanvas.drawDC());
+        canvasClear.addEventListener('click', () => SolarCanvas.clear());
+      }
+
+      /* Mark complete */
+      const btn = document.getElementById('completeBtn');
+      const lbl = document.getElementById('completeBtnLabel');
+
+      if (window.SolarLearn?.isModuleDone(6)) {
+        btn.classList.add('complete-btn--done');
+        btn.setAttribute('aria-pressed', 'true');
+        btn.disabled = true;
+        if (lbl) lbl.textContent = I18n.t(SolarLearn.currentLang, 'markedDone');
+      }
+
+      btn.addEventListener('click', () => {
+        if (btn.dataset.done) return;
+        btn.dataset.done = 'true';
+        btn.classList.add('complete-btn--done');
+        btn.setAttribute('aria-pressed', 'true');
+        btn.disabled = true;
+        if (lbl) lbl.textContent = I18n.t(SolarLearn.currentLang, 'markedDone');
+        window.SolarLearn?.markModuleDone(6);
+      });
+    });
+  })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="es" data-i18n-base="..">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title data-i18n="mod5PageTitle">Module 5 — System Design</title>
+  <link rel="stylesheet" href="../css/styles.css" />
+  <style>
+    /* ── Module-5 local styles ─────────────────────── */
+
+    /* Battery sizing formula display */
+    .formula-box {
+      background: var(--clr-amber-bg);
+      border: 1.5px solid var(--clr-amber);
+      border-radius: var(--r-lg);
+      padding: var(--sp-5);
+      margin-bottom: var(--sp-5);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--sp-4);
+    }
+    .formula-box__eq {
+      font-size: var(--fs-xl);
+      font-weight: var(--fw-medium);
+      color: var(--clr-amber-text);
+      letter-spacing: 0.04em;
+    }
+    .formula-box__vars {
+      display: flex;
+      gap: var(--sp-5);
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .formula-box__var {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--sp-1);
+    }
+    .formula-box__sym {
+      font-size: var(--fs-md);
+      font-weight: var(--fw-medium);
+      color: var(--clr-amber-text);
+    }
+    .formula-box__desc {
+      font-size: var(--fs-xs);
+      color: var(--clr-text-3);
+      text-align: center;
+    }
+    .formula-box__divider {
+      width: 100%;
+      height: 1px;
+      background: var(--clr-amber);
+      opacity: 0.3;
+    }
+
+    /* Calculation example block */
+    .calc-example {
+      border-left: 3px solid var(--clr-amber);
+      background: var(--clr-amber-bg);
+      border-radius: 0 var(--r-md) var(--r-md) 0;
+      padding: var(--sp-4) var(--sp-5);
+      margin-bottom: var(--sp-5);
+      font-size: var(--fs-sm);
+      color: var(--clr-text-2);
+      line-height: var(--lh-snug);
+    }
+
+    /* PWM vs MPPT comparison grid */
+    .controller-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--sp-4);
+      margin-bottom: var(--sp-5);
+    }
+    @media (max-width: 500px) { .controller-grid { grid-template-columns: 1fr; } }
+
+    .controller-card {
+      background: var(--clr-surface);
+      border: .5px solid var(--clr-border-card);
+      border-radius: var(--r-lg);
+      padding: var(--sp-4);
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-2);
+    }
+    .controller-card--pwm  { border-top: 3px solid #185FA5; }
+    .controller-card--mppt { border-top: 3px solid #1D9E75; }
+
+    .controller-card__label {
+      font-size: var(--fs-xs);
+      font-weight: var(--fw-medium);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--clr-text-3);
+    }
+    .controller-card--pwm  .controller-card__label { color: #185FA5; }
+    .controller-card--mppt .controller-card__label { color: #1D9E75; }
+
+    .controller-card__name {
+      font-size: var(--fs-sm);
+      font-weight: var(--fw-medium);
+      color: var(--clr-text);
+    }
+    .controller-card__note {
+      font-size: var(--fs-xs);
+      color: var(--clr-text-2);
+      line-height: var(--lh-snug);
+    }
+
+    /* Key terms */
+    .key-terms {
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-3);
+      margin-bottom: var(--sp-6);
+    }
+    .term-row {
+      display: flex;
+      gap: var(--sp-4);
+      align-items: flex-start;
+    }
+    .term-row__name {
+      min-width: 140px;
+      font-size: var(--fs-sm);
+      font-weight: var(--fw-medium);
+      color: var(--clr-amber-text);
+      flex-shrink: 0;
+    }
+    .term-row__def {
+      font-size: var(--fs-sm);
+      color: var(--clr-text-2);
+      line-height: var(--lh-snug);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ══ NAVBAR ══════════════════════════════════════════════ -->
+  <header class="navbar" role="banner">
+    <div class="navbar__inner">
+      <button type="button" class="btn--icon" id="menuBtn" aria-label="Open menu" aria-expanded="false">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+          <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+      </button>
+      <a href="../index.html" class="navbar__brand">
+        <span class="navbar__logo" aria-hidden="true">☀️</span>
+        <span data-i18n="brandName">Solar Course</span>
+      </a>
+      <span class="navbar__spacer"></span>
+      <div class="navbar__actions">
+        <div class="lang-toggle" role="group" aria-label="Language">
+          <button type="button" class="lang-toggle__btn" id="langEn" data-lang="en" aria-pressed="false">EN</button>
+          <span class="lang-toggle__sep" aria-hidden="true"></span>
+          <button type="button" class="lang-toggle__btn lang-toggle__btn--active" id="langEs" data-lang="es" aria-pressed="true">ES</button>
+        </div>
+        <button type="button" class="btn--icon" aria-label="Notifications">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+          </svg>
+        </button>
+        <button type="button" class="btn--icon" aria-label="User account">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div class="navbar__progress" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" id="navProgress" aria-label="Course progress">
+      <div class="navbar__progress-fill" id="progressFill"></div>
+    </div>
+  </header>
+
+  <!-- ══ LAYOUT ══════════════════════════════════════════════ -->
+  <div class="layout">
+
+    <!-- SIDEBAR (desktop) -->
+    <aside class="sidebar" id="sidebar" aria-label="Course navigation">
+      <p class="sidebar__section-label" data-i18n="sidebarLabel">Modules</p>
+      <ul class="sidebar__list" role="list">
+        <li><a href="module1.html" class="sidebar__item" data-module="1"><span class="sidebar__item-text" data-i18n="mod1Title">1. Intro to solar energy</span></a></li>
+        <li><a href="module2.html" class="sidebar__item" data-module="2"><span class="sidebar__item-text" data-i18n="mod2Title">2. How panels work</span></a></li>
+        <li><a href="module3.html" class="sidebar__item" data-module="3"><span class="sidebar__item-text" data-i18n="mod3Title">3. DC circuits</span></a></li>
+        <li><a href="module4.html" class="sidebar__item" data-module="4"><span class="sidebar__item-text" data-i18n="mod4Title">4. AC &amp; inverters</span></a></li>
+        <li><a href="module5.html" class="sidebar__item sidebar__item--active" data-module="5"><span class="sidebar__item-text" data-i18n="mod5Title">5. System design</span><span class="pill pill--active sidebar__item-pill" data-i18n="pillActive">Active</span></a></li>
+        <li><a href="module6.html" class="sidebar__item" data-module="6"><span class="sidebar__item-text" data-i18n="mod6Title">6. Maintenance</span></a></li>
+      </ul>
+    </aside>
+
+    <!-- Mobile sidebar overlay -->
+    <aside class="sidebar sidebar--mobile" id="mobileSidebar" aria-label="Course navigation" aria-hidden="true">
+      <p class="sidebar__section-label" data-i18n="sidebarLabel">Modules</p>
+      <ul class="sidebar__list" role="list">
+        <li><a href="module1.html" class="sidebar__item"><span data-i18n="mod1Title">1. Intro to solar energy</span></a></li>
+        <li><a href="module2.html" class="sidebar__item"><span data-i18n="mod2Title">2. How panels work</span></a></li>
+        <li><a href="module3.html" class="sidebar__item"><span data-i18n="mod3Title">3. DC circuits</span></a></li>
+        <li><a href="module4.html" class="sidebar__item"><span data-i18n="mod4Title">4. AC &amp; inverters</span></a></li>
+        <li><a href="module5.html" class="sidebar__item sidebar__item--active"><span data-i18n="mod5Title">5. System design</span><span class="pill pill--active" data-i18n="pillActive">Active</span></a></li>
+        <li><a href="module6.html" class="sidebar__item"><span data-i18n="mod6Title">6. Maintenance</span></a></li>
+      </ul>
+    </aside>
+    <div class="sidebar-overlay" id="sidebarOverlay" aria-hidden="true"></div>
+
+    <!-- MAIN ══════════════════════════════════════════════════ -->
+    <main class="main" id="main">
+      <div class="lesson-wrap">
+
+        <!-- ── Lesson header ─────────────────────────── -->
+        <header class="lesson-header">
+          <p class="lesson-header__eyebrow" data-i18n="mod5Eyebrow">Module 5 · System sizing</p>
+          <h1 class="lesson-header__title" data-i18n="mod5Title">5. System design</h1>
+          <div class="lesson-header__meta">
+            <span>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="display:inline;vertical-align:-1px"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              50 min
+            </span>
+            <span data-i18n="mod5Prereq">Requires Module 4</span>
+            <span class="pill pill--active" data-i18n="pillActive">Active</span>
+          </div>
+        </header>
+
+        <!-- ── Section 1: The four components ──────────── -->
+        <section class="content-block">
+          <h2 data-i18n="m5s1Title">The four components of a solar system</h2>
+          <p data-i18n="m5s1p1">
+            A complete solar energy system has four main subsystems that work together: the PV array
+            (panels), a charge controller, a battery bank (for off-grid or hybrid systems), and an
+            inverter. In a grid-tie system without batteries, the charge controller is replaced by the
+            inverter's built-in MPPT, and surplus energy is exported to the grid rather than stored.
+          </p>
+          <p data-i18n="m5s1p2">
+            Understanding how these components interact — and how to size each one correctly — is the
+            core skill of solar system design. Undersizing any component creates a bottleneck;
+            oversizing wastes money. The goal is a balanced system that meets the load reliably at
+            the lowest possible cost.
+          </p>
+          <div class="callout callout--info">
+            <span aria-hidden="true">💡</span>
+            <span data-i18n="m5s1callout">
+              <strong>Design order matters.</strong>
+              Always start with the load (how much energy you need), then size the battery bank,
+              then the array, and finally the charge controller and wiring. Working backwards from
+              the load prevents costly mistakes.
+            </span>
+          </div>
+        </section>
+
+        <!-- ── Section 2: Daily load calculation ────────── -->
+        <section class="content-block">
+          <h2 data-i18n="m5s2Title">Step 1 — Calculate the daily load</h2>
+          <p data-i18n="m5s2p1">
+            The first step is to list every electrical load, its power rating and how many hours per
+            day it runs. Multiplying power (W) by time (h) gives energy in watt-hours (Wh). Summing
+            all loads gives the daily energy demand.
+          </p>
+          <p data-i18n="m5s2p2">
+            Add a 20–25 % margin for inverter losses, wiring losses and battery inefficiency.
+            The result is the system's daily design load.
+          </p>
+          <div class="callout callout--tip">
+            <span aria-hidden="true">🔢</span>
+            <span data-i18n="m5s2callout">
+              <strong>Example.</strong>
+              Fridge 150 W × 24 h = 3 600 Wh; lights 60 W × 5 h = 300 Wh; TV 80 W × 4 h = 320 Wh;
+              phone 10 W × 2 h = 20 Wh. Total = 4 240 Wh/day. With 20 % margin → design load ≈ 5 088 Wh/day.
+            </span>
+          </div>
+        </section>
+
+        <!-- ── Section 3: Battery bank sizing ───────────── -->
+        <section class="content-block">
+          <h2 data-i18n="m5s3Title">Step 2 — Size the battery bank</h2>
+          <p data-i18n="m5s3p1">
+            The battery bank stores energy to cover night-time consumption and cloudy days.
+            Two key parameters drive battery sizing: autonomy (how many days without sun the system
+            must survive) and depth of discharge (DoD — how deeply the battery can be drained
+            without damage).
+          </p>
+
+          <div class="formula-box" aria-label="Battery sizing formula">
+            <span class="formula-box__eq">C = E × days / DoD</span>
+            <div class="formula-box__divider"></div>
+            <div class="formula-box__vars">
+              <div class="formula-box__var">
+                <span class="formula-box__sym">C</span>
+                <span class="formula-box__desc">Capacity<br>(Wh nominal)</span>
+              </div>
+              <div class="formula-box__var">
+                <span class="formula-box__sym">E</span>
+                <span class="formula-box__desc">Daily design<br>load (Wh)</span>
+              </div>
+              <div class="formula-box__var">
+                <span class="formula-box__sym">days</span>
+                <span class="formula-box__desc">Days of<br>autonomy</span>
+              </div>
+              <div class="formula-box__var">
+                <span class="formula-box__sym">DoD</span>
+                <span class="formula-box__desc">Depth of<br>discharge (0–1)</span>
+              </div>
+            </div>
+          </div>
+
+          <p data-i18n="m5s3p2">
+            Lead-acid batteries are limited to 50 % DoD to protect lifespan; lithium (LFP) batteries
+            tolerate 80–90 % DoD. A larger DoD means you need fewer kWh of nominal capacity to
+            deliver the same usable energy.
+          </p>
+          <div class="callout callout--tip">
+            <span aria-hidden="true">🔢</span>
+            <span data-i18n="m5s3callout">
+              <strong>Example.</strong>
+              2 days autonomy, 50 % DoD: C = 5 088 × 2 / 0.5 = 20 352 Wh ≈ 20.4 kWh nominal.
+            </span>
+          </div>
+        </section>
+
+        <!-- ── Section 4: Array sizing ───────────────────── -->
+        <section class="content-block">
+          <h2 data-i18n="m5s4Title">Step 3 — Size the solar array</h2>
+          <p data-i18n="m5s4p1">
+            The array must replenish the battery bank in the available peak sun hours (PSH). PSH is
+            the number of hours per day when irradiance averages 1 000 W/m² — it varies by location
+            and season. Use the worst-month PSH value for a reliable year-round design.
+          </p>
+          <p data-i18n="m5s4p2">
+            Array power (Wp) = Daily design load / (PSH × system efficiency). System efficiency
+            accounts for wiring losses (~3 %), battery charge/discharge (~85 %) and inverter
+            conversion (~95 %). Combined efficiency ≈ 75–80 %.
+          </p>
+          <div class="callout callout--tip">
+            <span aria-hidden="true">🔢</span>
+            <span data-i18n="m5s4callout">
+              <strong>Example.</strong>
+              PSH = 4.5 h/day. Array Wp = 5 088 / (4.5 × 0.78) ≈ 1 450 Wp.
+              With 400 Wp panels: 1 450 / 400 = 3.6 → round up to 4 panels = 1 600 Wp.
+            </span>
+          </div>
+        </section>
+
+        <!-- ── Canvas: system wiring diagram ───────────── -->
+        <section class="canvas-section" aria-label="Solar system wiring diagram">
+          <p class="canvas-section__title" data-i18n="m5canvasTitle">System wiring — live diagram</p>
+          <canvas id="circuitCanvas" width="760" height="200" aria-label="DC solar system wiring diagram"></canvas>
+          <div class="canvas-section__controls">
+            <button type="button" class="btn btn--amber btn--sm" id="canvasDC" data-i18n="btnSineDC">DC system</button>
+            <button type="button" class="btn btn--ghost-amber btn--sm" id="canvasAC" data-i18n="btnSineAC">AC waveform</button>
+            <button type="button" class="btn btn--ghost-amber btn--sm" id="canvasClear" data-i18n="btnClear">Clear</button>
+          </div>
+        </section>
+
+        <!-- ── Section 5: Charge controllers ────────────── -->
+        <section class="content-block">
+          <h2 data-i18n="m5s5Title">Step 4 — Choose the charge controller</h2>
+          <p data-i18n="m5s5p1">
+            The charge controller sits between the array and the battery bank, preventing overcharge
+            and over-discharge. There are two main types: PWM (Pulse Width Modulation) and MPPT
+            (Maximum Power Point Tracking).
+          </p>
+
+          <div class="controller-grid">
+            <div class="controller-card controller-card--pwm">
+              <span class="controller-card__label">PWM</span>
+              <span class="controller-card__name">Pulse Width Modulation</span>
+              <p class="controller-card__note">
+                Simple, reliable and low-cost. Works efficiently only when panel voltage closely
+                matches battery voltage. Best for small or very budget-constrained systems.
+              </p>
+            </div>
+            <div class="controller-card controller-card--mppt">
+              <span class="controller-card__label">MPPT</span>
+              <span class="controller-card__name">Maximum Power Point Tracking</span>
+              <p class="controller-card__note">
+                Harvests 20–30 % more energy by continuously optimising the panel's operating point.
+                Handles high-voltage string inputs and steps voltage down for the battery.
+                Recommended for systems with more than 1–2 panels.
+              </p>
+            </div>
+          </div>
+
+          <p data-i18n="m5s5p2">
+            PWM controllers are simple and affordable but only work efficiently when the panel
+            voltage closely matches the battery voltage. MPPT controllers harvest 20–30 % more energy
+            by continuously finding the panel's maximum power point. For any system with more than
+            1–2 panels, MPPT is almost always the better investment.
+          </p>
+          <div class="callout callout--info">
+            <span aria-hidden="true">⚡</span>
+            <span data-i18n="m5s5callout">
+              <strong>Sizing the controller.</strong>
+              Controller current (A) ≥ Array Isc × 1.25.
+              Example: 4 panels in parallel, each Isc = 10 A → 40 A × 1.25 = 50 A controller minimum.
+            </span>
+          </div>
+        </section>
+
+        <!-- ── Section 6: Wiring overview ───────────────── -->
+        <section class="content-block">
+          <h2 data-i18n="m5s6Title">Putting it together — system wiring overview</h2>
+          <p data-i18n="m5s6p1">
+            A typical off-grid residential system connects as follows: the PV array feeds into the
+            charge controller, which charges the battery bank at the correct voltage. The battery bank
+            powers the inverter, which outputs 120 V or 230 V AC for the home's distribution panel.
+            DC loads (12 V or 24 V) can connect directly to the battery through a fuse.
+          </p>
+          <p data-i18n="m5s6p2">
+            Cable sizing is critical at every stage. Use the formula V<sub>drop</sub> = I × R<sub>cable</sub>
+            and target less than 3 % voltage drop on each run. Larger cable cross-sections cost more
+            upfront but pay back in reduced losses over the system's 25-year life.
+          </p>
+          <div class="callout callout--tip">
+            <span aria-hidden="true">⚠️</span>
+            <span data-i18n="m5s6callout">
+              <strong>Safety first.</strong>
+              Every DC circuit requires an appropriately rated fuse or breaker as close to the battery
+              positive terminal as possible. A short circuit in an unprotected battery circuit can
+              produce currents of thousands of amperes, causing fires within seconds.
+            </span>
+          </div>
+        </section>
+
+        <!-- ── Section 7: Key terms ──────────────────────── -->
+        <section class="content-block">
+          <h2 data-i18n="m5s7Title">Key terms</h2>
+          <div class="key-terms">
+            <div class="term-row">
+              <span class="term-row__name" data-i18n="m5t1Name">PSH</span>
+              <span class="term-row__def" data-i18n="m5t1Def">Peak Sun Hours — equivalent hours per day of full 1 000 W/m² irradiance. Used to size the array.</span>
+            </div>
+            <div class="term-row">
+              <span class="term-row__name" data-i18n="m5t2Name">DoD</span>
+              <span class="term-row__def" data-i18n="m5t2Def">Depth of Discharge — percentage of battery capacity drawn before recharging. Higher DoD shortens battery life.</span>
+            </div>
+            <div class="term-row">
+              <span class="term-row__name" data-i18n="m5t3Name">Autonomy</span>
+              <span class="term-row__def" data-i18n="m5t3Def">Number of days the battery bank can power the load without any solar input.</span>
+            </div>
+            <div class="term-row">
+              <span class="term-row__name" data-i18n="m5t4Name">Charge controller</span>
+              <span class="term-row__def" data-i18n="m5t4Def">Device that manages current flow from the array to the battery, preventing overcharge and over-discharge.</span>
+            </div>
+            <div class="term-row">
+              <span class="term-row__name" data-i18n="m5t5Name">MPPT</span>
+              <span class="term-row__def" data-i18n="m5t5Def">Maximum Power Point Tracking — advanced charge controller algorithm that maximises energy harvest from the array.</span>
+            </div>
+            <div class="term-row">
+              <span class="term-row__name" data-i18n="m5t6Name">System efficiency</span>
+              <span class="term-row__def" data-i18n="m5t6Def">Combined efficiency of wiring, battery, and inverter losses — typically 75–80 % for off-grid systems.</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- ── Quiz trigger ─────────────────────────────── -->
+        <section class="content-block">
+          <button type="button" class="quiz-trigger" id="openQuizBtn" aria-haspopup="dialog">
+            <span class="quiz-trigger__icon" aria-hidden="true">📝</span>
+            <span class="quiz-trigger__content">
+              <strong data-i18n="quizTitle">Quick check</strong>
+              <span class="quiz-trigger__sub">4 <span data-i18n="quizQuestions">questions</span></span>
+            </span>
+            <span class="quiz-trigger__arrow" aria-hidden="true">›</span>
+          </button>
+        </section>
+
+        <!-- ── Mark complete ──────────────────────────────── -->
+        <button type="button" class="complete-btn" id="completeBtn" aria-pressed="false">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+          <span id="completeBtnLabel" data-i18n="markDone">Mark as complete</span>
+        </button>
+
+        <!-- ── Lesson nav ───────────────────────────────── -->
+        <nav class="lesson-nav" aria-label="Lesson navigation">
+          <a href="module4.html" class="btn btn--ghost-amber btn--md" data-i18n="lessonPrev">← Previous</a>
+          <a href="module6.html" class="btn btn--amber btn--md" data-i18n="lessonNext">Next →</a>
+        </nav>
+
+      </div><!-- /lesson-wrap -->
+    </main>
+  </div><!-- /layout -->
+
+  <!-- ══ BOTTOM NAV (mobile) ═════════════════════════════════ -->
+  <nav class="bottom-nav" aria-label="Main navigation" role="navigation">
+    <a href="../index.html" class="bottom-nav__item" aria-label="Course">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+      </svg>
+      <span data-i18n="navCourse">Course</span>
+    </a>
+    <a href="simulator.html" class="bottom-nav__item" aria-label="Simulator">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+      </svg>
+      <span data-i18n="navSimulator">Simulator</span>
+    </a>
+    <button type="button" class="bottom-nav__item" aria-label="Calculator">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="12" y2="14"/>
+      </svg>
+      <span data-i18n="navCalc">Calc</span>
+    </button>
+    <button type="button" class="bottom-nav__item" aria-label="Profile">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+      </svg>
+      <span data-i18n="navProfile">Profile</span>
+    </button>
+  </nav>
+
+  <script src="../js/i18n.js"></script>
+  <script src="../js/app.js"></script>
+  <script src="../js/canvas.js"></script>
+  <script>
+  /* ── Module-5 page scripts ────────────────────────── */
+  (function () {
+    'use strict';
+
+    /* q2: 4000 / (5 × 0.8) = 1 000 Wp → answer c */
+    const QUIZ_DATA = [
+      { textKey: 'm5q1text', opts: [{ key: 'm5q1a', ok: false }, { key: 'm5q1b', ok: true  }, { key: 'm5q1c', ok: false }, { key: 'm5q1d', ok: false }] },
+      { textKey: 'm5q2text', opts: [{ key: 'm5q2a', ok: false }, { key: 'm5q2b', ok: false }, { key: 'm5q2c', ok: true  }, { key: 'm5q2d', ok: false }] },
+      { textKey: 'm5q3text', opts: [{ key: 'm5q3a', ok: false }, { key: 'm5q3b', ok: false }, { key: 'm5q3c', ok: true  }, { key: 'm5q3d', ok: false }] },
+      { textKey: 'm5q4text', opts: [{ key: 'm5q4a', ok: false }, { key: 'm5q4b', ok: true  }, { key: 'm5q4c', ok: false }, { key: 'm5q4d', ok: false }] },
+    ];
+
+    document.addEventListener('SolarLearnReady', () => {
+      SolarLearn.initQuizModal(QUIZ_DATA, 'openQuizBtn');
+
+      /* Canvas: DC system by default */
+      const canvasDC    = document.getElementById('canvasDC');
+      const canvasAC    = document.getElementById('canvasAC');
+      const canvasClear = document.getElementById('canvasClear');
+
+      if (window.SolarCanvas) {
+        SolarCanvas.drawDC();
+        canvasDC.addEventListener('click',    () => SolarCanvas.drawDC());
+        canvasAC.addEventListener('click',    () => SolarCanvas.drawAC());
+        canvasClear.addEventListener('click', () => SolarCanvas.clear());
+      }
+
+      /* Mark complete */
+      const btn = document.getElementById('completeBtn');
+      const lbl = document.getElementById('completeBtnLabel');
+
+      if (window.SolarLearn?.isModuleDone(5)) {
+        btn.classList.add('complete-btn--done');
+        btn.setAttribute('aria-pressed', 'true');
+        btn.disabled = true;
+        if (lbl) lbl.textContent = I18n.t(SolarLearn.currentLang, 'markedDone');
+      }
+
+      btn.addEventListener('click', () => {
+        if (btn.dataset.done) return;
+        btn.dataset.done = 'true';
+        btn.classList.add('complete-btn--done');
+        btn.setAttribute('aria-pressed', 'true');
+        btn.disabled = true;
+        if (lbl) lbl.textContent = I18n.t(SolarLearn.currentLang, 'markedDone');
+        window.SolarLearn?.markModuleDone(5);
+      });
+    });
+  })();
+  </script>
+</body>
+</html>

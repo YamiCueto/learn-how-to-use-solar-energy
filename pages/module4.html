@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="es" data-i18n-base="..">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title data-i18n="mod4PageTitle">Module 4 — AC &amp; Inverters</title>
+  <link rel="stylesheet" href="../css/styles.css" />
+  <style>
+    /* ── Module-4 local styles ─────────────────────── */
+
+    /* Sine wave formula display */
+    .formula-box {
+      background: var(--clr-amber-bg);
+      border: 1.5px solid var(--clr-amber);
+      border-radius: var(--r-lg);
+      padding: var(--sp-5);
+      margin-bottom: var(--sp-5);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--sp-4);
+    }
+    .formula-box__eq {
+      font-size: var(--fs-xl);
+      font-weight: var(--fw-medium);
+      color: var(--clr-amber-text);
+      letter-spacing: 0.04em;
+    }
+    .formula-box__vars {
+      display: flex;
+      gap: var(--sp-5);
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .formula-box__var {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--sp-1);
+    }
+    .formula-box__sym {
+      font-size: var(--fs-md);
+      font-weight: var(--fw-medium);
+      color: var(--clr-amber-text);
+    }
+    .formula-box__desc {
+      font-size: var(--fs-xs);
+      color: var(--clr-text-3);
+      text-align: center;
+    }
+    .formula-box__divider {
+      width: 100%;
+      height: 1px;
+      background: var(--clr-amber);
+      opacity: 0.3;
+    }
+
+    /* Inverter type comparison grid */
+    .inverter-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--sp-4);
+      margin-bottom: var(--sp-5);
+    }
+    @media (max-width: 600px) { .inverter-grid { grid-template-columns: 1fr; } }
+
+    .inverter-card {
+      background: var(--clr-surface);
+      border: .5px solid var(--clr-border-card);
+      border-radius: var(--r-lg);
+      padding: var(--sp-4);
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-2);
+    }
+    .inverter-card--grid   { border-top: 3px solid #185FA5; }
+    .inverter-card--off    { border-top: 3px solid #1D9E75; }
+    .inverter-card--hybrid { border-top: 3px solid #8B5CF6; }
+
+    .inverter-card__label {
+      font-size: var(--fs-xs);
+      font-weight: var(--fw-medium);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--clr-text-3);
+    }
+    .inverter-card--grid   .inverter-card__label { color: #185FA5; }
+    .inverter-card--off    .inverter-card__label { color: #1D9E75; }
+    .inverter-card--hybrid .inverter-card__label { color: #8B5CF6; }
+
+    .inverter-card__name {
+      font-size: var(--fs-sm);
+      font-weight: var(--fw-medium);
+      color: var(--clr-text);
+    }
+    .inverter-card__note {
+      font-size: var(--fs-xs);
+      color: var(--clr-text-2);
+      line-height: var(--lh-snug);
+    }
+
+    /* Topology comparison: string / micro / optimizer */
+    .topology-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--sp-4);
+      margin-bottom: var(--sp-5);
+    }
+    @media (max-width: 600px) { .topology-grid { grid-template-columns: 1fr; } }
+
+    .topology-card {
+      background: var(--clr-surface);
+      border: .5px solid var(--clr-border-card);
+      border-radius: var(--r-lg);
+      padding: var(--sp-4);
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-2);
+    }
+    .topology-card--string  { border-top: 3px solid #185FA5; }
+    .topology-card--micro   { border-top: 3px solid #F59E0B; }
+    .topology-card--optimiz { border-top: 3px solid #1D9E75; }
+
+    .topology-card__label {
+      font-size: var(--fs-xs);
+      font-weight: var(--fw-medium);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .topology-card--string  .topology-card__label { color: #185FA5; }
+    .topology-card--micro   .topology-card__label { color: #c07a00; }
+    .topology-card--optimiz .topology-card__label { color: #1D9E75; }
+
+    .topology-card__note {
+      font-size: var(--fs-xs);
+      color: var(--clr-text-2);
+      line-height: var(--lh-snug);
+    }
+
+    /* Key terms (same as module 1 / 3 pattern) */
+    .key-terms {
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-3);
+      margin-bottom: var(--sp-6);
+    }
+    .term-row {
+      display: flex;
+      gap: var(--sp-4);
+      align-items: flex-start;
+    }
+    .term-row__name {
+      min-width: 130px;
+      font-size: var(--fs-sm);
+      font-weight: var(--fw-medium);
+      color: var(--clr-amber-text);
+      flex-shrink: 0;
+    }
+    .term-row__def {
+      font-size: var(--fs-sm);
+      color: var(--clr-text-2);
+      line-height: var(--lh-snug);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ══ NAVBAR ══════════════════════════════════════════════ -->
+  <header class="navbar" role="banner">
+    <div class="navbar__inner">
+      <button type="button" class="btn--icon" id="menuBtn" aria-label="Open menu" aria-expanded="false">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+          <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+      </button>
+      <a href="../index.html" class="navbar__brand">
+        <span class="navbar__logo" aria-hidden="true">☀️</span>
+        <span data-i18n="brandName">Solar Course</span>
+      </a>
+      <span class="navbar__spacer"></span>
+      <div class="navbar__actions">
+        <div class="lang-toggle" role="group" aria-label="Language">
+          <button type="button" class="lang-toggle__btn" id="langEn" data-lang="en" aria-pressed="false">EN</button>
+          <span class="lang-toggle__sep" aria-hidden="true"></span>
+          <button type="button" class="lang-toggle__btn lang-toggle__btn--active" id="langEs" data-lang="es" aria-pressed="true">ES</button>
+        </div>
+        <button type="button" class="btn--icon" aria-label="Notifications">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+          </svg>
+        </button>
+        <button type="button" class="btn--icon" aria-label="User account">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div class="navbar__progress" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" id="navProgress" aria-label="Course progress">
+      <div class="navbar__progress-fill" id="progressFill"></div>
+    </div>
+  </header>
+
+  <!-- ══ LAYOUT ══════════════════════════════════════════════ -->
+  <div class="layout">
+
+    <!-- SIDEBAR (desktop) -->
+    <aside class="sidebar" id="sidebar" aria-label="Course navigation">
+      <p class="sidebar__section-label" data-i18n="sidebarLabel">Modules</p>
+      <ul class="sidebar__list" role="list">
+        <li><a href="module1.html" class="sidebar__item" data-module="1"><span class="sidebar__item-text" data-i18n="mod1Title">1. Intro to solar energy</span></a></li>
+        <li><a href="module2.html" class="sidebar__item" data-module="2"><span class="sidebar__item-text" data-i18n="mod2Title">2. How panels work</span></a></li>
+        <li><a href="module3.html" class="sidebar__item" data-module="3"><span class="sidebar__item-text" data-i18n="mod3Title">3. DC circuits</span></a></li>
+        <li><a href="module4.html" class="sidebar__item sidebar__item--active" data-module="4"><span class="sidebar__item-text" data-i18n="mod4Title">4. AC &amp; inverters</span><span class="pill pill--active sidebar__item-pill" data-i18n="pillActive">Active</span></a></li>
+        <li><a href="module5.html" class="sidebar__item" data-module="5"><span class="sidebar__item-text" data-i18n="mod5Title">5. System design</span></a></li>
+        <li><a href="module6.html" class="sidebar__item" data-module="6"><span class="sidebar__item-text" data-i18n="mod6Title">6. Maintenance</span></a></li>
+      </ul>
+    </aside>
+
+    <!-- Mobile sidebar overlay -->
+    <aside class="sidebar sidebar--mobile" id="mobileSidebar" aria-label="Course navigation" aria-hidden="true">
+      <p class="sidebar__section-label" data-i18n="sidebarLabel">Modules</p>
+      <ul class="sidebar__list" role="list">
+        <li><a href="module1.html" class="sidebar__item"><span data-i18n="mod1Title">1. Intro to solar energy</span></a></li>
+        <li><a href="module2.html" class="sidebar__item"><span data-i18n="mod2Title">2. How panels work</span></a></li>
+        <li><a href="module3.html" class="sidebar__item"><span data-i18n="mod3Title">3. DC circuits</span></a></li>
+        <li><a href="module4.html" class="sidebar__item sidebar__item--active"><span data-i18n="mod4Title">4. AC &amp; inverters</span><span class="pill pill--active" data-i18n="pillActive">Active</span></a></li>
+        <li><a href="module5.html" class="sidebar__item"><span data-i18n="mod5Title">5. System design</span></a></li>
+        <li><a href="module6.html" class="sidebar__item"><span data-i18n="mod6Title">6. Maintenance</span></a></li>
+      </ul>
+    </aside>
+    <div class="sidebar-overlay" id="sidebarOverlay" aria-hidden="true"></div>
+
+    <!-- MAIN ══════════════════════════════════════════════════ -->
+    <main class="main" id="main">
+      <div class="lesson-wrap">
+
+        <!-- ── Lesson header ─────────────────────────── -->
+        <header class="lesson-header">
+          <p class="lesson-header__eyebrow" data-i18n="mod4Eyebrow">Module 4 · Power conversion</p>
+          <h1 class="lesson-header__title" data-i18n="mod4Title">4. AC &amp; inverters</h1>
+          <div class="lesson-header__meta">
+            <span>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="display:inline;vertical-align:-1px"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              45 min
+            </span>
+            <span data-i18n="mod4Prereq">Requires Module 3</span>
+            <span class="pill pill--active" data-i18n="pillActive">Active</span>
+          </div>
+        </header>
+
+        <!-- ── Section 1: What is AC? ─────────────────── -->
+        <section class="content-block">
+          <h2 data-i18n="m4s1Title">What is alternating current?</h2>
+          <p data-i18n="m4s1p1">
+            Alternating current (AC) is electricity whose direction of flow reverses periodically,
+            tracing a smooth sinusoidal wave. Unlike DC — which flows in a single constant direction —
+            AC voltage rises from zero to a positive peak, falls back through zero to a negative peak,
+            and repeats. One complete cycle per second equals 1 Hz.
+          </p>
+
+          <div class="formula-box" aria-label="Peak voltage formula">
+            <span class="formula-box__eq">V<sub>peak</sub> = V<sub>rms</sub> × √2</span>
+            <div class="formula-box__divider"></div>
+            <div class="formula-box__vars">
+              <div class="formula-box__var">
+                <span class="formula-box__sym">V<sub>peak</sub></span>
+                <span class="formula-box__desc">Peak<br>voltage</span>
+              </div>
+              <div class="formula-box__var">
+                <span class="formula-box__sym">V<sub>rms</sub></span>
+                <span class="formula-box__desc">RMS voltage<br>(rated value)</span>
+              </div>
+              <div class="formula-box__var">
+                <span class="formula-box__sym">√2</span>
+                <span class="formula-box__desc">≈ 1.414</span>
+              </div>
+            </div>
+          </div>
+
+          <p data-i18n="m4s1p2">
+            Grid frequency is 50 Hz in most of Europe, Africa and South America, and 60 Hz in
+            North America. Household outlets deliver 120 V<sub>rms</sub> or 230 V<sub>rms</sub>
+            depending on the region.
+          </p>
+          <div class="callout callout--info">
+            <span aria-hidden="true">💡</span>
+            <span data-i18n="m4s1callout">
+              <strong>Why AC for the grid?</strong>
+              AC voltage can be stepped up to hundreds of kilovolts with a transformer for
+              long-distance transmission, then stepped back down near homes.
+              This dramatically reduces resistive losses.
+            </span>
+          </div>
+        </section>
+
+        <!-- ── Section 2: How inverters work ─────────── -->
+        <section class="content-block">
+          <h2 data-i18n="m4s2Title">How an inverter converts DC to AC</h2>
+          <p data-i18n="m4s2p1">
+            A solar inverter uses a set of fast-switching transistors (MOSFETs or IGBTs)
+            arranged in an H-bridge. By alternately switching pairs of transistors, the inverter
+            reverses the polarity of the DC many thousands of times per second. A filter then
+            smooths this high-frequency pulsed output into a clean sine wave at 50 or 60 Hz.
+          </p>
+          <p data-i18n="m4s2p2">
+            This switching strategy is called Pulse Width Modulation (PWM). Modern inverters
+            achieve total harmonic distortion (THD) below 3 %, meeting grid codes worldwide.
+            Conversion efficiency typically reaches 95–98 %.
+          </p>
+          <div class="callout callout--tip">
+            <span aria-hidden="true">⚡</span>
+            <span data-i18n="m4s2callout">
+              <strong>MPPT — Maximum Power Point Tracking.</strong>
+              The inverter continuously samples the panel voltage and current to find the exact
+              operating point where power output (P = V × I) is highest. As clouds pass or
+              temperature changes, the MPPT algorithm adjusts within milliseconds.
+            </span>
+          </div>
+        </section>
+
+        <!-- ── Canvas: AC sine wave ─────────────────── -->
+        <section class="canvas-section" aria-label="AC sine wave diagram">
+          <p class="canvas-section__title" data-i18n="m4canvasTitle">AC sine wave — live diagram</p>
+          <canvas id="circuitCanvas" width="760" height="200" aria-label="AC sine wave and DC comparison diagram"></canvas>
+          <div class="canvas-section__controls">
+            <button type="button" class="btn btn--amber btn--sm" id="canvasAC" data-i18n="btnSineAC">AC waveform</button>
+            <button type="button" class="btn btn--ghost-amber btn--sm" id="canvasDC" data-i18n="btnSineDC">DC comparison</button>
+            <button type="button" class="btn btn--ghost-amber btn--sm" id="canvasClear" data-i18n="btnClear">Clear</button>
+          </div>
+        </section>
+
+        <!-- ── Section 3: Types of inverters ─────────── -->
+        <section class="content-block">
+          <h2 data-i18n="m4s3Title">Types of inverters</h2>
+          <p data-i18n="m4s3p1">
+            The three main inverter types suit different applications. Choosing correctly
+            affects system cost, reliability and the ability to store or export energy.
+          </p>
+
+          <div class="inverter-grid">
+            <div class="inverter-card inverter-card--grid">
+              <span class="inverter-card__label" data-i18n="m4gridLabel">Grid-tie</span>
+              <span class="inverter-card__name" data-i18n="m4gridName">Grid-connected</span>
+              <p class="inverter-card__note" data-i18n="m4gridNote">
+                Syncs with the utility grid. No battery required. Exports surplus power (net metering).
+                Requires anti-islanding. Shuts down if grid fails.
+              </p>
+            </div>
+            <div class="inverter-card inverter-card--off">
+              <span class="inverter-card__label" data-i18n="m4offLabel">Off-grid</span>
+              <span class="inverter-card__name" data-i18n="m4offName">Standalone</span>
+              <p class="inverter-card__note" data-i18n="m4offNote">
+                Operates independently. Requires a battery bank. Creates its own AC reference.
+                Used for remote sites and areas without reliable grid access.
+              </p>
+            </div>
+            <div class="inverter-card inverter-card--hybrid">
+              <span class="inverter-card__label" data-i18n="m4hybLabel">Hybrid</span>
+              <span class="inverter-card__name" data-i18n="m4hybName">Battery + grid</span>
+              <p class="inverter-card__note" data-i18n="m4hybNote">
+                Combines grid connection and battery storage. Can prioritise solar self-consumption,
+                discharge batteries during peak-rate hours, and charge from the grid overnight.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- ── Section 4: String vs micro vs optimizer ── -->
+        <section class="content-block">
+          <h2 data-i18n="m4s4Title">String inverters vs microinverters vs power optimisers</h2>
+          <p data-i18n="m4s4p1">
+            Within the grid-tie family, system designers choose between a central inverter
+            for the whole array, per-panel microinverters, or a hybrid approach with DC optimisers.
+          </p>
+
+          <div class="topology-grid">
+            <div class="topology-card topology-card--string">
+              <span class="topology-card__label" data-i18n="m4stringLabel">String inverter</span>
+              <p class="topology-card__note" data-i18n="m4stringNote">
+                One inverter for the whole array. Lowest cost and easiest to maintain.
+                Entire string limited by the weakest panel — shading or mismatch hurts total output.
+              </p>
+            </div>
+            <div class="topology-card topology-card--micro">
+              <span class="topology-card__label" data-i18n="m4microLabel">Microinverter</span>
+              <p class="topology-card__note" data-i18n="m4microNote">
+                One inverter per panel. Panel-level MPPT eliminates shading losses.
+                No single point of failure. Higher upfront cost; best for complex or partially shaded roofs.
+              </p>
+            </div>
+            <div class="topology-card topology-card--optimiz">
+              <span class="topology-card__label" data-i18n="m4optimLabel">Power optimiser</span>
+              <p class="topology-card__note" data-i18n="m4optimNote">
+                DC–DC optimiser per panel feeds into a single string inverter.
+                Achieves panel-level MPPT at lower cost than microinverters.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- ── Section 5: Anti-islanding ─────────────── -->
+        <section class="content-block">
+          <h2 data-i18n="m4s5Title">Anti-islanding safety</h2>
+          <p data-i18n="m4s5p1">
+            Anti-islanding is a mandatory safety feature for all grid-tie inverters.
+            If the utility grid goes offline — due to a fault or deliberate shutdown for maintenance —
+            the inverter must disconnect within milliseconds. Without this protection, the inverter
+            would continue energising the lines, creating a dangerous "island" of live voltage that
+            could electrocute utility workers.
+          </p>
+          <div class="callout callout--tip">
+            <span aria-hidden="true">⚠️</span>
+            <span data-i18n="m4s5callout">
+              <strong>Grid codes mandate anti-islanding.</strong>
+              Standards such as IEC 62116 (international) and UL 1741 (USA) define the maximum
+              trip time — typically under 2 seconds, often under 0.16 seconds.
+              Never connect a grid-tie inverter that does not comply with your local grid code.
+            </span>
+          </div>
+        </section>
+
+        <!-- ── Section 6: Key terms ────────────────────── -->
+        <section class="content-block">
+          <h2 data-i18n="m4s6Title">Key terms</h2>
+          <div class="key-terms">
+            <div class="term-row">
+              <span class="term-row__name" data-i18n="m4t1Name">AC</span>
+              <span class="term-row__def" data-i18n="m4t1Def">Alternating Current — electric current that periodically reverses direction, described by a sine wave.</span>
+            </div>
+            <div class="term-row">
+              <span class="term-row__name" data-i18n="m4t2Name">Inverter</span>
+              <span class="term-row__def" data-i18n="m4t2Def">Power electronics device that converts DC (from panels or batteries) into AC for loads and the grid.</span>
+            </div>
+            <div class="term-row">
+              <span class="term-row__name" data-i18n="m4t3Name">MPPT</span>
+              <span class="term-row__def" data-i18n="m4t3Def">Maximum Power Point Tracking — algorithm that adjusts the inverter's input voltage to maximise PV array output.</span>
+            </div>
+            <div class="term-row">
+              <span class="term-row__name" data-i18n="m4t4Name">Grid-tie</span>
+              <span class="term-row__def" data-i18n="m4t4Def">Inverter configuration that synchronises with the utility grid and requires anti-islanding protection.</span>
+            </div>
+            <div class="term-row">
+              <span class="term-row__name" data-i18n="m4t5Name">Anti-islanding</span>
+              <span class="term-row__def" data-i18n="m4t5Def">Safety mechanism that disconnects the inverter from the grid within milliseconds if the grid fails.</span>
+            </div>
+            <div class="term-row">
+              <span class="term-row__name" data-i18n="m4t6Name">THD</span>
+              <span class="term-row__def" data-i18n="m4t6Def">Total Harmonic Distortion — measure of sine wave purity. Grid-tie inverters must achieve THD &lt; 3 %.</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- ── Quiz trigger ─────────────────────────────── -->
+        <section class="content-block">
+          <button type="button" class="quiz-trigger" id="openQuizBtn" aria-haspopup="dialog">
+            <span class="quiz-trigger__icon" aria-hidden="true">📝</span>
+            <span class="quiz-trigger__content">
+              <strong data-i18n="quizTitle">Quick check</strong>
+              <span class="quiz-trigger__sub">4 <span data-i18n="quizQuestions">questions</span></span>
+            </span>
+            <span class="quiz-trigger__arrow" aria-hidden="true">›</span>
+          </button>
+        </section>
+
+        <!-- ── Mark complete ──────────────────────────────── -->
+        <button type="button" class="complete-btn" id="completeBtn" aria-pressed="false">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+          <span id="completeBtnLabel" data-i18n="markDone">Mark as complete</span>
+        </button>
+
+        <!-- ── Lesson nav ───────────────────────────────── -->
+        <nav class="lesson-nav" aria-label="Lesson navigation">
+          <a href="module3.html" class="btn btn--ghost-amber btn--md" data-i18n="lessonPrev">← Previous</a>
+          <a href="module5.html" class="btn btn--amber btn--md" data-i18n="lessonNext">Next →</a>
+        </nav>
+
+      </div><!-- /lesson-wrap -->
+    </main>
+  </div><!-- /layout -->
+
+  <!-- ══ BOTTOM NAV (mobile) ═════════════════════════════════ -->
+  <nav class="bottom-nav" aria-label="Main navigation" role="navigation">
+    <a href="../index.html" class="bottom-nav__item" aria-label="Course">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+      </svg>
+      <span data-i18n="navCourse">Course</span>
+    </a>
+    <a href="simulator.html" class="bottom-nav__item" aria-label="Simulator">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+      </svg>
+      <span data-i18n="navSimulator">Simulator</span>
+    </a>
+    <button type="button" class="bottom-nav__item" aria-label="Calculator">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="12" y2="14"/>
+      </svg>
+      <span data-i18n="navCalc">Calc</span>
+    </button>
+    <button type="button" class="bottom-nav__item" aria-label="Profile">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+      </svg>
+      <span data-i18n="navProfile">Profile</span>
+    </button>
+  </nav>
+
+  <script src="../js/i18n.js"></script>
+  <script src="../js/app.js"></script>
+  <script src="../js/canvas.js"></script>
+  <script>
+  /* ── Module-4 page scripts ────────────────────────── */
+  (function () {
+    'use strict';
+
+    const QUIZ_DATA = [
+      { textKey: 'm4q1text', opts: [{ key: 'm4q1a', ok: false }, { key: 'm4q1b', ok: true  }, { key: 'm4q1c', ok: false }, { key: 'm4q1d', ok: false }] },
+      { textKey: 'm4q2text', opts: [{ key: 'm4q2a', ok: false }, { key: 'm4q2b', ok: true  }, { key: 'm4q2c', ok: false }, { key: 'm4q2d', ok: false }] },
+      { textKey: 'm4q3text', opts: [{ key: 'm4q3a', ok: false }, { key: 'm4q3b', ok: false }, { key: 'm4q3c', ok: true  }, { key: 'm4q3d', ok: false }] },
+      { textKey: 'm4q4text', opts: [{ key: 'm4q4a', ok: false }, { key: 'm4q4b', ok: true  }, { key: 'm4q4c', ok: false }, { key: 'm4q4d', ok: false }] },
+    ];
+
+    document.addEventListener('SolarLearnReady', () => {
+      SolarLearn.initQuizModal(QUIZ_DATA, 'openQuizBtn');
+
+      /* Canvas: AC waveform by default */
+      const canvasAC  = document.getElementById('canvasAC');
+      const canvasDC  = document.getElementById('canvasDC');
+      const canvasClear = document.getElementById('canvasClear');
+
+      if (window.SolarCanvas) {
+        SolarCanvas.drawAC();
+        canvasAC.addEventListener('click', () => SolarCanvas.drawAC());
+        canvasDC.addEventListener('click', () => SolarCanvas.drawDC());
+        canvasClear.addEventListener('click', () => SolarCanvas.clear());
+      }
+
+      /* Mark complete */
+      const btn = document.getElementById('completeBtn');
+      const lbl = document.getElementById('completeBtnLabel');
+
+      if (window.SolarLearn?.isModuleDone(4)) {
+        btn.classList.add('complete-btn--done');
+        btn.setAttribute('aria-pressed', 'true');
+        btn.disabled = true;
+        if (lbl) lbl.textContent = I18n.t(SolarLearn.currentLang, 'markedDone');
+      }
+
+      btn.addEventListener('click', () => {
+        if (btn.dataset.done) return;
+        btn.dataset.done = 'true';
+        btn.classList.add('complete-btn--done');
+        btn.setAttribute('aria-pressed', 'true');
+        btn.disabled = true;
+        if (lbl) lbl.textContent = I18n.t(SolarLearn.currentLang, 'markedDone');
+        window.SolarLearn?.markModuleDone(4);
+      });
+    });
+  })();
+  </script>
+</body>
+</html>
