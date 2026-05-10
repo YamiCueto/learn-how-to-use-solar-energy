@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es" data-i18n-base="..">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -24,9 +24,9 @@
       <span class="navbar__spacer"></span>
       <div class="navbar__actions">
         <div class="lang-toggle" role="group" aria-label="Language">
-          <button class="lang-toggle__btn lang-toggle__btn--active" id="langEn" data-lang="en" aria-pressed="true">EN</button>
+          <button class="lang-toggle__btn" id="langEn" data-lang="en" aria-pressed="false">EN</button>
           <span class="lang-toggle__sep" aria-hidden="true"></span>
-          <button class="lang-toggle__btn" id="langEs" data-lang="es" aria-pressed="false">ES</button>
+          <button class="lang-toggle__btn lang-toggle__btn--active" id="langEs" data-lang="es" aria-pressed="true">ES</button>
         </div>
         <button class="btn--icon" aria-label="Notifications">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
@@ -332,86 +332,14 @@
 
         <!-- ── Quiz ──────────────────────────────────────────── -->
         <section class="content-block">
-          <h2 data-i18n="m2quizTitle">Quick check</h2>
-
-          <!-- Q1 -->
-          <div class="quiz-block" id="quiz1">
-            <p class="quiz-block__question" data-i18n="m2q1text">
-              1. What creates the voltage in a solar cell?
-            </p>
-            <div class="quiz-options" role="radiogroup" aria-label="Quiz question 1">
-              <label class="quiz-option" data-answer="wrong">
-                <span class="quiz-option__letter" aria-hidden="true">A</span>
-                <span data-i18n="m2q1a">Heat from the sun warming the metal contacts</span>
-              </label>
-              <label class="quiz-option" data-answer="correct">
-                <span class="quiz-option__letter" aria-hidden="true">B</span>
-                <span data-i18n="m2q1b">The electric field at the p-n junction separating electron-hole pairs</span>
-              </label>
-              <label class="quiz-option" data-answer="wrong">
-                <span class="quiz-option__letter" aria-hidden="true">C</span>
-                <span data-i18n="m2q1c">Chemical reactions in the silicon</span>
-              </label>
-              <label class="quiz-option" data-answer="wrong">
-                <span class="quiz-option__letter" aria-hidden="true">D</span>
-                <span data-i18n="m2q1d">Magnetic fields induced by sunlight</span>
-              </label>
-            </div>
-            <p class="quiz-feedback" id="quiz1-fb" aria-live="polite"></p>
-          </div>
-
-          <!-- Q2 -->
-          <div class="quiz-block" id="quiz2">
-            <p class="quiz-block__question" data-i18n="m2q2text">
-              2. Which panel type typically achieves the highest efficiency?
-            </p>
-            <div class="quiz-options" role="radiogroup" aria-label="Quiz question 2">
-              <label class="quiz-option" data-answer="wrong">
-                <span class="quiz-option__letter" aria-hidden="true">A</span>
-                <span data-i18n="m2q2a">Thin-film (CdTe)</span>
-              </label>
-              <label class="quiz-option" data-answer="wrong">
-                <span class="quiz-option__letter" aria-hidden="true">B</span>
-                <span data-i18n="m2q2b">Polycrystalline silicon</span>
-              </label>
-              <label class="quiz-option" data-answer="correct">
-                <span class="quiz-option__letter" aria-hidden="true">C</span>
-                <span data-i18n="m2q2c">Monocrystalline silicon</span>
-              </label>
-              <label class="quiz-option" data-answer="wrong">
-                <span class="quiz-option__letter" aria-hidden="true">D</span>
-                <span data-i18n="m2q2d">Amorphous silicon</span>
-              </label>
-            </div>
-            <p class="quiz-feedback" id="quiz2-fb" aria-live="polite"></p>
-          </div>
-
-          <!-- Q3 -->
-          <div class="quiz-block" id="quiz3">
-            <p class="quiz-block__question" data-i18n="m2q3text">
-              3. You need to check that a panel string won't exceed your inverter's maximum input voltage.
-                 Which datasheet value should you use?
-            </p>
-            <div class="quiz-options" role="radiogroup" aria-label="Quiz question 3">
-              <label class="quiz-option" data-answer="wrong">
-                <span class="quiz-option__letter" aria-hidden="true">A</span>
-                <span data-i18n="m2q3a">Vmp (voltage at max power)</span>
-              </label>
-              <label class="quiz-option" data-answer="correct">
-                <span class="quiz-option__letter" aria-hidden="true">B</span>
-                <span data-i18n="m2q3b">Voc (open-circuit voltage)</span>
-              </label>
-              <label class="quiz-option" data-answer="wrong">
-                <span class="quiz-option__letter" aria-hidden="true">C</span>
-                <span data-i18n="m2q3c">Isc (short-circuit current)</span>
-              </label>
-              <label class="quiz-option" data-answer="wrong">
-                <span class="quiz-option__letter" aria-hidden="true">D</span>
-                <span data-i18n="m2q3d">Pmax (peak power)</span>
-              </label>
-            </div>
-            <p class="quiz-feedback" id="quiz3-fb" aria-live="polite"></p>
-          </div>
+          <button class="quiz-trigger" id="openQuizBtn" aria-haspopup="dialog">
+            <span class="quiz-trigger__icon" aria-hidden="true">📝</span>
+            <span class="quiz-trigger__content">
+              <strong data-i18n="quizTitle">Comprueba lo aprendido</strong>
+              <span class="quiz-trigger__sub">3 preguntas</span>
+            </span>
+            <span class="quiz-trigger__arrow" aria-hidden="true">›</span>
+          </button>
         </section>
 
         <!-- ── Mark complete ──────────────────────────────────── -->
@@ -665,8 +593,15 @@
       renderCanvas();
     }
 
+    /* ── Quiz data ───────────────────────────────────── */
+    const QUIZ_DATA = [
+      { textKey: 'm2q1text', opts: [{ key: 'm2q1a', ok: false }, { key: 'm2q1b', ok: true  }, { key: 'm2q1c', ok: false }, { key: 'm2q1d', ok: false }] },
+      { textKey: 'm2q2text', opts: [{ key: 'm2q2a', ok: false }, { key: 'm2q2b', ok: false }, { key: 'm2q2c', ok: true  }, { key: 'm2q2d', ok: false }] },
+      { textKey: 'm2q3text', opts: [{ key: 'm2q3a', ok: false }, { key: 'm2q3b', ok: true  }, { key: 'm2q3c', ok: false }, { key: 'm2q3d', ok: false }] },
+    ];
+
     /* ── Init ───────────────────────────────────────── */
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('SolarLearnReady', () => {
       renderCanvas();
 
       const ro = new ResizeObserver(renderCanvas);
@@ -679,33 +614,8 @@
       });
       document.getElementById('btnReset')?.addEventListener('click', resetCanvas);
 
-      /* ── Quiz logic ──────────────────────────── */
-      const quizFeedback = {
-        correct: { en: '✓ Correct!', es: '✓ ¡Correcto!' },
-        wrong:   { en: '✗ Not quite — try again.', es: '✗ No es correcto — intenta de nuevo.' },
-      };
-
-      [1, 2, 3].forEach(n => {
-        const block = document.getElementById(`quiz${n}`);
-        if (!block) return;
-        const fb = document.getElementById(`quiz${n}-fb`);
-        block.querySelectorAll('.quiz-option').forEach(opt => {
-          opt.addEventListener('click', () => {
-            if (block.dataset.answered) return;
-            const isCorrect = opt.dataset.answer === 'correct';
-            opt.classList.add(isCorrect ? 'quiz-option--correct' : 'quiz-option--wrong');
-            if (isCorrect) {
-              block.dataset.answered = 'true';
-              block.querySelectorAll('.quiz-option').forEach(o => {
-                if (o.dataset.answer === 'correct') o.classList.add('quiz-option--correct');
-              });
-            }
-            const lang = window.SolarLearn?.currentLang || 'en';
-            fb.textContent = quizFeedback[isCorrect ? 'correct' : 'wrong'][lang];
-            fb.className   = 'quiz-feedback ' + (isCorrect ? 'quiz-feedback--ok' : 'quiz-feedback--err');
-          });
-        });
-      });
+      /* ── Quiz modal ──────────────────────────── */
+      SolarLearn.initQuizModal(QUIZ_DATA, 'openQuizBtn');
 
       /* ── Complete button ─────────────────────── */
       const btn = document.getElementById('completeBtn');
@@ -715,7 +625,7 @@
         btn.classList.add('complete-btn--done');
         btn.setAttribute('aria-pressed', 'true');
         btn.disabled = true;
-        if (lbl) lbl.textContent = window.SolarLearn.currentLang === 'es' ? '✓ Completado' : '✓ Completed';
+        if (lbl) lbl.textContent = I18n.t(SolarLearn.currentLang, 'markedDone');
       }
 
       btn.addEventListener('click', () => {
@@ -724,8 +634,7 @@
         btn.classList.add('complete-btn--done');
         btn.setAttribute('aria-pressed', 'true');
         btn.disabled = true;
-        const lang = window.SolarLearn?.currentLang || 'en';
-        if (lbl) lbl.textContent = lang === 'es' ? '✓ Completado' : '✓ Completed';
+        if (lbl) lbl.textContent = I18n.t(SolarLearn.currentLang, 'markedDone');
         window.SolarLearn?.markModuleDone(2);
       });
     });

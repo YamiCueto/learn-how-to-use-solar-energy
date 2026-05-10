@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es" data-i18n-base="..">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -188,9 +188,9 @@
 
       <div class="navbar__actions">
         <div class="lang-toggle" role="group" aria-label="Language">
-          <button class="lang-toggle__btn lang-toggle__btn--active" id="langEn" data-lang="en" aria-pressed="true">EN</button>
+          <button class="lang-toggle__btn" id="langEn" data-lang="en" aria-pressed="false">EN</button>
           <span class="lang-toggle__sep" aria-hidden="true"></span>
-          <button class="lang-toggle__btn" id="langEs" data-lang="es" aria-pressed="false">ES</button>
+          <button class="lang-toggle__btn lang-toggle__btn--active" id="langEs" data-lang="es" aria-pressed="true">ES</button>
         </div>
         <button class="btn--icon" aria-label="Notifications">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
@@ -444,87 +444,16 @@
           </div>
         </section>
 
-        <!-- ── Quiz ──────────────────────────────────────────── -->
+        <!-- ── Quiz trigger ─────────────────────────────────────── -->
         <section class="content-block">
-          <h2 data-i18n="quizTitle">Quick check</h2>
-
-          <!-- Q1 -->
-          <div class="quiz-block" id="quiz1">
-            <p class="quiz-block__question" data-i18n="q1text">
-              1. What is the approximate peak solar irradiance at sea level under clear sky conditions?
-            </p>
-            <div class="quiz-options" role="radiogroup" aria-label="Quiz question 1">
-              <label class="quiz-option" data-answer="wrong">
-                <span class="quiz-option__letter" aria-hidden="true">A</span>
-                <span data-i18n="q1a">500 W/m²</span>
-              </label>
-              <label class="quiz-option" data-answer="correct">
-                <span class="quiz-option__letter" aria-hidden="true">B</span>
-                <span data-i18n="q1b">1 000 W/m²</span>
-              </label>
-              <label class="quiz-option" data-answer="wrong">
-                <span class="quiz-option__letter" aria-hidden="true">C</span>
-                <span data-i18n="q1c">1 361 W/m²</span>
-              </label>
-              <label class="quiz-option" data-answer="wrong">
-                <span class="quiz-option__letter" aria-hidden="true">D</span>
-                <span data-i18n="q1d">2 000 W/m²</span>
-              </label>
-            </div>
-            <p class="quiz-feedback" id="quiz1-fb" aria-live="polite"></p>
-          </div>
-
-          <!-- Q2 -->
-          <div class="quiz-block" id="quiz2">
-            <p class="quiz-block__question" data-i18n="q2text">
-              2. A single silicon solar cell produces approximately how much voltage?
-            </p>
-            <div class="quiz-options" role="radiogroup" aria-label="Quiz question 2">
-              <label class="quiz-option" data-answer="wrong">
-                <span class="quiz-option__letter" aria-hidden="true">A</span>
-                <span data-i18n="q2a">12 V</span>
-              </label>
-              <label class="quiz-option" data-answer="wrong">
-                <span class="quiz-option__letter" aria-hidden="true">B</span>
-                <span data-i18n="q2b">5 V</span>
-              </label>
-              <label class="quiz-option" data-answer="correct">
-                <span class="quiz-option__letter" aria-hidden="true">C</span>
-                <span data-i18n="q2c">0.5 V</span>
-              </label>
-              <label class="quiz-option" data-answer="wrong">
-                <span class="quiz-option__letter" aria-hidden="true">D</span>
-                <span data-i18n="q2d">24 V</span>
-              </label>
-            </div>
-            <p class="quiz-feedback" id="quiz2-fb" aria-live="polite"></p>
-          </div>
-
-          <!-- Q3 -->
-          <div class="quiz-block" id="quiz3">
-            <p class="quiz-block__question" data-i18n="q3text">
-              3. What does "insolation" measure?
-            </p>
-            <div class="quiz-options" role="radiogroup" aria-label="Quiz question 3">
-              <label class="quiz-option" data-answer="wrong">
-                <span class="quiz-option__letter" aria-hidden="true">A</span>
-                <span data-i18n="q3a">Instantaneous solar power in W/m²</span>
-              </label>
-              <label class="quiz-option" data-answer="correct">
-                <span class="quiz-option__letter" aria-hidden="true">B</span>
-                <span data-i18n="q3b">Total solar energy per day in kWh/m²</span>
-              </label>
-              <label class="quiz-option" data-answer="wrong">
-                <span class="quiz-option__letter" aria-hidden="true">C</span>
-                <span data-i18n="q3c">Panel efficiency percentage</span>
-              </label>
-              <label class="quiz-option" data-answer="wrong">
-                <span class="quiz-option__letter" aria-hidden="true">D</span>
-                <span data-i18n="q3d">Temperature of a solar cell</span>
-              </label>
-            </div>
-            <p class="quiz-feedback" id="quiz3-fb" aria-live="polite"></p>
-          </div>
+          <button class="quiz-trigger" id="openQuizBtn" aria-haspopup="dialog">
+            <span class="quiz-trigger__icon" aria-hidden="true">📝</span>
+            <span class="quiz-trigger__content">
+              <strong data-i18n="quizTitle">Comprueba lo aprendido</strong>
+              <span class="quiz-trigger__sub">3 preguntas</span>
+            </span>
+            <span class="quiz-trigger__arrow" aria-hidden="true">›</span>
+          </button>
         </section>
 
         <!-- ── Mark complete ──────────────────────────────────── -->
@@ -580,6 +509,13 @@
   (function () {
     'use strict';
 
+    /* ── Quiz data ─────────────────────────────────── */
+    const QUIZ_DATA = [
+      { textKey: 'q1text', opts: [{ key: 'q1a', ok: false }, { key: 'q1b', ok: true  }, { key: 'q1c', ok: false }, { key: 'q1d', ok: false }] },
+      { textKey: 'q2text', opts: [{ key: 'q2a', ok: false }, { key: 'q2b', ok: false }, { key: 'q2c', ok: true  }, { key: 'q2d', ok: false }] },
+      { textKey: 'q3text', opts: [{ key: 'q3a', ok: false }, { key: 'q3b', ok: true  }, { key: 'q3c', ok: false }, { key: 'q3d', ok: false }] },
+    ];
+
     /* ── Irradiance canvas ─────────────────────────── */
     function drawIrradiance(season) {
       const canvas = document.getElementById('irradianceCanvas');
@@ -592,18 +528,16 @@
       ctx.clearRect(0, 0, W, H);
 
       const isSummer = season !== 'winter';
-      const peak     = isSummer ? 0.85 : 0.55;  /* fraction of H for peak */
+      const peak     = isSummer ? 0.85 : 0.55;
       const color    = isSummer ? '#EF9F27' : '#185FA5';
       const hours    = 24;
       const sunrise  = isSummer ? 5  : 7;
       const sunset   = isSummer ? 19 : 17;
 
-      /* Axes */
       const padL = 44, padR = 16, padT = 16, padB = 36;
       const aW   = W - padL - padR;
       const aH   = H - padT - padB;
 
-      /* Grid lines */
       ctx.strokeStyle = 'rgba(0,0,0,.06)';
       ctx.lineWidth   = 1;
       [0.25, 0.5, 0.75, 1].forEach(frac => {
@@ -611,7 +545,6 @@
         ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(padL + aW, y); ctx.stroke();
       });
 
-      /* Y-axis labels */
       ctx.fillStyle    = '#999';
       ctx.font         = '10px system-ui, sans-serif';
       ctx.textAlign    = 'right';
@@ -621,7 +554,6 @@
         ctx.fillText(lbl, padL - 6, y);
       });
 
-      /* X-axis labels */
       ctx.textAlign    = 'center';
       ctx.textBaseline = 'top';
       ['0h', '6h', '12h', '18h', '24h'].forEach((lbl, i) => {
@@ -629,48 +561,32 @@
         ctx.fillText(lbl, x, padT + aH + 6);
       });
 
-      /* Curve */
-      ctx.beginPath();
-      let first = true;
-      for (let h = 0; h <= hours; h += 0.1) {
-        let irr = 0;
-        if (h > sunrise && h < sunset) {
-          const mid  = (sunrise + sunset) / 2;
-          const half = (sunset - sunrise) / 2;
-          irr = peak * Math.pow(Math.cos((h - mid) / half * (Math.PI / 2)), 1.5);
+      function curve(stroke) {
+        ctx.beginPath();
+        let first = true;
+        for (let h = 0; h <= hours; h += 0.1) {
+          let irr = 0;
+          if (h > sunrise && h < sunset) {
+            const mid  = (sunrise + sunset) / 2;
+            const half = (sunset - sunrise) / 2;
+            irr = peak * Math.pow(Math.cos((h - mid) / half * (Math.PI / 2)), 1.5);
+          }
+          const x = padL + aW * (h / hours);
+          const y = padT + aH * (1 - Math.max(0, irr));
+          first ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+          first = false;
         }
-        const x = padL + aW * (h / hours);
-        const y = padT + aH * (1 - Math.max(0, irr));
-        first ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
-        first = false;
-      }
-      /* Fill under curve */
-      ctx.lineTo(padL + aW, padT + aH);
-      ctx.lineTo(padL, padT + aH);
-      ctx.closePath();
-      ctx.fillStyle = color + '22';
-      ctx.fill();
-
-      /* Stroke */
-      ctx.beginPath();
-      first = true;
-      for (let h = 0; h <= hours; h += 0.1) {
-        let irr = 0;
-        if (h > sunrise && h < sunset) {
-          const mid  = (sunrise + sunset) / 2;
-          const half = (sunset - sunrise) / 2;
-          irr = peak * Math.pow(Math.cos((h - mid) / half * (Math.PI / 2)), 1.5);
+        if (!stroke) {
+          ctx.lineTo(padL + aW, padT + aH);
+          ctx.lineTo(padL, padT + aH);
+          ctx.closePath();
+          ctx.fillStyle = color + '22'; ctx.fill();
+        } else {
+          ctx.strokeStyle = color; ctx.lineWidth = 2; ctx.stroke();
         }
-        const x = padL + aW * (h / hours);
-        const y = padT + aH * (1 - Math.max(0, irr));
-        first ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
-        first = false;
       }
-      ctx.strokeStyle = color;
-      ctx.lineWidth   = 2;
-      ctx.stroke();
+      curve(false); curve(true);
 
-      /* Peak annotation */
       const midH  = (sunrise + sunset) / 2;
       const peakX = padL + aW * (midH / hours);
       const peakY = padT + aH * (1 - peak);
@@ -681,9 +597,10 @@
       ctx.fillText(isSummer ? '~1000 W/m²' : '~650 W/m²', peakX, peakY - 4);
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
+    /* ── Wire up everything after i18n is ready ────── */
+    document.addEventListener('SolarLearnReady', () => {
+      /* Canvas */
       drawIrradiance('summer');
-
       const ro = new ResizeObserver(() => drawIrradiance(window._irradianceSeason || 'summer'));
       const canvas = document.getElementById('irradianceCanvas');
       if (canvas) ro.observe(canvas.parentElement);
@@ -697,46 +614,18 @@
         drawIrradiance('winter');
       });
 
-      /* ── Quiz logic ──────────────────────────── */
-      const quizFeedback = {
-        correct: { en: '✓ Correct!', es: '✓ ¡Correcto!' },
-        wrong:   { en: '✗ Not quite — try again.', es: '✗ No es correcto — intenta de nuevo.' },
-      };
+      /* Quiz modal */
+      SolarLearn.initQuizModal(QUIZ_DATA, 'openQuizBtn');
 
-      [1, 2, 3].forEach(n => {
-        const block = document.getElementById(`quiz${n}`);
-        if (!block) return;
-        const fb = document.getElementById(`quiz${n}-fb`);
-        block.querySelectorAll('.quiz-option').forEach(opt => {
-          opt.addEventListener('click', () => {
-            if (block.dataset.answered) return;
-            const isCorrect = opt.dataset.answer === 'correct';
-            opt.classList.add(isCorrect ? 'quiz-option--correct' : 'quiz-option--wrong');
-            if (isCorrect) {
-              block.dataset.answered = 'true';
-              /* Highlight correct */
-              block.querySelectorAll('.quiz-option').forEach(o => {
-                if (o.dataset.answer === 'correct') o.classList.add('quiz-option--correct');
-              });
-            }
-            const lang = (window.SolarLearn?.currentLang) || 'en';
-            fb.textContent = quizFeedback[isCorrect ? 'correct' : 'wrong'][lang];
-            fb.className   = 'quiz-feedback ' + (isCorrect ? 'quiz-feedback--ok' : 'quiz-feedback--err');
-          });
-        });
-      });
-
-      /* ── Complete button ─────────────────────── */
+      /* ── Complete button ───────────────────────── */
       const btn = document.getElementById('completeBtn');
       const lbl = document.getElementById('completeBtnLabel');
 
-      /* Restore saved state */
       if (window.SolarLearn?.isModuleDone(1)) {
         btn.classList.add('complete-btn--done');
         btn.setAttribute('aria-pressed', 'true');
         btn.disabled = true;
-        if (lbl) lbl.textContent = (window.SolarLearn.currentLang === 'es')
-          ? '✓ Completado' : '✓ Completed';
+        if (lbl) lbl.textContent = I18n.t(SolarLearn.currentLang, 'markedDone');
       }
 
       btn.addEventListener('click', () => {
@@ -745,8 +634,7 @@
         btn.classList.add('complete-btn--done');
         btn.setAttribute('aria-pressed', 'true');
         btn.disabled = true;
-        const lang = window.SolarLearn?.currentLang || 'en';
-        if (lbl) lbl.textContent = lang === 'es' ? '✓ Completado' : '✓ Completed';
+        if (lbl) lbl.textContent = I18n.t(SolarLearn.currentLang, 'markedDone');
         window.SolarLearn?.markModuleDone(1);
       });
     });

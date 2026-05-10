@@ -625,4 +625,116 @@ button { cursor: pointer; border: none; background: none; font: inherit; }
     transition-duration: .01ms !important;
   }
 }
+
+/* ── 17. QUIZ MODAL ──────────────────────────────────── */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0, 0, 0, .45);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 200; padding: var(--sp-4);
+}
+.modal-overlay[hidden] { display: none; }
+
+.modal {
+  background: var(--clr-surface);
+  border-radius: var(--r-xl);
+  max-width: 560px; width: 100%;
+  max-height: 90dvh;
+  display: flex; flex-direction: column; overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, .22);
+}
+
+.modal__header {
+  padding: var(--sp-4) var(--sp-5);
+  border-bottom: 1px solid var(--clr-border);
+  display: flex; justify-content: space-between; align-items: center;
+  gap: var(--sp-3);
+}
+.modal__title {
+  font-size: var(--fs-base); font-weight: var(--fw-medium);
+  color: var(--clr-text-1); margin: 0;
+}
+.modal__counter {
+  font-size: var(--fs-xs); color: var(--clr-text-3);
+  white-space: nowrap;
+}
+.modal__close-btn {
+  display: flex; align-items: center; justify-content: center;
+  width: 32px; height: 32px; border-radius: var(--r-full);
+  border: none; background: transparent; cursor: pointer;
+  color: var(--clr-text-3); transition: background var(--dur) var(--ease);
+}
+.modal__close-btn:hover { background: var(--clr-bg); color: var(--clr-text-1); }
+
+.modal__body {
+  padding: var(--sp-5); overflow-y: auto; flex: 1;
+}
+.modal__footer {
+  padding: var(--sp-4) var(--sp-5);
+  border-top: 1px solid var(--clr-border);
+  display: flex; justify-content: space-between; gap: var(--sp-3);
+}
+
+/* Quiz trigger button */
+.quiz-trigger {
+  display: flex; align-items: center; gap: var(--sp-3);
+  width: 100%; padding: var(--sp-4) var(--sp-5);
+  background: var(--clr-amber-bg);
+  border: 1.5px solid var(--clr-amber);
+  border-radius: var(--r-lg); cursor: pointer;
+  font-size: var(--fs-base); font-weight: var(--fw-medium);
+  color: var(--clr-amber-text); text-align: left;
+  transition: background var(--dur) var(--ease), transform var(--dur) var(--ease);
+}
+.quiz-trigger:hover { background: #f7e3ad; transform: translateY(-1px); }
+.quiz-trigger__icon { font-size: 1.25rem; flex-shrink: 0; }
+.quiz-trigger__content { display: flex; flex-direction: column; gap: 2px; flex: 1; }
+.quiz-trigger__sub { font-size: var(--fs-xs); color: var(--clr-amber-dark); font-weight: var(--fw-regular); }
+.quiz-trigger__arrow { margin-left: auto; color: var(--clr-amber-dark); font-size: 1rem; }
+
+/* Quiz question + options */
+.modal-quiz-qtext {
+  font-size: var(--fs-base); font-weight: var(--fw-medium);
+  color: var(--clr-text-1); margin: 0 0 var(--sp-4);
+  line-height: 1.5;
+}
+.modal-quiz-option {
+  display: flex; align-items: center; gap: var(--sp-3);
+  width: 100%; padding: var(--sp-3) var(--sp-4);
+  border-radius: var(--r-md); border: 1px solid var(--clr-border);
+  cursor: pointer; font-size: var(--fs-sm); color: var(--clr-text-2);
+  background: var(--clr-bg); text-align: left;
+  transition: background var(--dur) var(--ease), border-color var(--dur) var(--ease);
+  margin-bottom: var(--sp-2);
+}
+.modal-quiz-option:hover:not(:disabled) { background: var(--clr-amber-bg); border-color: var(--clr-amber); }
+.modal-quiz-option:disabled { cursor: default; }
+.modal-quiz-option--correct { background: var(--clr-green-bg) !important; border-color: var(--clr-green) !important; color: var(--clr-green-text) !important; }
+.modal-quiz-option--wrong   { background: #fdecea !important; border-color: #e53935 !important; color: #c62828 !important; }
+
+.modal-quiz-letter {
+  width: 26px; height: 26px; flex-shrink: 0;
+  border-radius: var(--r-full); background: var(--clr-border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: var(--fs-xs); font-weight: var(--fw-medium);
+}
+
+.modal-quiz-feedback {
+  font-size: var(--fs-xs); min-height: 20px;
+  margin-top: var(--sp-3); padding: 0;
+}
+.modal-quiz-feedback--ok  { color: var(--clr-green); }
+.modal-quiz-feedback--err { color: #c62828; }
+
+.modal-quiz-result {
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; padding: var(--sp-8) 0; gap: var(--sp-2);
+}
+.modal-quiz-score {
+  font-size: 3rem; font-weight: var(--fw-bold);
+  color: var(--clr-amber); line-height: 1;
+}
+.modal-quiz-score-label {
+  font-size: var(--fs-sm); color: var(--clr-text-2); margin: 0;
+}
  

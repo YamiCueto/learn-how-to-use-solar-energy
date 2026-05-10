@@ -9,7 +9,7 @@
   const STORAGE_KEY   = 'solarlearn_progress';
   const LANG_KEY      = 'solarlearn_lang';
 
-  let currentLang = localStorage.getItem(LANG_KEY) || 'en';
+  let currentLang = localStorage.getItem(LANG_KEY) || 'es';
 
   /* ── DOM refs ─────────────────────────────────────── */
   const progressFill   = document.getElementById('progressFill');
@@ -56,7 +56,7 @@
         const pill = el.querySelector('.pill');
         if (pill) {
           pill.className = 'pill pill--done';
-          pill.textContent = i18n[currentLang].pillDone;
+          pill.textContent = I18n.t(currentLang, 'pillDone');
         }
       }
     });
@@ -64,7 +64,6 @@
 
   /* ── Language toggle ──────────────────────────────── */
   function applyLang(lang) {
-    if (!i18n[lang]) return;
     currentLang = lang;
     localStorage.setItem(LANG_KEY, lang);
 
@@ -74,15 +73,9 @@
     /* Update all data-i18n elements */
     document.querySelectorAll('[data-i18n]').forEach(el => {
       const key = el.dataset.i18n;
-      if (i18n[lang][key] !== undefined) {
-        el.textContent = i18n[lang][key];
-      }
+      const val = I18n.t(lang, key);
+      if (val !== key) el.textContent = val;
     });
-
-    /* Update <title> */
-    if (i18n[lang].pageTitle) {
-      document.title = i18n[lang].pageTitle;
-    }
 
     /* Toggle button active state */
     if (langEnBtn && langEsBtn) {
@@ -96,9 +89,14 @@
     renderProgress();
   }
 
+  async function switchLang(lang) {
+    await I18n.load(lang);
+    applyLang(lang);
+  }
+
   function initLangToggle() {
-    if (langEnBtn) langEnBtn.addEventListener('click', () => applyLang('en'));
-    if (langEsBtn) langEsBtn.addEventListener('click', () => applyLang('es'));
+    if (langEnBtn) langEnBtn.addEventListener('click', () => switchLang('en'));
+    if (langEsBtn) langEsBtn.addEventListener('click', () => switchLang('es'));
   }
 
   /* ── Mobile sidebar ───────────────────────────────── */
@@ -155,21 +153,210 @@
     });
   }
 
+  /* ── Quiz Modal ───────────────────────────────────── */
+  /**
+   * initQuizModal(quizData, triggerBtnId)
+   *
+   * quizData: Array of { textKey, opts: [{key, ok}] }
+   *   textKey  — i18n key for the question text
+   *   opts     — array of {key (i18n key), ok (boolean: correct answer)}
+   *
+   * Creates and appends a modal to <body>, wires it to triggerBtnId.
+   * Uses ESC to close, focus-traps inside the modal while open.
+   */
+  function initQuizModal(quizData, triggerBtnId) {
+    const triggerBtn = document.getElementById(triggerBtnId);
+    if (!triggerBtn || !quizData || !quizData.length) return;
+
+    /* Update trigger subtitle with question count */
+    const subEl = triggerBtn.querySelector('.quiz-trigger__sub');
+    if (subEl) {
+      subEl.textContent = `${quizData.length} ${I18n.t(currentLang, 'quizQuestions')}`;
+    }
+
+    /* ── Build modal DOM ── */
+    const overlay = document.createElement('div');
+    overlay.id = 'quizModal';
+    overlay.className = 'modal-overlay';
+    overlay.setAttribute('role', 'dialog');
+    overlay.setAttribute('aria-modal', 'true');
+    overlay.setAttribute('aria-labelledby', 'quizModalTitle');
+    overlay.hidden = true;
+
+    overlay.innerHTML = `
+      <div class="modal" role="document">
+        <div class="modal__header">
+          <h2 class="modal__title" id="quizModalTitle"></h2>
+          <div style="display:flex;align-items:center;gap:var(--sp-3)">
+            <span class="modal__counter" id="quizCounter" aria-live="polite"></span>
+            <button class="modal__close-btn" id="quizCloseBtn" aria-label="Cerrar">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+                <path d="M1 1l16 16M17 1L1 17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div class="modal__body" id="quizBody"></div>
+        <div class="modal__footer">
+          <button class="btn btn--ghost btn--md" id="quizPrevBtn"></button>
+          <button class="btn btn--amber btn--md" id="quizNextBtn"></button>
+        </div>
+      </div>`;
+
+    document.body.appendChild(overlay);
+
+    /* ── State ── */
+    let currentQ = 0;
+    let answered = new Array(quizData.length).fill(null); /* null | 'correct' | 'wrong' */
+
+    /* ── Helpers ── */
+    function t(key) { return I18n.t(currentLang, key); }
+
+    function renderQuestion(idx) {
+      const q         = quizData[idx];
+      const isLast    = idx === quizData.length - 1;
+      const isResult  = idx === quizData.length;
+
+      /* header */
+      document.getElementById('quizModalTitle').textContent = t('quizTitle');
+      document.getElementById('quizCounter').textContent    =
+        isResult ? '' : `${t('quizQuestion')} ${idx + 1} ${t('quizOf')} ${quizData.length}`;
+
+      /* footer buttons */
+      const prevBtn = document.getElementById('quizPrevBtn');
+      const nextBtn = document.getElementById('quizNextBtn');
+      prevBtn.textContent  = t('quizPrev');
+      prevBtn.style.visibility = idx === 0 ? 'hidden' : 'visible';
+      nextBtn.textContent  = isResult ? t('quizRetry') : (isLast ? t('quizFinish') : t('quizNext'));
+
+      /* body */
+      const body = document.getElementById('quizBody');
+
+      if (isResult) {
+        const score = answered.filter(a => a === 'correct').length;
+        body.innerHTML = `
+          <div class="modal-quiz-result">
+            <div class="modal-quiz-score">${score} / ${quizData.length}</div>
+            <p class="modal-quiz-score-label">${t('quizCorrectAnswers')}</p>
+          </div>`;
+        return;
+      }
+
+      const letters = ['A', 'B', 'C', 'D'];
+      const optHTML  = q.opts.map((opt, i) => `
+        <button class="modal-quiz-option${answered[idx] ? (opt.ok ? ' modal-quiz-option--correct' : (answered[idx] === String(i) ? ' modal-quiz-option--wrong' : '')) : ''}"
+          data-opt="${i}" ${answered[idx] ? 'disabled' : ''} aria-pressed="${answered[idx] === String(i)}">
+          <span class="modal-quiz-letter">${letters[i]}</span>
+          <span>${t(opt.key)}</span>
+        </button>`).join('');
+
+      const fb = answered[idx]
+        ? `<p class="modal-quiz-feedback ${answered[idx] === 'correct' ? 'modal-quiz-feedback--ok' : 'modal-quiz-feedback--err'}" aria-live="polite">${answered[idx] === 'correct' ? t('quizCorrectFb') : t('quizWrongFb')}</p>`
+        : '<p class="modal-quiz-feedback" aria-live="polite"></p>';
+
+      body.innerHTML = `<p class="modal-quiz-qtext">${t(q.textKey)}</p>${optHTML}${fb}`;
+
+      /* Option click handlers */
+      body.querySelectorAll('.modal-quiz-option').forEach(btn => {
+        if (answered[idx]) return;
+        btn.addEventListener('click', () => {
+          const chosenIdx = btn.dataset.opt;
+          const isOk      = q.opts[chosenIdx].ok;
+          answered[idx]   = isOk ? 'correct' : chosenIdx;
+          renderQuestion(idx);
+        });
+      });
+    }
+
+    /* ── Navigation ── */
+    document.getElementById('quizPrevBtn').addEventListener('click', () => {
+      if (currentQ > 0) { currentQ--; renderQuestion(currentQ); }
+    });
+
+    document.getElementById('quizNextBtn').addEventListener('click', () => {
+      if (currentQ < quizData.length) {
+        currentQ++;
+        renderQuestion(currentQ);
+      } else {
+        /* Retry — reset */
+        currentQ = 0;
+        answered = new Array(quizData.length).fill(null);
+        renderQuestion(0);
+      }
+    });
+
+    /* ── Open / close ── */
+    function openModal() {
+      currentQ = 0;
+      answered = new Array(quizData.length).fill(null);
+      overlay.hidden = false;
+      renderQuestion(0);
+      /* Focus first focusable element */
+      const first = overlay.querySelector('button, [tabindex]');
+      if (first) first.focus();
+    }
+
+    function closeModal() {
+      overlay.hidden = true;
+      triggerBtn.focus();
+    }
+
+    triggerBtn.addEventListener('click', openModal);
+    document.getElementById('quizCloseBtn').addEventListener('click', closeModal);
+
+    /* Close on backdrop click */
+    overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
+
+    /* ESC to close + focus trap */
+    overlay.addEventListener('keydown', e => {
+      if (e.key === 'Escape') { closeModal(); return; }
+      if (e.key !== 'Tab') return;
+      const focusable = Array.from(overlay.querySelectorAll(
+        'button:not([disabled]), [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      ));
+      if (!focusable.length) return;
+      const first = focusable[0];
+      const last  = focusable[focusable.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault(); last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault(); first.focus();
+      }
+    });
+
+    /* Re-render on language change */
+    document.addEventListener('SolarLearnLangChange', () => {
+      if (!overlay.hidden) renderQuestion(currentQ);
+      if (subEl) subEl.textContent = `${quizData.length} ${I18n.t(currentLang, 'quizQuestions')}`;
+    });
+  }
+
   /* ── Init ─────────────────────────────────────────── */
-  function init() {
+  async function init() {
+    /* Prevent flash of untranslated content */
+    document.body.style.opacity = '0';
+    document.body.style.transition = 'opacity 0.15s ease';
+
+    /* Load default locale + saved locale */
+    await I18n.load('es');
+    if (currentLang !== 'es') await I18n.load(currentLang);
+
     initLangToggle();
     initMobileSidebar();
     initBottomNav();
     initModuleCards();
 
-    /* Apply saved language */
     applyLang(currentLang);
-
-    /* Render progress from localStorage */
     renderProgress();
 
     /* Draw default canvas diagram */
     if (typeof drawDC === 'function') drawDC();
+
+    /* Signal module pages that i18n is ready */
+    document.dispatchEvent(new CustomEvent('SolarLearnReady'));
+
+    /* Reveal page */
+    document.body.style.opacity = '1';
   }
 
   document.addEventListener('DOMContentLoaded', init);
@@ -185,7 +372,13 @@
     isModuleDone(moduleNumber) {
       return !!getProgress()[moduleNumber];
     },
-    applyLang,
+    applyLang(lang) {
+      I18n.load(lang).then(() => {
+        applyLang(lang);
+        document.dispatchEvent(new CustomEvent('SolarLearnLangChange'));
+      });
+    },
+    initQuizModal,
     get currentLang() { return currentLang; },
   };
 })();

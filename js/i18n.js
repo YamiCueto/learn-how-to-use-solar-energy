@@ -1,8 +1,54 @@
 /* ═══════════════════════════════════════════════════
-   i18n — bilingual strings (EN / ES)
-   Usage: i18n['en']['key']  or  i18n['es']['key']
+   i18n.js — async locale loader
+   Fetches translations from locales/{lang}.json
+   Usage:
+     await I18n.load('es')
+     I18n.t('es', 'key')
+   Each HTML page must set data-i18n-base on <html>:
+     root pages  → data-i18n-base="."
+     pages/ dir  → data-i18n-base=".."
 ═══════════════════════════════════════════════════ */
-const i18n = {
+const I18n = (() => {
+  'use strict';
+
+  const _cache = {};
+
+  function _base() {
+    return document.documentElement.dataset.i18nBase || '.';
+  }
+
+  async function load(lang) {
+    if (_cache[lang]) return _cache[lang];
+    const url = `${_base()}/locales/${lang}.json`;
+    try {
+      const res = await fetch(url);
+      if (!res.ok) throw new Error(`HTTP ${res.status} — ${url}`);
+      _cache[lang] = await res.json();
+    } catch (err) {
+      console.warn('[i18n]', err.message);
+      _cache[lang] = {};
+    }
+    return _cache[lang];
+  }
+
+  function t(lang, key) {
+    if (_cache[lang] && _cache[lang][key] !== undefined) return _cache[lang][key];
+    if (_cache['es'] && _cache['es'][key] !== undefined) return _cache['es'][key];
+    return key;
+  }
+
+  return { load, t };
+})();
+
+/* Node / test compat */
+if (typeof module !== 'undefined') module.exports = I18n;
+
+/* ── Legacy data kept below for reference only — NOT used at runtime ──────
+   The source of truth is now locales/es.json and locales/en.json
+   This block is intentionally unreachable and will be removed in a future
+   cleanup commit once all pages are verified against the JSON files.
+─────────────────────────────────────────────────────────────────────────── */
+const _i18n_legacy = {
   en: {
     /* Meta */
     pageTitle:       'Solar Energy Course',
@@ -391,6 +437,4 @@ const i18n = {
     m2q3c: 'Isc (corriente de cortocircuito)', m2q3d: 'Pmax (potencia pico)',
   },
 };
-
-/* Expose for app.js */
-if (typeof module !== 'undefined') module.exports = i18n;
+/* end of _i18n_legacy */
