@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title data-i18n="mod1PageTitle">Module 1 — Intro to Solar Energy</title>
+  <link rel="stylesheet" href="../css/styles.css" />
+  <style>
+    /* ── Module-1 local styles ─────────────────────── */
+    .fact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--sp-3);
+      margin-bottom: var(--sp-6);
+    }
+    @media (max-width: 480px) { .fact-grid { grid-template-columns: 1fr; } }
+
+    .fact-card {
+      background: var(--clr-surface);
+      border: .5px solid var(--clr-border-card);
+      border-radius: var(--r-lg);
+      padding: var(--sp-4);
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-2);
+    }
+    .fact-card__icon { font-size: 1.5rem; }
+    .fact-card__value {
+      font-size: var(--fs-xl);
+      font-weight: var(--fw-medium);
+      color: var(--clr-amber-text);
+      line-height: 1;
+    }
+    .fact-card__label {
+      font-size: var(--fs-xs);
+      color: var(--clr-text-3);
+    }
+
+    .timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      margin-bottom: var(--sp-6);
+    }
+    .timeline-item {
+      display: flex;
+      gap: var(--sp-4);
+      position: relative;
+    }
+    .timeline-item:not(:last-child)::before {
+      content: '';
+      position: absolute;
+      left: 19px;
+      top: 40px;
+      bottom: 0;
+      width: 2px;
+      background: var(--clr-border);
+    }
+    .timeline-dot {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--r-full);
+      background: var(--clr-amber-bg);
+      color: var(--clr-amber-text);
+      font-size: var(--fs-xs);
+      font-weight: var(--fw-medium);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      z-index: 1;
+    }
+    .timeline-body {
+      padding-bottom: var(--sp-6);
+      flex: 1;
+    }
+    .timeline-body h3 {
+      font-size: var(--fs-sm);
+      font-weight: var(--fw-medium);
+      margin-bottom: var(--sp-1);
+      color: var(--clr-text);
+    }
+    .timeline-body p {
+      font-size: var(--fs-xs);
+      color: var(--clr-text-3);
+      line-height: var(--lh-base);
+      margin: 0;
+    }
+
+    .quiz-block {
+      background: var(--clr-surface);
+      border: .5px solid var(--clr-border-card);
+      border-radius: var(--r-lg);
+      padding: var(--sp-5);
+      margin-bottom: var(--sp-6);
+    }
+    .quiz-block__question {
+      font-size: var(--fs-sm);
+      font-weight: var(--fw-medium);
+      margin-bottom: var(--sp-4);
+      color: var(--clr-text);
+    }
+    .quiz-options {
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-2);
+    }
+    .quiz-option {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-3);
+      padding: var(--sp-3) var(--sp-4);
+      border-radius: var(--r-md);
+      border: 1px solid var(--clr-border);
+      cursor: pointer;
+      font-size: var(--fs-sm);
+      color: var(--clr-text-2);
+      transition: background var(--dur) var(--ease), border-color var(--dur) var(--ease);
+      background: var(--clr-bg);
+      user-select: none;
+    }
+    .quiz-option:hover { background: var(--clr-amber-bg); border-color: var(--clr-amber); }
+    .quiz-option--correct { background: var(--clr-green-bg) !important; border-color: var(--clr-green) !important; color: var(--clr-green) !important; }
+    .quiz-option--wrong   { background: #fdecea !important; border-color: #e53935 !important; color: #c62828 !important; }
+    .quiz-option__letter {
+      width: 24px;
+      height: 24px;
+      border-radius: var(--r-full);
+      background: var(--clr-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: var(--fs-xs);
+      font-weight: var(--fw-medium);
+      flex-shrink: 0;
+    }
+    .quiz-feedback {
+      margin-top: var(--sp-3);
+      font-size: var(--fs-xs);
+      color: var(--clr-text-3);
+      min-height: 18px;
+    }
+    .quiz-feedback--ok  { color: var(--clr-green); }
+    .quiz-feedback--err { color: #c62828; }
+
+    .key-terms {
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-3);
+      margin-bottom: var(--sp-6);
+    }
+    .term-row {
+      display: flex;
+      gap: var(--sp-4);
+      align-items: flex-start;
+    }
+    .term-row__name {
+      min-width: 110px;
+      font-size: var(--fs-sm);
+      font-weight: var(--fw-medium);
+      color: var(--clr-amber-text);
+      flex-shrink: 0;
+    }
+    .term-row__def {
+      font-size: var(--fs-sm);
+      color: var(--clr-text-2);
+      line-height: var(--lh-snug);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ══ NAVBAR ══════════════════════════════════════════════ -->
+  <header class="navbar" role="banner">
+    <div class="navbar__inner">
+      <button class="btn--icon" id="menuBtn" aria-label="Open menu" aria-expanded="false">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+          <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+      </button>
+
+      <a href="../index.html" class="navbar__brand">
+        <span class="navbar__logo" aria-hidden="true">☀️</span>
+        <span data-i18n="brandName">Solar Course</span>
+      </a>
+
+      <span class="navbar__spacer"></span>
+
+      <div class="navbar__actions">
+        <div class="lang-toggle" role="group" aria-label="Language">
+          <button class="lang-toggle__btn lang-toggle__btn--active" id="langEn" data-lang="en" aria-pressed="true">EN</button>
+          <span class="lang-toggle__sep" aria-hidden="true"></span>
+          <button class="lang-toggle__btn" id="langEs" data-lang="es" aria-pressed="false">ES</button>
+        </div>
+        <button class="btn--icon" aria-label="Notifications">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+          </svg>
+        </button>
+        <button class="btn--icon" aria-label="User account">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div class="navbar__progress" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" id="navProgress" aria-label="Course progress">
+      <div class="navbar__progress-fill" id="progressFill"></div>
+    </div>
+  </header>
+
+  <!-- ══ LAYOUT ══════════════════════════════════════════════ -->
+  <div class="layout">
+
+    <!-- SIDEBAR (desktop) -->
+    <aside class="sidebar" id="sidebar" aria-label="Course navigation">
+      <p class="sidebar__section-label" data-i18n="sidebarLabel">Modules</p>
+      <ul class="sidebar__list" role="list">
+        <li><a href="module1.html" class="sidebar__item sidebar__item--active" data-module="1"><span class="sidebar__item-text" data-i18n="mod1Title">1. Intro to solar energy</span><span class="pill pill--active sidebar__item-pill" data-i18n="pillActive">Active</span></a></li>
+        <li><a href="module2.html" class="sidebar__item" data-module="2"><span class="sidebar__item-text" data-i18n="mod2Title">2. How panels work</span></a></li>
+        <li><a href="module3.html" class="sidebar__item" data-module="3"><span class="sidebar__item-text" data-i18n="mod3Title">3. DC circuits</span></a></li>
+        <li><a href="module4.html" class="sidebar__item module-card--locked" data-module="4" aria-disabled="true"><span class="sidebar__item-text" data-i18n="mod4Title">4. AC &amp; inverters</span><span class="pill pill--locked sidebar__item-pill">🔒</span></a></li>
+        <li><a href="module5.html" class="sidebar__item module-card--locked" data-module="5" aria-disabled="true"><span class="sidebar__item-text" data-i18n="mod5Title">5. System design</span><span class="pill pill--locked sidebar__item-pill">🔒</span></a></li>
+        <li><a href="module6.html" class="sidebar__item module-card--locked" data-module="6" aria-disabled="true"><span class="sidebar__item-text" data-i18n="mod6Title">6. Maintenance</span><span class="pill pill--locked sidebar__item-pill">🔒</span></a></li>
+      </ul>
+    </aside>
+
+    <!-- Mobile sidebar overlay -->
+    <aside class="sidebar sidebar--mobile" id="mobileSidebar" aria-label="Course navigation" aria-hidden="true">
+      <p class="sidebar__section-label" data-i18n="sidebarLabel">Modules</p>
+      <ul class="sidebar__list" role="list">
+        <li><a href="module1.html" class="sidebar__item sidebar__item--active"><span data-i18n="mod1Title">1. Intro to solar energy</span><span class="pill pill--active" data-i18n="pillActive">Active</span></a></li>
+        <li><a href="module2.html" class="sidebar__item"><span data-i18n="mod2Title">2. How panels work</span></a></li>
+        <li><a href="module3.html" class="sidebar__item"><span data-i18n="mod3Title">3. DC circuits</span></a></li>
+        <li><a href="module4.html" class="sidebar__item module-card--locked" aria-disabled="true"><span data-i18n="mod4Title">4. AC &amp; inverters</span><span class="pill pill--locked">🔒</span></a></li>
+        <li><a href="module5.html" class="sidebar__item module-card--locked" aria-disabled="true"><span data-i18n="mod5Title">5. System design</span><span class="pill pill--locked">🔒</span></a></li>
+        <li><a href="module6.html" class="sidebar__item module-card--locked" aria-disabled="true"><span data-i18n="mod6Title">6. Maintenance</span><span class="pill pill--locked">🔒</span></a></li>
+      </ul>
+    </aside>
+    <div class="sidebar-overlay" id="sidebarOverlay" aria-hidden="true"></div>
+
+    <!-- MAIN ══════════════════════════════════════════════════ -->
+    <main class="main" id="main">
+      <div class="lesson-wrap">
+
+        <!-- ── Lesson header ─────────────────────────── -->
+        <header class="lesson-header">
+          <p class="lesson-header__eyebrow" data-i18n="mod1Eyebrow">Module 1 · Basics</p>
+          <h1 class="lesson-header__title" data-i18n="mod1Title">1. Intro to solar energy</h1>
+          <div class="lesson-header__meta">
+            <span>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="display:inline;vertical-align:-1px"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              35 min
+            </span>
+            <span data-i18n="lessonNoPrereq">No prerequisites</span>
+            <span class="pill pill--active" data-i18n="pillActive">Active</span>
+          </div>
+        </header>
+
+        <!-- ── Section 1: Why solar? ─────────────────── -->
+        <section class="content-block">
+          <h2 data-i18n="m1s1Title">Why solar energy?</h2>
+          <p data-i18n="m1s1p1">
+            The sun delivers more energy to Earth in one hour than all of humanity consumes in an entire year.
+            Capturing even a tiny fraction of that energy can power homes, businesses and entire cities —
+            without burning a single gram of fossil fuel.
+          </p>
+          <p data-i18n="m1s1p2">
+            Solar photovoltaic (PV) systems convert sunlight directly into electricity using semiconducting
+            materials. They have no moving parts, produce zero emissions during operation, and their cost
+            has dropped more than 90 % over the last decade, making them the cheapest source of electricity
+            in history for most of the world.
+          </p>
+
+          <div class="callout callout--tip">
+            <span aria-hidden="true">💡</span>
+            <span data-i18n="m1s1callout">
+              <strong>Key insight.</strong>
+              In 2024, solar PV generated over 6 % of global electricity — up from less than 0.1 % in 2010.
+              The energy transition is already underway.
+            </span>
+          </div>
+        </section>
+
+        <!-- ── Fact grid ─────────────────────────────── -->
+        <section class="fact-grid" aria-label="Solar energy key facts">
+          <div class="fact-card">
+            <span class="fact-card__icon" aria-hidden="true">☀️</span>
+            <span class="fact-card__value">173 000 TW</span>
+            <span class="fact-card__label" data-i18n="fact1Label">Solar power hitting Earth's surface</span>
+          </div>
+          <div class="fact-card">
+            <span class="fact-card__icon" aria-hidden="true">📉</span>
+            <span class="fact-card__value">−90 %</span>
+            <span class="fact-card__label" data-i18n="fact2Label">Drop in solar panel cost since 2010</span>
+          </div>
+          <div class="fact-card">
+            <span class="fact-card__icon" aria-hidden="true">⚡</span>
+            <span class="fact-card__value">1.6 TW</span>
+            <span class="fact-card__label" data-i18n="fact3Label">Global installed PV capacity (2024)</span>
+          </div>
+          <div class="fact-card">
+            <span class="fact-card__icon" aria-hidden="true">🌍</span>
+            <span class="fact-card__value">6 %</span>
+            <span class="fact-card__label" data-i18n="fact4Label">Share of world electricity from solar (2024)</span>
+          </div>
+        </section>
+
+        <!-- ── Section 2: How the sun works ─────────────────── -->
+        <section class="content-block">
+          <h2 data-i18n="m1s2Title">How the sun delivers energy</h2>
+          <p data-i18n="m1s2p1">
+            The sun produces energy through nuclear fusion — hydrogen atoms merge to form helium,
+            releasing enormous amounts of energy as electromagnetic radiation. That radiation travels
+            150 million km to reach Earth in about 8 minutes.
+          </p>
+          <p data-i18n="m1s2p2">
+            At the top of Earth's atmosphere, the solar irradiance is approximately
+            <strong>1 361 W/m²</strong> (the "solar constant"). By the time sunlight reaches
+            sea level — after being absorbed and scattered by the atmosphere — a clear-sky
+            peak value of about <strong>1 000 W/m²</strong> is the standard used in panel ratings.
+          </p>
+
+          <div class="callout callout--info">
+            <span aria-hidden="true">📐</span>
+            <span data-i18n="m1s2callout">
+              <strong>Standard Test Conditions (STC).</strong>
+              Panel manufacturers rate their products at 1 000 W/m² irradiance, 25 °C cell temperature
+              and AM 1.5 spectrum. Real-world output is almost always lower.
+            </span>
+          </div>
+        </section>
+
+        <!-- ── Section 3: Solar resource ──────────────────────── -->
+        <section class="content-block">
+          <h2 data-i18n="m1s3Title">The solar resource: irradiance &amp; insolation</h2>
+          <p data-i18n="m1s3p1">
+            Two measurements describe how much solar energy is available at a site:
+          </p>
+          <ul>
+            <li data-i18n="m1s3li1"><strong>Irradiance (W/m²)</strong> — the instantaneous power of sunlight falling on a surface. Varies with time of day, season and weather.</li>
+            <li data-i18n="m1s3li2"><strong>Insolation (kWh/m²/day)</strong> — the total energy received over a full day. Also called "peak sun hours". Typical values: 3–7 kWh/m²/day depending on location.</li>
+            <li data-i18n="m1s3li3"><strong>Tilt &amp; orientation</strong> — panels facing the equator at an angle roughly equal to local latitude receive the most annual energy.</li>
+          </ul>
+        </section>
+
+        <!-- ── Canvas: irradiance diagram ──────────────────────── -->
+        <section class="canvas-section" aria-label="Sunlight irradiance diagram">
+          <p class="canvas-section__title" data-i18n="m1canvasTitle">Daily irradiance curve (clear sky)</p>
+          <canvas id="irradianceCanvas" width="760" height="200" aria-label="Bell curve showing solar irradiance peaking at noon"></canvas>
+          <div class="canvas-section__controls">
+            <button class="btn btn--ghost-amber btn--sm" id="btnSummer" data-i18n="btnSummer">Summer</button>
+            <button class="btn btn--ghost-amber btn--sm" id="btnWinter" data-i18n="btnWinter">Winter</button>
+          </div>
+        </section>
+
+        <!-- ── Section 4: PV conversion basics ──────────────────── -->
+        <section class="content-block">
+          <h2 data-i18n="m1s4Title">Photovoltaic conversion basics</h2>
+          <p data-i18n="m1s4p1">
+            A photovoltaic cell is a semiconductor device — usually made of silicon — that produces
+            a small direct current (DC) voltage when photons of light knock electrons loose from their
+            atoms. This is the <em>photoelectric effect</em>, first explained by Einstein in 1905
+            (for which he won the Nobel Prize).
+          </p>
+          <ul>
+            <li data-i18n="m1s4li1">A single silicon cell produces ~0.5 V DC.</li>
+            <li data-i18n="m1s4li2">Cells are wired in series inside a <strong>module</strong> (panel) to reach useful voltages (12 V, 24 V, 48 V…).</li>
+            <li data-i18n="m1s4li3">Modules are grouped into <strong>strings</strong> and combined into an <strong>array</strong> to meet a system's power requirements.</li>
+            <li data-i18n="m1s4li4">An <strong>inverter</strong> converts the DC output into AC electricity for use in homes and the grid.</li>
+          </ul>
+        </section>
+
+        <!-- ── Timeline: history ─────────────────────────────── -->
+        <section class="content-block">
+          <h2 data-i18n="m1s5Title">A brief history of solar PV</h2>
+          <div class="timeline" role="list">
+            <div class="timeline-item" role="listitem">
+              <div class="timeline-dot" aria-hidden="true">1839</div>
+              <div class="timeline-body">
+                <h3 data-i18n="tl1Title">Photovoltaic effect discovered</h3>
+                <p data-i18n="tl1Desc">Edmond Becquerel observes that certain materials produce electricity when exposed to light.</p>
+              </div>
+            </div>
+            <div class="timeline-item" role="listitem">
+              <div class="timeline-dot" aria-hidden="true">1954</div>
+              <div class="timeline-body">
+                <h3 data-i18n="tl2Title">First practical solar cell</h3>
+                <p data-i18n="tl2Desc">Bell Labs creates a silicon PV cell with ~6 % efficiency — enough to power small electronics.</p>
+              </div>
+            </div>
+            <div class="timeline-item" role="listitem">
+              <div class="timeline-dot" aria-hidden="true">1973</div>
+              <div class="timeline-body">
+                <h3 data-i18n="tl3Title">Oil crisis spurs research</h3>
+                <p data-i18n="tl3Desc">Rising oil prices push governments to invest in renewable energy research, including solar.</p>
+              </div>
+            </div>
+            <div class="timeline-item" role="listitem">
+              <div class="timeline-dot" aria-hidden="true">2000s</div>
+              <div class="timeline-body">
+                <h3 data-i18n="tl4Title">Grid-scale solar takes off</h3>
+                <p data-i18n="tl4Desc">Feed-in tariffs in Germany and Spain trigger the first large-scale solar boom in Europe.</p>
+              </div>
+            </div>
+            <div class="timeline-item" role="listitem">
+              <div class="timeline-dot" aria-hidden="true">2024</div>
+              <div class="timeline-body">
+                <h3 data-i18n="tl5Title">Solar is the cheapest electricity source</h3>
+                <p data-i18n="tl5Desc">New utility-scale solar achieves costs below $0.02/kWh in many regions — beating all other generation sources.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ── Key terms ─────────────────────────────────────── -->
+        <section class="content-block">
+          <h2 data-i18n="m1s6Title">Key terms</h2>
+          <div class="key-terms">
+            <div class="term-row">
+              <span class="term-row__name" data-i18n="term1Name">Photon</span>
+              <span class="term-row__def" data-i18n="term1Def">A particle of light that carries energy proportional to its frequency.</span>
+            </div>
+            <div class="term-row">
+              <span class="term-row__name" data-i18n="term2Name">PV cell</span>
+              <span class="term-row__def" data-i18n="term2Def">A semiconductor device that converts photons directly into DC electricity.</span>
+            </div>
+            <div class="term-row">
+              <span class="term-row__name" data-i18n="term3Name">Irradiance</span>
+              <span class="term-row__def" data-i18n="term3Def">Instantaneous solar power per unit area, measured in W/m².</span>
+            </div>
+            <div class="term-row">
+              <span class="term-row__name" data-i18n="term4Name">Insolation</span>
+              <span class="term-row__def" data-i18n="term4Def">Total solar energy received per unit area over a day, in kWh/m².</span>
+            </div>
+            <div class="term-row">
+              <span class="term-row__name" data-i18n="term5Name">STC</span>
+              <span class="term-row__def" data-i18n="term5Def">Standard Test Conditions — 1 000 W/m², 25 °C, AM 1.5 spectrum used for panel ratings.</span>
+            </div>
+            <div class="term-row">
+              <span class="term-row__name" data-i18n="term6Name">Inverter</span>
+              <span class="term-row__def" data-i18n="term6Def">Device that converts DC electricity from panels/batteries into AC electricity for loads.</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- ── Quiz ──────────────────────────────────────────── -->
+        <section class="content-block">
+          <h2 data-i18n="quizTitle">Quick check</h2>
+
+          <!-- Q1 -->
+          <div class="quiz-block" id="quiz1">
+            <p class="quiz-block__question" data-i18n="q1text">
+              1. What is the approximate peak solar irradiance at sea level under clear sky conditions?
+            </p>
+            <div class="quiz-options" role="radiogroup" aria-label="Quiz question 1">
+              <label class="quiz-option" data-answer="wrong">
+                <span class="quiz-option__letter" aria-hidden="true">A</span>
+                <span data-i18n="q1a">500 W/m²</span>
+              </label>
+              <label class="quiz-option" data-answer="correct">
+                <span class="quiz-option__letter" aria-hidden="true">B</span>
+                <span data-i18n="q1b">1 000 W/m²</span>
+              </label>
+              <label class="quiz-option" data-answer="wrong">
+                <span class="quiz-option__letter" aria-hidden="true">C</span>
+                <span data-i18n="q1c">1 361 W/m²</span>
+              </label>
+              <label class="quiz-option" data-answer="wrong">
+                <span class="quiz-option__letter" aria-hidden="true">D</span>
+                <span data-i18n="q1d">2 000 W/m²</span>
+              </label>
+            </div>
+            <p class="quiz-feedback" id="quiz1-fb" aria-live="polite"></p>
+          </div>
+
+          <!-- Q2 -->
+          <div class="quiz-block" id="quiz2">
+            <p class="quiz-block__question" data-i18n="q2text">
+              2. A single silicon solar cell produces approximately how much voltage?
+            </p>
+            <div class="quiz-options" role="radiogroup" aria-label="Quiz question 2">
+              <label class="quiz-option" data-answer="wrong">
+                <span class="quiz-option__letter" aria-hidden="true">A</span>
+                <span data-i18n="q2a">12 V</span>
+              </label>
+              <label class="quiz-option" data-answer="wrong">
+                <span class="quiz-option__letter" aria-hidden="true">B</span>
+                <span data-i18n="q2b">5 V</span>
+              </label>
+              <label class="quiz-option" data-answer="correct">
+                <span class="quiz-option__letter" aria-hidden="true">C</span>
+                <span data-i18n="q2c">0.5 V</span>
+              </label>
+              <label class="quiz-option" data-answer="wrong">
+                <span class="quiz-option__letter" aria-hidden="true">D</span>
+                <span data-i18n="q2d">24 V</span>
+              </label>
+            </div>
+            <p class="quiz-feedback" id="quiz2-fb" aria-live="polite"></p>
+          </div>
+
+          <!-- Q3 -->
+          <div class="quiz-block" id="quiz3">
+            <p class="quiz-block__question" data-i18n="q3text">
+              3. What does "insolation" measure?
+            </p>
+            <div class="quiz-options" role="radiogroup" aria-label="Quiz question 3">
+              <label class="quiz-option" data-answer="wrong">
+                <span class="quiz-option__letter" aria-hidden="true">A</span>
+                <span data-i18n="q3a">Instantaneous solar power in W/m²</span>
+              </label>
+              <label class="quiz-option" data-answer="correct">
+                <span class="quiz-option__letter" aria-hidden="true">B</span>
+                <span data-i18n="q3b">Total solar energy per day in kWh/m²</span>
+              </label>
+              <label class="quiz-option" data-answer="wrong">
+                <span class="quiz-option__letter" aria-hidden="true">C</span>
+                <span data-i18n="q3c">Panel efficiency percentage</span>
+              </label>
+              <label class="quiz-option" data-answer="wrong">
+                <span class="quiz-option__letter" aria-hidden="true">D</span>
+                <span data-i18n="q3d">Temperature of a solar cell</span>
+              </label>
+            </div>
+            <p class="quiz-feedback" id="quiz3-fb" aria-live="polite"></p>
+          </div>
+        </section>
+
+        <!-- ── Mark complete ──────────────────────────────────── -->
+        <button class="complete-btn" id="completeBtn" aria-pressed="false">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+          <span id="completeBtnLabel" data-i18n="markDone">Mark as complete</span>
+        </button>
+
+        <!-- ── Lesson nav ─────────────────────────────────────── -->
+        <nav class="lesson-nav" aria-label="Lesson navigation">
+          <a href="../index.html" class="btn btn--ghost-amber btn--md" data-i18n="lessonPrev">← Previous</a>
+          <a href="module2.html" class="btn btn--amber btn--md" data-i18n="lessonNext">Next →</a>
+        </nav>
+
+      </div><!-- /lesson-wrap -->
+    </main>
+  </div><!-- /layout -->
+
+  <!-- ══ BOTTOM NAV (mobile) ═════════════════════════════════ -->
+  <nav class="bottom-nav" aria-label="Main navigation" role="navigation">
+    <a href="../index.html" class="bottom-nav__item" aria-label="Course">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+      </svg>
+      <span data-i18n="navCourse">Course</span>
+    </a>
+    <button class="bottom-nav__item bottom-nav__item--active" aria-label="Simulator" aria-current="page">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+      </svg>
+      <span data-i18n="navSimulator">Simulator</span>
+    </button>
+    <button class="bottom-nav__item" aria-label="Calculator">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="12" y2="14"/>
+      </svg>
+      <span data-i18n="navCalc">Calc</span>
+    </button>
+    <button class="bottom-nav__item" aria-label="Profile">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+      </svg>
+      <span data-i18n="navProfile">Profile</span>
+    </button>
+  </nav>
+
+  <script src="../js/i18n.js"></script>
+  <script src="../js/app.js"></script>
+  <script>
+  /* ── Module-1 page scripts ────────────────────────── */
+  (function () {
+    'use strict';
+
+    /* ── Irradiance canvas ─────────────────────────── */
+    function drawIrradiance(season) {
+      const canvas = document.getElementById('irradianceCanvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const W = canvas.offsetWidth || canvas.width;
+      const H = canvas.offsetHeight || canvas.height;
+      canvas.width = W; canvas.height = H;
+
+      ctx.clearRect(0, 0, W, H);
+
+      const isSummer = season !== 'winter';
+      const peak     = isSummer ? 0.85 : 0.55;  /* fraction of H for peak */
+      const color    = isSummer ? '#EF9F27' : '#185FA5';
+      const hours    = 24;
+      const sunrise  = isSummer ? 5  : 7;
+      const sunset   = isSummer ? 19 : 17;
+
+      /* Axes */
+      const padL = 44, padR = 16, padT = 16, padB = 36;
+      const aW   = W - padL - padR;
+      const aH   = H - padT - padB;
+
+      /* Grid lines */
+      ctx.strokeStyle = 'rgba(0,0,0,.06)';
+      ctx.lineWidth   = 1;
+      [0.25, 0.5, 0.75, 1].forEach(frac => {
+        const y = padT + aH * (1 - frac);
+        ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(padL + aW, y); ctx.stroke();
+      });
+
+      /* Y-axis labels */
+      ctx.fillStyle    = '#999';
+      ctx.font         = '10px system-ui, sans-serif';
+      ctx.textAlign    = 'right';
+      ctx.textBaseline = 'middle';
+      ['1000', '750', '500', '250', '0'].forEach((lbl, i) => {
+        const y = padT + aH * (i / 4);
+        ctx.fillText(lbl, padL - 6, y);
+      });
+
+      /* X-axis labels */
+      ctx.textAlign    = 'center';
+      ctx.textBaseline = 'top';
+      ['0h', '6h', '12h', '18h', '24h'].forEach((lbl, i) => {
+        const x = padL + aW * (i / 4);
+        ctx.fillText(lbl, x, padT + aH + 6);
+      });
+
+      /* Curve */
+      ctx.beginPath();
+      let first = true;
+      for (let h = 0; h <= hours; h += 0.1) {
+        let irr = 0;
+        if (h > sunrise && h < sunset) {
+          const mid  = (sunrise + sunset) / 2;
+          const half = (sunset - sunrise) / 2;
+          irr = peak * Math.pow(Math.cos((h - mid) / half * (Math.PI / 2)), 1.5);
+        }
+        const x = padL + aW * (h / hours);
+        const y = padT + aH * (1 - Math.max(0, irr));
+        first ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+        first = false;
+      }
+      /* Fill under curve */
+      ctx.lineTo(padL + aW, padT + aH);
+      ctx.lineTo(padL, padT + aH);
+      ctx.closePath();
+      ctx.fillStyle = color + '22';
+      ctx.fill();
+
+      /* Stroke */
+      ctx.beginPath();
+      first = true;
+      for (let h = 0; h <= hours; h += 0.1) {
+        let irr = 0;
+        if (h > sunrise && h < sunset) {
+          const mid  = (sunrise + sunset) / 2;
+          const half = (sunset - sunrise) / 2;
+          irr = peak * Math.pow(Math.cos((h - mid) / half * (Math.PI / 2)), 1.5);
+        }
+        const x = padL + aW * (h / hours);
+        const y = padT + aH * (1 - Math.max(0, irr));
+        first ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+        first = false;
+      }
+      ctx.strokeStyle = color;
+      ctx.lineWidth   = 2;
+      ctx.stroke();
+
+      /* Peak annotation */
+      const midH  = (sunrise + sunset) / 2;
+      const peakX = padL + aW * (midH / hours);
+      const peakY = padT + aH * (1 - peak);
+      ctx.fillStyle    = color;
+      ctx.font         = '500 11px system-ui, sans-serif';
+      ctx.textAlign    = 'center';
+      ctx.textBaseline = 'bottom';
+      ctx.fillText(isSummer ? '~1000 W/m²' : '~650 W/m²', peakX, peakY - 4);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      drawIrradiance('summer');
+
+      const ro = new ResizeObserver(() => drawIrradiance(window._irradianceSeason || 'summer'));
+      const canvas = document.getElementById('irradianceCanvas');
+      if (canvas) ro.observe(canvas.parentElement);
+
+      document.getElementById('btnSummer')?.addEventListener('click', () => {
+        window._irradianceSeason = 'summer';
+        drawIrradiance('summer');
+      });
+      document.getElementById('btnWinter')?.addEventListener('click', () => {
+        window._irradianceSeason = 'winter';
+        drawIrradiance('winter');
+      });
+
+      /* ── Quiz logic ──────────────────────────── */
+      const quizFeedback = {
+        correct: { en: '✓ Correct!', es: '✓ ¡Correcto!' },
+        wrong:   { en: '✗ Not quite — try again.', es: '✗ No es correcto — intenta de nuevo.' },
+      };
+
+      [1, 2, 3].forEach(n => {
+        const block = document.getElementById(`quiz${n}`);
+        if (!block) return;
+        const fb = document.getElementById(`quiz${n}-fb`);
+        block.querySelectorAll('.quiz-option').forEach(opt => {
+          opt.addEventListener('click', () => {
+            if (block.dataset.answered) return;
+            const isCorrect = opt.dataset.answer === 'correct';
+            opt.classList.add(isCorrect ? 'quiz-option--correct' : 'quiz-option--wrong');
+            if (isCorrect) {
+              block.dataset.answered = 'true';
+              /* Highlight correct */
+              block.querySelectorAll('.quiz-option').forEach(o => {
+                if (o.dataset.answer === 'correct') o.classList.add('quiz-option--correct');
+              });
+            }
+            const lang = (window.SolarLearn?.currentLang) || 'en';
+            fb.textContent = quizFeedback[isCorrect ? 'correct' : 'wrong'][lang];
+            fb.className   = 'quiz-feedback ' + (isCorrect ? 'quiz-feedback--ok' : 'quiz-feedback--err');
+          });
+        });
+      });
+
+      /* ── Complete button ─────────────────────── */
+      const btn = document.getElementById('completeBtn');
+      const lbl = document.getElementById('completeBtnLabel');
+
+      /* Restore saved state */
+      if (window.SolarLearn?.isModuleDone(1)) {
+        btn.classList.add('complete-btn--done');
+        btn.setAttribute('aria-pressed', 'true');
+        btn.disabled = true;
+        if (lbl) lbl.textContent = (window.SolarLearn.currentLang === 'es')
+          ? '✓ Completado' : '✓ Completed';
+      }
+
+      btn.addEventListener('click', () => {
+        if (btn.dataset.done) return;
+        btn.dataset.done = 'true';
+        btn.classList.add('complete-btn--done');
+        btn.setAttribute('aria-pressed', 'true');
+        btn.disabled = true;
+        const lang = window.SolarLearn?.currentLang || 'en';
+        if (lbl) lbl.textContent = lang === 'es' ? '✓ Completado' : '✓ Completed';
+        window.SolarLearn?.markModuleDone(1);
+      });
+    });
+  })();
+  </script>
+</body>
+</html>
