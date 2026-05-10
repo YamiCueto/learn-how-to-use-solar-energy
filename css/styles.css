@@ -423,11 +423,12 @@ button { cursor: pointer; border: none; background: none; font: inherit; }
   font-size: 1.2rem;
   flex-shrink: 0;
 }
-.module-card__icon--amber { background: var(--clr-amber-bg); }
-.module-card__icon--teal  { background: var(--clr-teal-bg);  }
-.module-card__icon--blue  { background: var(--clr-blue-bg);  }
-.module-card__icon--green { background: var(--clr-green-bg); }
-.module-card__icon--gray  { background: var(--pill-locked-bg); }
+.module-card__icon--amber { background: var(--clr-amber-bg); color: var(--clr-amber); }
+.module-card__icon--teal  { background: var(--clr-teal-bg);  color: var(--clr-teal);  }
+.module-card__icon--blue  { background: var(--clr-blue-bg);  color: var(--clr-blue);  }
+.module-card__icon--green { background: var(--clr-green-bg); color: var(--clr-green); }
+.module-card__icon--gray  { background: var(--pill-locked-bg); color: var(--pill-locked-fg); }
+.module-card__icon .ti    { font-size: 22px; line-height: 1; }
 
 .module-card__body {
   flex: 1;
