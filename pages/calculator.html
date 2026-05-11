@@ -1,0 +1,1141 @@
+<!DOCTYPE html>
+<html lang="es" data-i18n-base="..">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title data-i18n="calcPageTitle">Solar Calculator</title>
+  <link rel="stylesheet" href="../css/styles.css" />
+  <style>
+    /* ── Page header ── */
+    .calc-header {
+      padding: var(--sp-6) var(--sp-5) var(--sp-4);
+      border-bottom: 1px solid var(--clr-border);
+    }
+    .calc-header__eyebrow {
+      font-size: var(--fs-xs);
+      font-weight: var(--fw-medium);
+      text-transform: uppercase;
+      letter-spacing: .07em;
+      color: var(--clr-amber-text);
+      margin-bottom: var(--sp-2);
+    }
+    .calc-header__title {
+      font-size: var(--fs-2xl);
+      font-weight: var(--fw-medium);
+      color: var(--clr-text);
+      margin-bottom: var(--sp-1);
+    }
+    .calc-header__sub {
+      font-size: var(--fs-sm);
+      color: var(--clr-text-2);
+    }
+
+    /* ── Mode tab bar ── */
+    .calc-mode-bar {
+      display: flex;
+      gap: var(--sp-2);
+      padding: var(--sp-4) var(--sp-5) 0;
+    }
+    .calc-mode-btn {
+      flex: 1;
+      max-width: 240px;
+      padding: var(--sp-3) var(--sp-4);
+      border: 1.5px solid var(--clr-border);
+      border-radius: var(--r-lg);
+      background: transparent;
+      font-size: var(--fs-sm);
+      font-weight: var(--fw-medium);
+      color: var(--clr-text-2);
+      cursor: pointer;
+      transition: all .15s;
+    }
+    .calc-mode-btn--active {
+      border-color: var(--clr-amber);
+      background: var(--clr-amber-bg);
+      color: var(--clr-amber-text);
+    }
+    .calc-mode-btn:hover:not(.calc-mode-btn--active) {
+      border-color: var(--clr-amber);
+      color: var(--clr-amber-text);
+    }
+
+    /* ── Two-column layout ── */
+    .calc-body {
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      gap: var(--sp-6);
+      padding: var(--sp-5) var(--sp-5);
+      align-items: start;
+    }
+    @media (max-width: 860px) {
+      .calc-body { grid-template-columns: 1fr; }
+    }
+
+    /* ── Controls panel (shared) ── */
+    .calc-controls {
+      background: var(--clr-surface);
+      border: .5px solid var(--clr-border-card);
+      border-radius: var(--r-lg);
+      padding: var(--sp-5);
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-5);
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* ── Section heading inside controls ── */
+    .ctrl-heading {
+      font-size: var(--fs-sm);
+      font-weight: var(--fw-medium);
+      color: var(--clr-text);
+      margin-bottom: calc(var(--sp-2) * -1); /* tighten gap */
+    }
+
+    /* ── Slider control group (same pattern as simulator) ── */
+    .ctrl-group {
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-2);
+    }
+    .ctrl-group__label {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+    .ctrl-group__name {
+      font-size: var(--fs-sm);
+      font-weight: var(--fw-medium);
+      color: var(--clr-text);
+    }
+    .ctrl-group__value {
+      font-size: var(--fs-sm);
+      font-weight: var(--fw-medium);
+      color: var(--clr-amber-text);
+      min-width: 72px;
+      text-align: right;
+    }
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 6px;
+      border-radius: 3px;
+      background: var(--clr-surface-alt);
+      outline: none;
+      cursor: pointer;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--clr-amber);
+      border: 2px solid #fff;
+      box-shadow: 0 1px 4px rgba(0,0,0,.2);
+      cursor: pointer;
+      transition: transform .1s;
+    }
+    input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.15); }
+    input[type="range"]::-moz-range-thumb {
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      background: var(--clr-amber);
+      border: 2px solid #fff;
+      box-shadow: 0 1px 4px rgba(0,0,0,.2);
+      cursor: pointer;
+    }
+    .ctrl-group__range-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 10px;
+      color: var(--clr-text-3);
+      margin-top: 2px;
+    }
+
+    /* ── Voltage toggle ── */
+    .volt-toggle {
+      display: flex;
+      gap: var(--sp-2);
+    }
+    .volt-toggle__btn {
+      flex: 1;
+      padding: var(--sp-2) 0;
+      border: 1.5px solid var(--clr-border);
+      border-radius: var(--r-md);
+      background: transparent;
+      font-size: var(--fs-sm);
+      font-weight: var(--fw-medium);
+      color: var(--clr-text-2);
+      cursor: pointer;
+      transition: all .15s;
+    }
+    .volt-toggle__btn--active {
+      border-color: var(--clr-amber);
+      background: var(--clr-amber-bg);
+      color: var(--clr-amber-text);
+    }
+
+    /* ── Appliance table ── */
+    .appl-table-header {
+      display: grid;
+      grid-template-columns: 1fr 50px 62px 62px 72px 28px;
+      gap: 6px;
+      align-items: center;
+      padding-bottom: var(--sp-2);
+      border-bottom: 1px solid var(--clr-border);
+    }
+    .appl-col-label {
+      font-size: 10px;
+      font-weight: var(--fw-medium);
+      color: var(--clr-text-3);
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      text-align: center;
+    }
+    .appl-col-label:first-child { text-align: left; }
+
+    .appl-row {
+      display: grid;
+      grid-template-columns: 1fr 50px 62px 62px 72px 28px;
+      gap: 6px;
+      align-items: center;
+      padding: var(--sp-2) 0;
+      border-bottom: 1px solid var(--clr-border);
+    }
+    @media (max-width: 480px) {
+      .appl-table-header { display: none; }
+      .appl-row {
+        grid-template-columns: 1fr 28px;
+        grid-template-rows: auto auto;
+      }
+      .appl-row__name  { grid-column: 1; }
+      .appl-row__del   { grid-column: 2; grid-row: 1; }
+      .appl-row__nums  { grid-column: 1 / -1; display: flex; gap: 6px; flex-wrap: wrap; }
+    }
+
+    .appl-select {
+      width: 100%;
+      padding: 5px 6px;
+      border: 1.5px solid var(--clr-border);
+      border-radius: var(--r-sm);
+      background: var(--clr-bg);
+      color: var(--clr-text);
+      font: inherit;
+      font-size: var(--fs-xs);
+      cursor: pointer;
+    }
+    .appl-select:focus { outline: none; border-color: var(--clr-amber); }
+
+    .appl-num {
+      width: 100%;
+      padding: 5px 4px;
+      border: 1.5px solid var(--clr-border);
+      border-radius: var(--r-sm);
+      background: var(--clr-bg);
+      color: var(--clr-text);
+      font: inherit;
+      font-size: var(--fs-xs);
+      text-align: center;
+    }
+    .appl-num:focus { outline: none; border-color: var(--clr-amber); }
+    /* hide spin buttons for cleaner look */
+    .appl-num::-webkit-outer-spin-button,
+    .appl-num::-webkit-inner-spin-button { -webkit-appearance: none; }
+    .appl-num[type=number] { -moz-appearance: textfield; }
+
+    .appl-wh-display {
+      font-size: var(--fs-xs);
+      font-weight: var(--fw-medium);
+      color: var(--clr-amber-text);
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    .appl-del-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border-radius: var(--r-sm);
+      background: transparent;
+      color: var(--clr-text-3);
+      transition: all .15s;
+      flex-shrink: 0;
+    }
+    .appl-del-btn:hover { background: #FEE2E2; color: #DC2626; }
+
+    .appl-total-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: var(--sp-3);
+      font-size: var(--fs-sm);
+    }
+    .appl-total-row__label {
+      font-weight: var(--fw-medium);
+      color: var(--clr-text-2);
+    }
+    .appl-total-row__val {
+      font-weight: var(--fw-medium);
+      color: var(--clr-amber-text);
+    }
+
+    .appl-add-btn {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-2);
+      padding: var(--sp-2) var(--sp-3);
+      border: 1.5px dashed var(--clr-amber);
+      border-radius: var(--r-md);
+      background: transparent;
+      font-size: var(--fs-sm);
+      font-weight: var(--fw-medium);
+      color: var(--clr-amber-text);
+      cursor: pointer;
+      width: 100%;
+      justify-content: center;
+      transition: background .15s;
+    }
+    .appl-add-btn:hover { background: var(--clr-amber-bg); }
+
+    /* ── Right panel ── */
+    .calc-right {
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-5);
+    }
+
+    /* ── Result cards (same as simulator) ── */
+    .results-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--sp-4);
+    }
+    @media (max-width: 500px) { .results-grid { grid-template-columns: 1fr; } }
+
+    .result-card {
+      background: var(--clr-surface);
+      border: .5px solid var(--clr-border-card);
+      border-radius: var(--r-lg);
+      padding: var(--sp-4) var(--sp-5);
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-1);
+      box-shadow: var(--shadow-sm);
+      transition: box-shadow .2s;
+    }
+    .result-card:hover { box-shadow: var(--shadow-md); }
+    .result-card--amber  { border-top: 3px solid var(--clr-amber); }
+    .result-card--teal   { border-top: 3px solid var(--clr-teal); }
+    .result-card--blue   { border-top: 3px solid var(--clr-blue); }
+    .result-card--purple { border-top: 3px solid #8B5CF6; }
+
+    .result-card__label {
+      font-size: var(--fs-xs);
+      color: var(--clr-text-3);
+      text-transform: uppercase;
+      letter-spacing: .05em;
+    }
+    .result-card__value {
+      font-size: 1.625rem;
+      font-weight: var(--fw-medium);
+      line-height: 1.1;
+    }
+    .result-card--amber  .result-card__value { color: var(--clr-amber-text); }
+    .result-card--teal   .result-card__value { color: var(--clr-teal-text); }
+    .result-card--blue   .result-card__value { color: var(--clr-blue-text); }
+    .result-card--purple .result-card__value { color: #5B21B6; }
+
+    .result-card__unit {
+      font-size: var(--fs-xs);
+      font-weight: 400;
+      color: var(--clr-text-3);
+      margin-left: 4px;
+    }
+    .result-card__sub {
+      font-size: var(--fs-xs);
+      color: var(--clr-text-3);
+      margin-top: 2px;
+    }
+
+    /* ── Results note ── */
+    .results-note {
+      font-size: var(--fs-xs);
+      color: var(--clr-text-3);
+      background: var(--clr-surface-alt);
+      border-radius: var(--r-md);
+      padding: var(--sp-3) var(--sp-4);
+      line-height: var(--lh-snug);
+    }
+
+    /* ── Mode 2: summary stats ── */
+    .m2-summary {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--sp-4);
+    }
+
+    /* ── Mode 2: Power list ── */
+    .power-list-wrap {
+      background: var(--clr-surface);
+      border: .5px solid var(--clr-border-card);
+      border-radius: var(--r-lg);
+      padding: var(--sp-4) var(--sp-5);
+      box-shadow: var(--shadow-sm);
+    }
+    .power-list-wrap__title {
+      font-size: var(--fs-sm);
+      font-weight: var(--fw-medium);
+      color: var(--clr-text-2);
+      margin-bottom: var(--sp-1);
+    }
+    .power-list-wrap__sub {
+      font-size: var(--fs-xs);
+      color: var(--clr-text-3);
+      margin-bottom: var(--sp-4);
+    }
+
+    .power-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-3);
+    }
+
+    .power-item {
+      display: grid;
+      grid-template-columns: 1fr 56px;
+      grid-template-rows: auto 6px;
+      gap: 4px var(--sp-3);
+      align-items: center;
+    }
+    .power-item__head {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+    .power-item__name {
+      font-size: var(--fs-sm);
+      font-weight: var(--fw-medium);
+      color: var(--clr-text);
+    }
+    .power-item__watts {
+      font-size: var(--fs-xs);
+      color: var(--clr-text-3);
+    }
+    .power-bar-track {
+      height: 6px;
+      border-radius: 3px;
+      background: var(--clr-surface-alt);
+      overflow: hidden;
+    }
+    .power-bar {
+      height: 100%;
+      border-radius: 3px;
+      transition: width .3s var(--ease);
+    }
+    .power-bar--green  { background: var(--clr-teal); }
+    .power-bar--amber  { background: var(--clr-amber); }
+    .power-bar--red    { background: #EF4444; }
+
+    .power-item__hours {
+      font-size: var(--fs-xs);
+      font-weight: var(--fw-medium);
+      text-align: right;
+      align-self: center;
+    }
+    .power-item__hours--green  { color: var(--clr-teal-text); }
+    .power-item__hours--amber  { color: var(--clr-amber-text); }
+    .power-item__hours--red    { color: #B91C1C; }
+    .power-item__bar-cell { grid-column: 1; }
+  </style>
+</head>
+<body>
+
+  <!-- ══ NAVBAR ══════════════════════════════════════════════ -->
+  <header class="navbar" role="banner">
+    <div class="navbar__inner">
+      <button type="button" class="btn--icon" id="menuBtn" aria-label="Open menu" aria-expanded="false">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+          <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+      </button>
+      <a href="../index.html" class="navbar__brand">
+        <span class="navbar__logo" aria-hidden="true">☀️</span>
+        <span data-i18n="brandName">Solar Course</span>
+      </a>
+      <span class="navbar__spacer"></span>
+      <div class="navbar__actions">
+        <div class="lang-toggle" role="group" aria-label="Language">
+          <button type="button" class="lang-toggle__btn" id="langEn" data-lang="en" aria-pressed="false">EN</button>
+          <span class="lang-toggle__sep" aria-hidden="true"></span>
+          <button type="button" class="lang-toggle__btn lang-toggle__btn--active" id="langEs" data-lang="es" aria-pressed="true">ES</button>
+        </div>
+        <button type="button" class="btn--icon" aria-label="Notifications">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+          </svg>
+        </button>
+        <button type="button" class="btn--icon" aria-label="User account">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div class="navbar__progress" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" id="navProgress" aria-label="Course progress">
+      <div class="navbar__progress-fill" id="progressFill"></div>
+    </div>
+  </header>
+
+  <!-- ══ LAYOUT ══════════════════════════════════════════════ -->
+  <div class="layout">
+
+    <!-- SIDEBAR (desktop) -->
+    <aside class="sidebar" id="sidebar" aria-label="Course navigation">
+      <p class="sidebar__section-label" data-i18n="sidebarLabel">Modules</p>
+      <ul class="sidebar__list" role="list">
+        <li><a href="module1.html" class="sidebar__item" data-module="1"><span class="sidebar__item-text" data-i18n="mod1Title">1. Intro to solar energy</span></a></li>
+        <li><a href="module2.html" class="sidebar__item" data-module="2"><span class="sidebar__item-text" data-i18n="mod2Title">2. How panels work</span></a></li>
+        <li><a href="module3.html" class="sidebar__item" data-module="3"><span class="sidebar__item-text" data-i18n="mod3Title">3. DC circuits</span></a></li>
+        <li><a href="module4.html" class="sidebar__item" data-module="4"><span class="sidebar__item-text" data-i18n="mod4Title">4. AC &amp; inverters</span></a></li>
+        <li><a href="module5.html" class="sidebar__item" data-module="5"><span class="sidebar__item-text" data-i18n="mod5Title">5. System design</span></a></li>
+        <li><a href="module6.html" class="sidebar__item" data-module="6"><span class="sidebar__item-text" data-i18n="mod6Title">6. Maintenance</span></a></li>
+      </ul>
+    </aside>
+
+    <!-- Mobile sidebar overlay -->
+    <aside class="sidebar sidebar--mobile" id="mobileSidebar" aria-label="Course navigation" aria-hidden="true">
+      <p class="sidebar__section-label" data-i18n="sidebarLabel">Modules</p>
+      <ul class="sidebar__list" role="list">
+        <li><a href="module1.html" class="sidebar__item"><span data-i18n="mod1Title">1. Intro to solar energy</span></a></li>
+        <li><a href="module2.html" class="sidebar__item"><span data-i18n="mod2Title">2. How panels work</span></a></li>
+        <li><a href="module3.html" class="sidebar__item"><span data-i18n="mod3Title">3. DC circuits</span></a></li>
+        <li><a href="module4.html" class="sidebar__item"><span data-i18n="mod4Title">4. AC &amp; inverters</span></a></li>
+        <li><a href="module5.html" class="sidebar__item"><span data-i18n="mod5Title">5. System design</span></a></li>
+        <li><a href="module6.html" class="sidebar__item"><span data-i18n="mod6Title">6. Maintenance</span></a></li>
+      </ul>
+    </aside>
+    <div class="sidebar-overlay" id="sidebarOverlay" aria-hidden="true"></div>
+
+    <!-- MAIN ══════════════════════════════════════════════════ -->
+    <main class="main" id="main">
+
+      <!-- Page header -->
+      <header class="calc-header">
+        <p class="calc-header__eyebrow" data-i18n="calcEyebrow">Planning tool</p>
+        <h1 class="calc-header__title" data-i18n="calcTitle">Solar Calculator</h1>
+        <p class="calc-header__sub" data-i18n="calcSubtitle">Find the system you need — or discover what your existing setup can power.</p>
+      </header>
+
+      <!-- Mode tab bar -->
+      <div class="calc-mode-bar" role="tablist" aria-label="Calculator mode">
+        <button type="button" class="calc-mode-btn calc-mode-btn--active" id="tabNeed"
+                role="tab" aria-selected="true" aria-controls="panelNeed"
+                data-i18n="calcModeNeed">¿Qué necesito?</button>
+        <button type="button" class="calc-mode-btn" id="tabPower"
+                role="tab" aria-selected="false" aria-controls="panelPower"
+                data-i18n="calcModePower">¿Qué puedo alimentar?</button>
+      </div>
+
+      <!-- Two-column body -->
+      <div class="calc-body">
+
+        <!-- ── LEFT: inputs ─────────────────────────── -->
+        <div class="calc-controls">
+
+          <!-- ════ MODE 1: What do I need? ════ -->
+          <div id="panelNeed" role="tabpanel" aria-labelledby="tabNeed">
+
+            <!-- Appliances section -->
+            <p class="ctrl-heading" data-i18n="calcAppliancesHeading">Appliances</p>
+
+            <!-- Table header -->
+            <div class="appl-table-header" aria-hidden="true">
+              <span class="appl-col-label" data-i18n="calcApplianceCol">Appliance</span>
+              <span class="appl-col-label" data-i18n="calcQtyCol">Qty</span>
+              <span class="appl-col-label" data-i18n="calcWattsCol">W</span>
+              <span class="appl-col-label" data-i18n="calcHoursCol">h/day</span>
+              <span class="appl-col-label">Wh</span>
+              <span></span>
+            </div>
+
+            <!-- Dynamic rows injected here -->
+            <div id="applRows"></div>
+
+            <!-- Add button -->
+            <button type="button" class="appl-add-btn" id="addApplBtn">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                <path d="M7 1v12M1 7h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+              <span data-i18n="calcAddBtn">+ Add appliance</span>
+            </button>
+
+            <!-- Divider -->
+            <hr style="border:none;border-top:1px solid var(--clr-border);" />
+
+            <!-- Sun hours slider -->
+            <div class="ctrl-group">
+              <div class="ctrl-group__label">
+                <span class="ctrl-group__name" data-i18n="calcSunHoursLabel">Daily sun hours</span>
+                <span class="ctrl-group__value" id="m1ValSun">5.0 h</span>
+              </div>
+              <input title="Daily sun hours" type="range" id="m1SliderSun" min="1" max="8" step="0.5" value="5"
+                     aria-valuemin="1" aria-valuemax="8" aria-valuenow="5" />
+              <div class="ctrl-group__range-labels"><span>1 h</span><span>8 h</span></div>
+            </div>
+
+            <!-- System voltage -->
+            <div class="ctrl-group">
+              <div class="ctrl-group__label">
+                <span class="ctrl-group__name" data-i18n="calcVoltLabel">System voltage</span>
+              </div>
+              <div class="volt-toggle" role="group">
+                <button type="button" class="volt-toggle__btn m1-volt-btn" data-volt="12">12 V</button>
+                <button type="button" class="volt-toggle__btn volt-toggle__btn--active m1-volt-btn" data-volt="24">24 V</button>
+                <button type="button" class="volt-toggle__btn m1-volt-btn" data-volt="48">48 V</button>
+              </div>
+            </div>
+
+          </div><!-- /panelNeed -->
+
+          <!-- ════ MODE 2: What can I power? ════ -->
+          <div id="panelPower" role="tabpanel" aria-labelledby="tabPower" hidden>
+
+            <!-- Panels count -->
+            <div class="ctrl-group">
+              <div class="ctrl-group__label">
+                <span class="ctrl-group__name" data-i18n="calcSysPanels">Number of panels</span>
+                <span class="ctrl-group__value" id="m2ValPanels">4</span>
+              </div>
+              <input type="range" id="m2SliderPanels" min="1" max="20" step="1" value="4"
+                     aria-valuemin="1" aria-valuemax="20" aria-valuenow="4" />
+              <div class="ctrl-group__range-labels"><span>1</span><span>20</span></div>
+            </div>
+
+            <!-- Panel wattage -->
+            <div class="ctrl-group">
+              <div class="ctrl-group__label">
+                <span class="ctrl-group__name" data-i18n="calcSysWattage">Panel wattage (W)</span>
+                <span class="ctrl-group__value" id="m2ValWattage">300 W</span>
+              </div>
+              <input type="range" id="m2SliderWattage" min="100" max="600" step="10" value="300"
+                     aria-valuemin="100" aria-valuemax="600" aria-valuenow="300" />
+              <div class="ctrl-group__range-labels"><span>100 W</span><span>600 W</span></div>
+            </div>
+
+            <!-- Sun hours -->
+            <div class="ctrl-group">
+              <div class="ctrl-group__label">
+                <span class="ctrl-group__name" data-i18n="calcSysSun">Daily sun hours</span>
+                <span class="ctrl-group__value" id="m2ValSun">5.0 h</span>
+              </div>
+              <input type="range" id="m2SliderSun" min="1" max="8" step="0.5" value="5"
+                     aria-valuemin="1" aria-valuemax="8" aria-valuenow="5" />
+              <div class="ctrl-group__range-labels"><span>1 h</span><span>8 h</span></div>
+            </div>
+
+            <!-- Battery Ah -->
+            <div class="ctrl-group">
+              <div class="ctrl-group__label">
+                <span class="ctrl-group__name" data-i18n="calcSysBattAh">Battery capacity (Ah)</span>
+                <span class="ctrl-group__value" id="m2ValBattAh">200 Ah</span>
+              </div>
+              <input type="range" id="m2SliderBattAh" min="50" max="1000" step="50" value="200"
+                     aria-valuemin="50" aria-valuemax="1000" aria-valuenow="200" />
+              <div class="ctrl-group__range-labels"><span>50 Ah</span><span>1 000 Ah</span></div>
+            </div>
+
+            <!-- Battery voltage -->
+            <div class="ctrl-group">
+              <div class="ctrl-group__label">
+                <span class="ctrl-group__name" data-i18n="calcSysBattV">Battery voltage (V)</span>
+              </div>
+              <div class="volt-toggle" role="group">
+                <button type="button" class="volt-toggle__btn m2-volt-btn" data-volt="12">12 V</button>
+                <button type="button" class="volt-toggle__btn volt-toggle__btn--active m2-volt-btn" data-volt="24">24 V</button>
+                <button type="button" class="volt-toggle__btn m2-volt-btn" data-volt="48">48 V</button>
+              </div>
+            </div>
+
+          </div><!-- /panelPower -->
+
+        </div><!-- /calc-controls -->
+
+        <!-- ── RIGHT: results ────────────────────────── -->
+        <div class="calc-right">
+
+          <!-- ════ MODE 1 results ════ -->
+          <div id="resultsNeed" aria-live="polite" aria-atomic="true">
+
+            <div class="results-grid">
+
+              <div class="result-card result-card--amber">
+                <span class="result-card__label" data-i18n="calcResLoad">Daily load</span>
+                <div>
+                  <span class="result-card__value" id="m1ResLoad">—</span>
+                  <span class="result-card__unit">Wh/day</span>
+                </div>
+              </div>
+
+              <div class="result-card result-card--teal">
+                <span class="result-card__label" data-i18n="calcResPanels">Solar panels</span>
+                <div class="result-card__value" id="m1ResPanels" style="font-size:1.25rem">—</div>
+                <div class="result-card__sub" id="m1ResPanelsSub"></div>
+              </div>
+
+              <div class="result-card result-card--blue">
+                <span class="result-card__label" data-i18n="calcResBattery">Battery bank</span>
+                <div>
+                  <span class="result-card__value" id="m1ResBattery">—</span>
+                  <span class="result-card__unit">Ah</span>
+                </div>
+                <div class="result-card__sub" id="m1ResBatterySub"></div>
+              </div>
+
+              <div class="result-card result-card--purple">
+                <span class="result-card__label" data-i18n="calcResInverter">Inverter</span>
+                <div>
+                  <span class="result-card__value" id="m1ResInverter">—</span>
+                  <span class="result-card__unit">W</span>
+                </div>
+              </div>
+
+            </div><!-- /results-grid -->
+
+            <p class="results-note" data-i18n="calcResNote">
+              Assumes 80 % system efficiency and 50 % battery depth of discharge.
+            </p>
+
+          </div><!-- /resultsNeed -->
+
+          <!-- ════ MODE 2 results ════ -->
+          <div id="resultsPower" aria-live="polite" aria-atomic="true" hidden>
+
+            <!-- Summary stats -->
+            <div class="m2-summary">
+
+              <div class="result-card result-card--amber">
+                <span class="result-card__label" data-i18n="calcAvailableEnergy">Available energy</span>
+                <div>
+                  <span class="result-card__value" id="m2ResDailyEnergy">—</span>
+                  <span class="result-card__unit">Wh/day</span>
+                </div>
+              </div>
+
+              <div class="result-card result-card--blue">
+                <span class="result-card__label" data-i18n="calcBatteryUsable">Battery usable</span>
+                <div>
+                  <span class="result-card__value" id="m2ResBattWh">—</span>
+                  <span class="result-card__unit">Wh</span>
+                </div>
+              </div>
+
+            </div><!-- /m2-summary -->
+
+            <!-- Appliance capability list -->
+            <div class="power-list-wrap">
+              <p class="power-list-wrap__title" data-i18n="calcResultsPowerHeading">What you can power</p>
+              <p class="power-list-wrap__sub" data-i18n="calcPoweredNote">Hours per day each appliance can run with your system.</p>
+              <div class="power-list" id="powerList" aria-label="Appliance run times"></div>
+            </div>
+
+          </div><!-- /resultsPower -->
+
+        </div><!-- /calc-right -->
+
+      </div><!-- /calc-body -->
+
+    </main>
+  </div><!-- /layout -->
+
+  <!-- ══ BOTTOM NAV (mobile) ═════════════════════════════════ -->
+  <nav class="bottom-nav" aria-label="Main navigation" role="navigation">
+    <a href="../index.html" class="bottom-nav__item" aria-label="Course">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+      </svg>
+      <span data-i18n="navCourse">Course</span>
+    </a>
+    <a href="simulator.html" class="bottom-nav__item" aria-label="Simulator">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+      </svg>
+      <span data-i18n="navSimulator">Simulator</span>
+    </a>
+    <a href="calculator.html" class="bottom-nav__item bottom-nav__item--active" aria-label="Calculator" aria-current="page">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="12" y2="14"/>
+      </svg>
+      <span data-i18n="navCalc">Calc</span>
+    </a>
+    <button type="button" class="bottom-nav__item" aria-label="Profile">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+      </svg>
+      <span data-i18n="navProfile">Profile</span>
+    </button>
+  </nav>
+
+  <script src="../js/i18n.js"></script>
+  <script src="../js/app.js"></script>
+  <script>
+  /* ── Solar Calculator ──────────────────────────────────────
+     Mode 1: "What do I need?"  – appliance list → required system
+     Mode 2: "What can I power?" – system specs → appliance run times
+  ──────────────────────────────────────────────────────────── */
+  (function () {
+    'use strict';
+
+    /* ── Appliance catalog ─────────────────────────────── */
+    const APPLIANCES = [
+      { key: 'appFridge',    watts: 150 },
+      { key: 'appTV',        watts: 100 },
+      { key: 'appLight',     watts:  10 },
+      { key: 'appFan',       watts:  75 },
+      { key: 'appLaptop',    watts:  50 },
+      { key: 'appPC',        watts: 200 },
+      { key: 'appWasher',    watts: 500 },
+      { key: 'appMicrowave', watts: 1000 },
+      { key: 'appAC',        watts: 1500 },
+      { key: 'appPhone',     watts:   5 },
+      { key: 'appWaterPump', watts: 400 },
+    ];
+
+    /* ── Mode 1 state ──────────────────────────────────── */
+    let _nextId = 0;
+    function makeItem(key, qty, watts, hours) {
+      return { id: _nextId++, key, qty, watts, hours };
+    }
+    let items = [
+      makeItem('appFridge', 1, 150, 8),
+      makeItem('appLight',  4,  10, 5),
+      makeItem('appTV',     1, 100, 4),
+    ];
+
+    let m1Sun  = 5;
+    let m1Volt = 24;
+
+    /* ── Mode 2 state ──────────────────────────────────── */
+    const m2 = { panels: 4, wattage: 300, sun: 5, battAh: 200, battV: 24 };
+
+    /* ── Current mode ──────────────────────────────────── */
+    let mode = 'need'; // 'need' | 'power'
+
+    /* ── Helpers ───────────────────────────────────────── */
+    function getLang() {
+      return (window.SolarLearn && window.SolarLearn.currentLang) ||
+             document.documentElement.lang || 'es';
+    }
+    function t(key) { return I18n.t(getLang(), key); }
+    function fmt(n)  { return Math.round(n).toLocaleString('de-DE'); }
+
+    /* ── DOM refs ───────────────────────────────────────── */
+    const tabNeed      = document.getElementById('tabNeed');
+    const tabPower     = document.getElementById('tabPower');
+    const panelNeed    = document.getElementById('panelNeed');
+    const panelPower   = document.getElementById('panelPower');
+    const resultsNeed  = document.getElementById('resultsNeed');
+    const resultsPower = document.getElementById('resultsPower');
+    const applRows     = document.getElementById('applRows');
+    const addApplBtn   = document.getElementById('addApplBtn');
+    const powerList    = document.getElementById('powerList');
+
+    /* ── Mode switching ────────────────────────────────── */
+    function switchMode(newMode) {
+      mode = newMode;
+      const isNeed = mode === 'need';
+
+      tabNeed.classList.toggle('calc-mode-btn--active', isNeed);
+      tabNeed.setAttribute('aria-selected', isNeed);
+      tabPower.classList.toggle('calc-mode-btn--active', !isNeed);
+      tabPower.setAttribute('aria-selected', !isNeed);
+
+      panelNeed.hidden    = !isNeed;
+      panelPower.hidden   = isNeed;
+      resultsNeed.hidden  = !isNeed;
+      resultsPower.hidden = isNeed;
+    }
+
+    tabNeed.addEventListener('click',  () => switchMode('need'));
+    tabPower.addEventListener('click', () => switchMode('power'));
+
+    /* ── Slider fill ───────────────────────────────────── */
+    function fillSlider(el) {
+      const pct = ((parseFloat(el.value) - parseFloat(el.min)) /
+                   (parseFloat(el.max)  - parseFloat(el.min))) * 100;
+      el.style.background =
+        `linear-gradient(to right, var(--clr-amber) ${pct}%, var(--clr-surface-alt) ${pct}%)`;
+    }
+
+    /* ══ MODE 1 ════════════════════════════════════════════ */
+
+    /* Build <select> options for an appliance row */
+    function buildOptions(selectedKey) {
+      let html = `<option value="">${t('calcSelectAppliance')}</option>`;
+      APPLIANCES.forEach(a => {
+        const sel = a.key === selectedKey ? ' selected' : '';
+        html += `<option value="${a.key}"${sel}>${t(a.key)} (${a.watts} W)</option>`;
+      });
+      const cSel = selectedKey === 'custom' ? ' selected' : '';
+      html += `<option value="custom"${cSel}>${t('appCustom')}</option>`;
+      return html;
+    }
+
+    /* Render the appliance rows + total */
+    function renderRows() {
+      let html = '';
+      items.forEach(item => {
+        const wh = Math.round(item.qty * item.watts * item.hours);
+        html += `
+          <div class="appl-row" data-id="${item.id}">
+            <div class="appl-row__name">
+              <select class="appl-select" data-field="key" data-id="${item.id}"
+                      aria-label="${t('calcApplianceCol')}">
+                ${buildOptions(item.key)}
+              </select>
+            </div>
+            <input type="number" class="appl-num" data-field="qty" data-id="${item.id}"
+                   min="1" max="50" value="${item.qty}"
+                   aria-label="${t('calcQtyCol')}" />
+            <input type="number" class="appl-num" data-field="watts" data-id="${item.id}"
+                   min="1" max="10000" value="${item.watts}"
+                   aria-label="${t('calcWattsCol')}" />
+            <input type="number" class="appl-num" data-field="hours" data-id="${item.id}"
+                   min="0.5" max="24" step="0.5" value="${item.hours}"
+                   aria-label="${t('calcHoursCol')}" />
+            <span class="appl-wh-display">${fmt(wh)}</span>
+            <button class="appl-del-btn" data-del="${item.id}"
+                    aria-label="Remove appliance" ${items.length <= 1 ? 'disabled style="opacity:.3"' : ''}>
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                <path d="M1 1l10 10M11 1L1 11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>`;
+      });
+
+      const totalWh = items.reduce((s, i) => s + i.qty * i.watts * i.hours, 0);
+      html += `
+        <div class="appl-total-row">
+          <span class="appl-total-row__label" data-i18n="calcResLoad">${t('calcResLoad')}</span>
+          <span class="appl-total-row__val">${fmt(totalWh)} Wh/day</span>
+        </div>`;
+
+      applRows.innerHTML = html;
+
+      /* Wire events ── select */
+      applRows.querySelectorAll('.appl-select').forEach(sel => {
+        sel.addEventListener('change', e => {
+          const id   = +e.target.dataset.id;
+          const item = items.find(i => i.id === id);
+          if (!item) return;
+          item.key = e.target.value;
+          const catalog = APPLIANCES.find(a => a.key === item.key);
+          if (catalog) item.watts = catalog.watts;
+          renderRows();
+          updateM1();
+        });
+      });
+
+      /* Wire events ── number inputs */
+      applRows.querySelectorAll('.appl-num').forEach(inp => {
+        inp.addEventListener('input', e => {
+          const id    = +e.target.dataset.id;
+          const field = e.target.dataset.field;
+          const item  = items.find(i => i.id === id);
+          if (!item) return;
+          const raw = field === 'hours'
+            ? parseFloat(e.target.value)
+            : parseInt(e.target.value, 10);
+          item[field] = isNaN(raw) || raw < 0.5 ? (field === 'hours' ? 0.5 : 1) : raw;
+          /* Re-render only the Wh display (avoid losing focus) */
+          const wh = Math.round(item.qty * item.watts * item.hours);
+          const row = applRows.querySelector(`[data-id="${id}"]`);
+          if (row) {
+            const whEl = row.querySelector('.appl-wh-display');
+            if (whEl) whEl.textContent = fmt(wh);
+            /* update total row */
+            const totalWh = items.reduce((s, i) => s + i.qty * i.watts * i.hours, 0);
+            const totEl = applRows.querySelector('.appl-total-row__val');
+            if (totEl) totEl.textContent = `${fmt(totalWh)} Wh/day`;
+          }
+          updateM1();
+        });
+      });
+
+      /* Wire events ── delete */
+      applRows.querySelectorAll('[data-del]').forEach(btn => {
+        btn.addEventListener('click', e => {
+          const id = +e.currentTarget.dataset.del;
+          if (items.length <= 1) return;
+          items = items.filter(i => i.id !== id);
+          renderRows();
+          updateM1();
+        });
+      });
+    }
+
+    /* Add appliance button */
+    addApplBtn.addEventListener('click', () => {
+      items.push(makeItem('appLight', 1, 10, 4));
+      renderRows();
+      updateM1();
+    });
+
+    /* Mode 1 sun hours slider */
+    const m1SunSlider = document.getElementById('m1SliderSun');
+    const m1SunVal    = document.getElementById('m1ValSun');
+    m1SunSlider.addEventListener('input', e => {
+      m1Sun = parseFloat(e.target.value);
+      m1SunVal.textContent = m1Sun.toFixed(1) + ' h';
+      fillSlider(m1SunSlider);
+      updateM1();
+    });
+
+    /* Mode 1 voltage toggle */
+    document.querySelectorAll('.m1-volt-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.m1-volt-btn').forEach(b =>
+          b.classList.remove('volt-toggle__btn--active'));
+        btn.classList.add('volt-toggle__btn--active');
+        m1Volt = parseInt(btn.dataset.volt, 10);
+        updateM1();
+      });
+    });
+
+    /* Mode 1 calculations */
+    function calcM1() {
+      const totalWh      = items.reduce((s, i) => s + i.qty * i.watts * i.hours, 0);
+      /* Panel array: total_wh / (sun * overall_efficiency 0.64) */
+      const reqPanelW    = totalWh / (m1Sun * 0.64);
+      const numPanels    = Math.ceil(reqPanelW / 300);
+      /* Battery: 1-day autonomy at 50% DoD */
+      const reqBattAh    = totalWh / (m1Volt * 0.5);
+      /* Inverter: peak simultaneous load × 1.25 safety factor */
+      const peakLoad     = items.reduce((s, i) => s + i.qty * i.watts, 0);
+      const reqInverterW = peakLoad * 1.25;
+      return {
+        totalWh:     Math.round(totalWh),
+        reqPanelW:   Math.round(reqPanelW),
+        numPanels,
+        reqBattAh:   Math.round(reqBattAh),
+        reqInverterW: Math.round(reqInverterW),
+      };
+    }
+
+    function updateM1() {
+      const { totalWh, reqPanelW, numPanels, reqBattAh, reqInverterW } = calcM1();
+
+      document.getElementById('m1ResLoad').textContent     = fmt(totalWh);
+      document.getElementById('m1ResPanels').textContent   =
+        totalWh > 0 ? `${numPanels} × 300 W` : '—';
+      document.getElementById('m1ResPanelsSub').textContent =
+        totalWh > 0 ? `(${fmt(reqPanelW)} W total)` : '';
+      document.getElementById('m1ResBattery').textContent  =
+        totalWh > 0 ? fmt(reqBattAh) : '—';
+      document.getElementById('m1ResBatterySub').textContent =
+        totalWh > 0 ? `@ ${m1Volt} V` : '';
+      document.getElementById('m1ResInverter').textContent =
+        reqInverterW > 0 ? `≥ ${fmt(reqInverterW)}` : '—';
+    }
+
+    /* ══ MODE 2 ════════════════════════════════════════════ */
+
+    function setupSlider(sliderId, valId, stateKey, formatFn) {
+      const slider = document.getElementById(sliderId);
+      const valEl  = document.getElementById(valId);
+      if (!slider) return;
+      slider.addEventListener('input', e => {
+        m2[stateKey] = parseFloat(e.target.value);
+        if (valEl) valEl.textContent = formatFn(m2[stateKey]);
+        fillSlider(slider);
+        updateM2();
+      });
+      fillSlider(slider);
+      if (valEl) valEl.textContent = formatFn(m2[stateKey]);
+    }
+
+    setupSlider('m2SliderPanels',  'm2ValPanels',  'panels',  v => v);
+    setupSlider('m2SliderWattage', 'm2ValWattage', 'wattage', v => v + ' W');
+    setupSlider('m2SliderSun',     'm2ValSun',     'sun',     v => v.toFixed(1) + ' h');
+    setupSlider('m2SliderBattAh',  'm2ValBattAh',  'battAh',  v => v + ' Ah');
+
+    document.querySelectorAll('.m2-volt-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.m2-volt-btn').forEach(b =>
+          b.classList.remove('volt-toggle__btn--active'));
+        btn.classList.add('volt-toggle__btn--active');
+        m2.battV = parseInt(btn.dataset.volt, 10);
+        updateM2();
+      });
+    });
+
+    /* Mode 2 calculations */
+    function calcM2() {
+      const dailyEnergy = m2.panels * m2.wattage * m2.sun * 0.8;
+      const battWh      = m2.battAh * m2.battV * 0.5;
+      return { dailyEnergy: Math.round(dailyEnergy), battWh: Math.round(battWh) };
+    }
+
+    function updateM2() {
+      const { dailyEnergy, battWh } = calcM2();
+
+      document.getElementById('m2ResDailyEnergy').textContent = fmt(dailyEnergy);
+      document.getElementById('m2ResBattWh').textContent      = fmt(battWh);
+
+      /* Render appliance power list */
+      powerList.innerHTML = '';
+      APPLIANCES.forEach(appl => {
+        const hoursRaw = dailyEnergy / appl.watts;
+        const capped   = Math.min(hoursRaw, 24);
+        const pct      = (capped / 24) * 100;
+
+        let tier, hoursText;
+        if (hoursRaw >= 24) {
+          tier = 'green'; hoursText = t('calcFullDay');
+        } else if (hoursRaw >= 8) {
+          tier = 'green'; hoursText = hoursRaw.toFixed(1) + ' h';
+        } else if (hoursRaw >= 1) {
+          tier = 'amber'; hoursText = hoursRaw.toFixed(1) + ' h';
+        } else {
+          tier = 'red';   hoursText = t('calcNotEnough');
+        }
+
+        const item = document.createElement('div');
+        item.className = 'power-item';
+        item.innerHTML = `
+          <div class="power-item__head">
+            <span class="power-item__name">${t(appl.key)}</span>
+            <span class="power-item__watts">${appl.watts} W</span>
+          </div>
+          <span class="power-item__hours power-item__hours--${tier}">${hoursText}</span>
+          <div class="power-bar-track power-item__bar-cell">
+            <div class="power-bar power-bar--${tier}" style="width:${pct.toFixed(1)}%"></div>
+          </div>`;
+        powerList.appendChild(item);
+      });
+    }
+
+    /* ── Language change: re-render dynamic content ──── */
+    document.addEventListener('SolarLearnLangChange', () => {
+      renderRows();   /* re-build select options with new lang */
+      updateM2();     /* re-build appliance list with new lang */
+    });
+
+    /* ── Init ──────────────────────────────────────────── */
+    function init() {
+      fillSlider(m1SunSlider);
+      renderRows();
+      updateM1();
+      updateM2();
+    }
+
+    document.addEventListener('SolarLearnReady', init);
+    /* Fallback if app.js already fired */
+    if (document.readyState !== 'loading') init();
+
+  })();
+  </script>
+</body>
+</html>
