@@ -25,6 +25,7 @@ Módulo 6 — Mantenimiento                        🔒 bloqueado
 - **Diagramas interactivos** — Canvas API para circuitos DC y AC con componentes etiquetados.
 - **Simulador solar** — ajusta paneles, potencia, horas de sol y batería; diagrama del sistema en tiempo real.
 - **Calculadora solar** — dos modos: "¿Qué necesito?" (lista de electrodomésticos → sistema requerido) y "¿Qué puedo alimentar?" (especificaciones existentes → tiempos de uso por aparato).
+- **Perfil de usuario** — progreso del curso con barra visual, tiempo acumulado de estudio, insignias por módulo completado y botón de reinicio de progreso.
 - **Quiz modal** — preguntas con feedback inmediato, trap de foco y reintentos ilimitados.
 - **Accesibilidad WCAG** — roles ARIA, manejo de foco, `.sr-only`, `prefers-reduced-motion`.
 - **Responsive mobile-first** — sidebar para desktop, bottom nav para móvil (< 768 px).
@@ -56,7 +57,8 @@ learn-how-to-use-solar-energy/
     ├── module5.html      # Diseño de sistemas (bloqueado)
     ├── module6.html      # Mantenimiento (bloqueado)
     ├── simulator.html    # Simulador interactivo de sistema solar
-    └── calculator.html   # Calculadora solar (dos modos)
+    ├── calculator.html   # Calculadora solar (dos modos)
+    └── profile.html      # Perfil: progreso, tiempo de estudio, insignias
 ```
 
 ## Cómo ejecutar
@@ -87,6 +89,8 @@ Abre `http://localhost:8080` en el navegador.
 | `applyLang(lang)` | Cambia el idioma activo (`'es'` \| `'en'`). |
 | `initQuizModal(data, btnId)` | Inicializa el quiz modal con las preguntas y el botón disparador. |
 | `currentLang` | Getter — idioma activo en este momento. |
+| `getTimeSpent()` | Devuelve los segundos de estudio acumulados. |
+| `resetAllProgress()` | Borra todo el progreso y el tiempo acumulado del `localStorage`. |
 
 ## Sistema de i18n
 

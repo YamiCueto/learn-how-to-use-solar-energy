@@ -5,108 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title data-i18n="mod6PageTitle">Module 6 — Maintenance</title>
   <link rel="stylesheet" href="../css/styles.css" />
-  <style>
-    /* ── Module-6 local styles ─────────────────────── */
-
-    /* Maintenance checklist cards */
-    .maint-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: var(--sp-4);
-      margin-bottom: var(--sp-5);
-    }
-    @media (max-width: 640px) { .maint-grid { grid-template-columns: 1fr; } }
-    @media (max-width: 900px) and (min-width: 641px) { .maint-grid { grid-template-columns: 1fr 1fr; } }
-
-    .maint-card {
-      background: var(--clr-surface);
-      border: .5px solid var(--clr-border-card);
-      border-radius: var(--r-lg);
-      padding: var(--sp-4);
-      display: flex;
-      flex-direction: column;
-      gap: var(--sp-2);
-    }
-    .maint-card--monthly   { border-top: 3px solid #1D9E75; }
-    .maint-card--quarterly { border-top: 3px solid #F59E0B; }
-    .maint-card--annual    { border-top: 3px solid #185FA5; }
-
-    .maint-card__label {
-      font-size: var(--fs-xs);
-      font-weight: var(--fw-medium);
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-    }
-    .maint-card--monthly   .maint-card__label { color: #1D9E75; }
-    .maint-card--quarterly .maint-card__label { color: #c07a00; }
-    .maint-card--annual    .maint-card__label { color: #185FA5; }
-
-    .maint-card__name {
-      font-size: var(--fs-sm);
-      font-weight: var(--fw-medium);
-      color: var(--clr-text);
-    }
-    .maint-card__note {
-      font-size: var(--fs-xs);
-      color: var(--clr-text-2);
-      line-height: var(--lh-snug);
-    }
-
-    /* Monitoring metrics grid */
-    .metrics-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: var(--sp-4);
-      margin-bottom: var(--sp-5);
-    }
-    @media (max-width: 600px) { .metrics-grid { grid-template-columns: 1fr 1fr; } }
-
-    .metric-card {
-      background: var(--clr-surface);
-      border: .5px solid var(--clr-border-card);
-      border-radius: var(--r-lg);
-      padding: var(--sp-4);
-      display: flex;
-      flex-direction: column;
-      gap: var(--sp-1);
-      align-items: flex-start;
-    }
-    .metric-card__value {
-      font-size: var(--fs-lg);
-      font-weight: var(--fw-medium);
-      color: var(--clr-amber-text);
-    }
-    .metric-card__label {
-      font-size: var(--fs-xs);
-      color: var(--clr-text-3);
-      line-height: var(--lh-snug);
-    }
-
-    /* Key terms */
-    .key-terms {
-      display: flex;
-      flex-direction: column;
-      gap: var(--sp-3);
-      margin-bottom: var(--sp-6);
-    }
-    .term-row {
-      display: flex;
-      gap: var(--sp-4);
-      align-items: flex-start;
-    }
-    .term-row__name {
-      min-width: 160px;
-      font-size: var(--fs-sm);
-      font-weight: var(--fw-medium);
-      color: var(--clr-amber-text);
-      flex-shrink: 0;
-    }
-    .term-row__def {
-      font-size: var(--fs-sm);
-      color: var(--clr-text-2);
-      line-height: var(--lh-snug);
-    }
-  </style>
+  <link rel="stylesheet" href="../css/module6.css" />
 </head>
 <body>
 
@@ -453,12 +352,12 @@
       </svg>
       <span data-i18n="navCalc">Calc</span>
     </button>
-    <button type="button" class="bottom-nav__item" aria-label="Profile">
+    <a href="profile.html" class="bottom-nav__item" aria-label="Profile">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
         <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
       </svg>
       <span data-i18n="navProfile">Profile</span>
-    </button>
+    </a>
   </nav>
 
   <script src="../js/i18n.js"></script>

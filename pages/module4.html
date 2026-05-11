@@ -5,163 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title data-i18n="mod4PageTitle">Module 4 — AC &amp; Inverters</title>
   <link rel="stylesheet" href="../css/styles.css" />
-  <style>
-    /* ── Module-4 local styles ─────────────────────── */
-
-    /* Sine wave formula display */
-    .formula-box {
-      background: var(--clr-amber-bg);
-      border: 1.5px solid var(--clr-amber);
-      border-radius: var(--r-lg);
-      padding: var(--sp-5);
-      margin-bottom: var(--sp-5);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: var(--sp-4);
-    }
-    .formula-box__eq {
-      font-size: var(--fs-xl);
-      font-weight: var(--fw-medium);
-      color: var(--clr-amber-text);
-      letter-spacing: 0.04em;
-    }
-    .formula-box__vars {
-      display: flex;
-      gap: var(--sp-5);
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-    .formula-box__var {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: var(--sp-1);
-    }
-    .formula-box__sym {
-      font-size: var(--fs-md);
-      font-weight: var(--fw-medium);
-      color: var(--clr-amber-text);
-    }
-    .formula-box__desc {
-      font-size: var(--fs-xs);
-      color: var(--clr-text-3);
-      text-align: center;
-    }
-    .formula-box__divider {
-      width: 100%;
-      height: 1px;
-      background: var(--clr-amber);
-      opacity: 0.3;
-    }
-
-    /* Inverter type comparison grid */
-    .inverter-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: var(--sp-4);
-      margin-bottom: var(--sp-5);
-    }
-    @media (max-width: 600px) { .inverter-grid { grid-template-columns: 1fr; } }
-
-    .inverter-card {
-      background: var(--clr-surface);
-      border: .5px solid var(--clr-border-card);
-      border-radius: var(--r-lg);
-      padding: var(--sp-4);
-      display: flex;
-      flex-direction: column;
-      gap: var(--sp-2);
-    }
-    .inverter-card--grid   { border-top: 3px solid #185FA5; }
-    .inverter-card--off    { border-top: 3px solid #1D9E75; }
-    .inverter-card--hybrid { border-top: 3px solid #8B5CF6; }
-
-    .inverter-card__label {
-      font-size: var(--fs-xs);
-      font-weight: var(--fw-medium);
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      color: var(--clr-text-3);
-    }
-    .inverter-card--grid   .inverter-card__label { color: #185FA5; }
-    .inverter-card--off    .inverter-card__label { color: #1D9E75; }
-    .inverter-card--hybrid .inverter-card__label { color: #8B5CF6; }
-
-    .inverter-card__name {
-      font-size: var(--fs-sm);
-      font-weight: var(--fw-medium);
-      color: var(--clr-text);
-    }
-    .inverter-card__note {
-      font-size: var(--fs-xs);
-      color: var(--clr-text-2);
-      line-height: var(--lh-snug);
-    }
-
-    /* Topology comparison: string / micro / optimizer */
-    .topology-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: var(--sp-4);
-      margin-bottom: var(--sp-5);
-    }
-    @media (max-width: 600px) { .topology-grid { grid-template-columns: 1fr; } }
-
-    .topology-card {
-      background: var(--clr-surface);
-      border: .5px solid var(--clr-border-card);
-      border-radius: var(--r-lg);
-      padding: var(--sp-4);
-      display: flex;
-      flex-direction: column;
-      gap: var(--sp-2);
-    }
-    .topology-card--string  { border-top: 3px solid #185FA5; }
-    .topology-card--micro   { border-top: 3px solid #F59E0B; }
-    .topology-card--optimiz { border-top: 3px solid #1D9E75; }
-
-    .topology-card__label {
-      font-size: var(--fs-xs);
-      font-weight: var(--fw-medium);
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-    }
-    .topology-card--string  .topology-card__label { color: #185FA5; }
-    .topology-card--micro   .topology-card__label { color: #c07a00; }
-    .topology-card--optimiz .topology-card__label { color: #1D9E75; }
-
-    .topology-card__note {
-      font-size: var(--fs-xs);
-      color: var(--clr-text-2);
-      line-height: var(--lh-snug);
-    }
-
-    /* Key terms (same as module 1 / 3 pattern) */
-    .key-terms {
-      display: flex;
-      flex-direction: column;
-      gap: var(--sp-3);
-      margin-bottom: var(--sp-6);
-    }
-    .term-row {
-      display: flex;
-      gap: var(--sp-4);
-      align-items: flex-start;
-    }
-    .term-row__name {
-      min-width: 130px;
-      font-size: var(--fs-sm);
-      font-weight: var(--fw-medium);
-      color: var(--clr-amber-text);
-      flex-shrink: 0;
-    }
-    .term-row__def {
-      font-size: var(--fs-sm);
-      color: var(--clr-text-2);
-      line-height: var(--lh-snug);
-    }
-  </style>
+  <link rel="stylesheet" href="../css/module4.css" />
 </head>
 <body>
 
@@ -501,12 +345,12 @@
       </svg>
       <span data-i18n="navCalc">Calc</span>
     </button>
-    <button type="button" class="bottom-nav__item" aria-label="Profile">
+    <a href="profile.html" class="bottom-nav__item" aria-label="Profile">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
         <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
       </svg>
       <span data-i18n="navProfile">Profile</span>
-    </button>
+    </a>
   </nav>
 
   <script src="../js/i18n.js"></script>

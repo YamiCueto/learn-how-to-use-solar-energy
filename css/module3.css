@@ -1,0 +1,138 @@
+/* ── Module-3 local styles ─────────────────────── */
+
+/* Formula display */
+.formula-box {
+  background: var(--clr-amber-bg);
+  border: 1.5px solid var(--clr-amber);
+  border-radius: var(--r-lg);
+  padding: var(--sp-5);
+  margin-bottom: var(--sp-5);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-4);
+}
+.formula-box__eq {
+  font-size: var(--fs-xl);
+  font-weight: var(--fw-medium);
+  color: var(--clr-amber-text);
+  letter-spacing: 0.04em;
+}
+.formula-box__vars {
+  display: flex;
+  gap: var(--sp-5);
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.formula-box__var {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-1);
+}
+.formula-box__sym {
+  font-size: var(--fs-md);
+  font-weight: var(--fw-medium);
+  color: var(--clr-amber-text);
+}
+.formula-box__desc {
+  font-size: var(--fs-xs);
+  color: var(--clr-text-3);
+  text-align: center;
+}
+.formula-box__divider {
+  width: 100%;
+  height: 1px;
+  background: var(--clr-amber);
+  opacity: 0.3;
+}
+
+/* Series / parallel comparison */
+.wiring-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--sp-4);
+  margin-bottom: var(--sp-5);
+}
+@media (max-width: 520px) { .wiring-grid { grid-template-columns: 1fr; } }
+
+.wiring-card {
+  background: var(--clr-surface);
+  border: .5px solid var(--clr-border-card);
+  border-radius: var(--r-lg);
+  padding: var(--sp-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+.wiring-card--series  { border-top: 3px solid #185FA5; }
+.wiring-card--parallel { border-top: 3px solid #1D9E75; }
+
+.wiring-card__title {
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-medium);
+  color: var(--clr-text);
+}
+.wiring-card--series  .wiring-card__title { color: #185FA5; }
+.wiring-card--parallel .wiring-card__title { color: #1D9E75; }
+
+.wiring-card__rule {
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-medium);
+  padding: var(--sp-2) var(--sp-3);
+  border-radius: var(--r-sm);
+  font-family: monospace;
+  line-height: var(--lh-snug);
+}
+.wiring-card--series  .wiring-card__rule { background: #EBF2FC; color: #0E3B6A; }
+.wiring-card--parallel .wiring-card__rule { background: #E6F7F2; color: #0A4F38; }
+
+.wiring-card__list {
+  padding-left: var(--sp-4);
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+}
+.wiring-card__list li {
+  font-size: var(--fs-xs);
+  color: var(--clr-text-2);
+  line-height: var(--lh-snug);
+}
+
+/* Calculation example block */
+.calc-example {
+  background: var(--clr-surface);
+  border-left: 3px solid var(--clr-amber);
+  border-radius: 0 var(--r-md) var(--r-md) 0;
+  padding: var(--sp-3) var(--sp-4);
+  margin-bottom: var(--sp-4);
+  font-size: var(--fs-sm);
+  color: var(--clr-text-2);
+  line-height: var(--lh-snug);
+}
+
+/* Key terms */
+.key-terms {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  margin-bottom: var(--sp-6);
+}
+.term-row {
+  display: flex;
+  gap: var(--sp-4);
+  align-items: flex-start;
+}
+.term-row__name {
+  min-width: 130px;
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-medium);
+  color: var(--clr-amber-text);
+  flex-shrink: 0;
+}
+.term-row__def {
+  font-size: var(--fs-sm);
+  color: var(--clr-text-2);
+  line-height: var(--lh-snug);
+}

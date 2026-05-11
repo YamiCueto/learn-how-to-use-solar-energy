@@ -8,6 +8,7 @@
   const TOTAL_MODULES = 6;
   const STORAGE_KEY   = 'solarlearn_progress';
   const LANG_KEY      = 'solarlearn_lang';
+  const TIME_KEY      = 'solarlearn_time'; /* seconds */
 
   let currentLang = localStorage.getItem(LANG_KEY) || 'es';
 
@@ -36,6 +37,22 @@
       localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
     } catch { /* storage unavailable */ }
   }
+
+  /* ── Time tracking ────────────────────────────────── */
+  function getTimeSpent() {
+    return parseInt(localStorage.getItem(TIME_KEY) || '0', 10);
+  }
+
+  (function startTimeTracker() {
+    let buffer = 0;
+    setInterval(() => {
+      buffer++;
+      if (buffer >= 30) {
+        try { localStorage.setItem(TIME_KEY, getTimeSpent() + buffer); } catch { /* noop */ }
+        buffer = 0;
+      }
+    }, 1000);
+  })();
 
   function renderProgress() {
     const data  = getProgress();
@@ -380,5 +397,13 @@
     },
     initQuizModal,
     get currentLang() { return currentLang; },
+    getTimeSpent() { return getTimeSpent(); },
+    resetAllProgress() {
+      try {
+        localStorage.removeItem(STORAGE_KEY);
+        localStorage.removeItem(TIME_KEY);
+      } catch { /* noop */ }
+      renderProgress();
+    },
   };
 })();

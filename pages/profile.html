@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="es" data-i18n-base="..">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title data-i18n="profPageTitle">My Profile</title>
+  <link rel="stylesheet" href="../css/styles.css" />
+  <link rel="stylesheet" href="../css/profile.css" />
+</head>
+<body>
+
+  <!-- ══ NAVBAR ══════════════════════════════════════════════ -->
+  <header class="navbar" role="banner">
+    <div class="navbar__inner">
+      <button type="button" class="btn--icon" id="menuBtn" aria-label="Open menu" aria-expanded="false">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+          <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+      </button>
+      <a href="../index.html" class="navbar__brand">
+        <span class="navbar__logo" aria-hidden="true">☀️</span>
+        <span data-i18n="brandName">Solar Course</span>
+      </a>
+      <span class="navbar__spacer"></span>
+      <div class="navbar__actions">
+        <div class="lang-toggle" role="group" aria-label="Language">
+          <button type="button" class="lang-toggle__btn" id="langEn" data-lang="en" aria-pressed="false">EN</button>
+          <span class="lang-toggle__sep" aria-hidden="true"></span>
+          <button type="button" class="lang-toggle__btn lang-toggle__btn--active" id="langEs" data-lang="es" aria-pressed="true">ES</button>
+        </div>
+        <button type="button" class="btn--icon" aria-label="Notifications">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+          </svg>
+        </button>
+        <button type="button" class="btn--icon" aria-label="User account" aria-current="page">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div class="navbar__progress" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" id="navProgress" aria-label="Course progress">
+      <div class="navbar__progress-fill" id="progressFill"></div>
+    </div>
+  </header>
+
+  <!-- ══ LAYOUT ══════════════════════════════════════════════ -->
+  <div class="layout">
+
+    <!-- SIDEBAR (desktop) -->
+    <aside class="sidebar" id="sidebar" aria-label="Course navigation">
+      <p class="sidebar__section-label" data-i18n="sidebarLabel">Modules</p>
+      <ul class="sidebar__list" role="list">
+        <li><a href="module1.html" class="sidebar__item" data-module="1"><span class="sidebar__item-text" data-i18n="mod1Title">1. Intro to solar energy</span></a></li>
+        <li><a href="module2.html" class="sidebar__item" data-module="2"><span class="sidebar__item-text" data-i18n="mod2Title">2. How panels work</span></a></li>
+        <li><a href="module3.html" class="sidebar__item" data-module="3"><span class="sidebar__item-text" data-i18n="mod3Title">3. DC circuits</span></a></li>
+        <li><a href="module4.html" class="sidebar__item" data-module="4"><span class="sidebar__item-text" data-i18n="mod4Title">4. AC &amp; inverters</span></a></li>
+        <li><a href="module5.html" class="sidebar__item" data-module="5"><span class="sidebar__item-text" data-i18n="mod5Title">5. System design</span></a></li>
+        <li><a href="module6.html" class="sidebar__item" data-module="6"><span class="sidebar__item-text" data-i18n="mod6Title">6. Maintenance</span></a></li>
+      </ul>
+    </aside>
+
+    <!-- Mobile sidebar overlay -->
+    <aside class="sidebar sidebar--mobile" id="mobileSidebar" aria-label="Course navigation" aria-hidden="true">
+      <p class="sidebar__section-label" data-i18n="sidebarLabel">Modules</p>
+      <ul class="sidebar__list" role="list">
+        <li><a href="module1.html" class="sidebar__item"><span data-i18n="mod1Title">1. Intro to solar energy</span></a></li>
+        <li><a href="module2.html" class="sidebar__item"><span data-i18n="mod2Title">2. How panels work</span></a></li>
+        <li><a href="module3.html" class="sidebar__item"><span data-i18n="mod3Title">3. DC circuits</span></a></li>
+        <li><a href="module4.html" class="sidebar__item"><span data-i18n="mod4Title">4. AC &amp; inverters</span></a></li>
+        <li><a href="module5.html" class="sidebar__item"><span data-i18n="mod5Title">5. System design</span></a></li>
+        <li><a href="module6.html" class="sidebar__item"><span data-i18n="mod6Title">6. Maintenance</span></a></li>
+      </ul>
+    </aside>
+    <div class="sidebar-overlay" id="sidebarOverlay" aria-hidden="true"></div>
+
+    <!-- MAIN ══════════════════════════════════════════════════ -->
+    <main class="main" id="main">
+
+      <!-- Page header -->
+      <header class="prof-header">
+        <p class="prof-header__eyebrow" data-i18n="profEyebrow">Your learning journey</p>
+        <h1 class="prof-header__title" data-i18n="profTitle">My Profile</h1>
+        <p class="prof-header__sub" data-i18n="profSubtitle">Track your progress, time and achievements.</p>
+      </header>
+
+      <div class="prof-body">
+
+        <!-- ── Stats row: progress + time ── -->
+        <div class="prof-stats-row">
+
+          <!-- Progress card -->
+          <div class="prof-card">
+            <p class="prof-card__heading" data-i18n="profProgressHeading">Course progress</p>
+            <div class="prof-progress__numbers">
+              <span class="prof-progress__big" id="profDoneCount">0</span>
+              <span class="prof-progress__label">
+                <span data-i18n="profModulesOf">of</span>
+                6
+                <span data-i18n="profModulesLabel">modules completed</span>
+              </span>
+            </div>
+            <div class="prof-progress-bar-track" role="progressbar"
+                 aria-valuemin="0" aria-valuemax="100" id="profBar"
+                 aria-label="Course progress">
+              <div class="prof-progress-bar-fill" id="profBarFill" style="width:0%"></div>
+            </div>
+            <p class="prof-progress__pct">
+              <span id="profPct">0</span>% <span data-i18n="profStatPct">complete</span>
+            </p>
+          </div>
+
+          <!-- Time card -->
+          <div class="prof-card">
+            <p class="prof-card__heading" data-i18n="profTimeHeading">Time spent learning</p>
+            <div class="prof-time__display">
+              <span class="prof-time__big" id="profTimeMain">0</span>
+              <span class="prof-time__unit" id="profTimeUnit" data-i18n="profTimeMinutes">min</span>
+            </div>
+            <p class="prof-time__sub" data-i18n="profTimeSub">total study time</p>
+          </div>
+
+        </div><!-- /stats-row -->
+
+        <!-- ── Module completion list ── -->
+        <div class="prof-card">
+          <p class="prof-card__heading" data-i18n="modulesLabel">Modules</p>
+          <div class="prof-module-list" id="profModuleList" aria-label="Module completion status"></div>
+        </div>
+
+        <!-- ── Badges ── -->
+        <div class="prof-card">
+          <p class="prof-card__heading" data-i18n="profBadgesHeading">Badges earned</p>
+          <div class="badges-grid" id="profBadgesGrid" aria-label="Earned badges"></div>
+        </div>
+
+        <!-- ── Reset ── -->
+        <div class="prof-reset-wrap">
+          <button type="button" class="prof-reset-btn" id="profResetBtn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2" stroke-linecap="round" aria-hidden="true">
+              <polyline points="1 4 1 10 7 10"/>
+              <path d="M3.51 15a9 9 0 1 0 .49-3.12"/>
+            </svg>
+            <span data-i18n="profResetBtn">Reset progress</span>
+          </button>
+        </div>
+
+      </div><!-- /prof-body -->
+
+    </main>
+  </div><!-- /layout -->
+
+  <!-- ══ BOTTOM NAV (mobile) ═════════════════════════════════ -->
+  <nav class="bottom-nav" aria-label="Main navigation" role="navigation">
+    <a href="../index.html" class="bottom-nav__item" aria-label="Course">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+      </svg>
+      <span data-i18n="navCourse">Course</span>
+    </a>
+    <a href="simulator.html" class="bottom-nav__item" aria-label="Simulator">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+      </svg>
+      <span data-i18n="navSimulator">Simulator</span>
+    </a>
+    <a href="calculator.html" class="bottom-nav__item" aria-label="Calculator">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="12" y2="14"/>
+      </svg>
+      <span data-i18n="navCalc">Calc</span>
+    </a>
+    <a href="profile.html" class="bottom-nav__item bottom-nav__item--active" aria-label="Profile" aria-current="page">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+      </svg>
+      <span data-i18n="navProfile">Profile</span>
+    </a>
+  </nav>
+
+  <!-- Toast -->
+  <div class="prof-toast" id="profToast" role="status" aria-live="polite"></div>
+
+  <script src="../js/i18n.js"></script>
+  <script src="../js/app.js"></script>
+  <script>
+  /* ── Profile page ──────────────────────────────────────────
+     Reads solarlearn_progress + solarlearn_time from localStorage.
+     Re-renders on SolarLearnReady and SolarLearnLangChange.
+  ──────────────────────────────────────────────────────────── */
+  (function () {
+    'use strict';
+
+    const TOTAL = 6;
+    const STORAGE_KEY = 'solarlearn_progress';
+
+    /* ── Badge definitions ─────────────────────────────── */
+    const BADGES = [
+      { mod: 1, emoji: '🌱', nameKey: 'profBadge1Name', descKey: 'profBadge1Desc' },
+      { mod: 2, emoji: '⚡', nameKey: 'profBadge2Name', descKey: 'profBadge2Desc' },
+      { mod: 3, emoji: '🔌', nameKey: 'profBadge3Name', descKey: 'profBadge3Desc' },
+      { mod: 4, emoji: '🔄', nameKey: 'profBadge4Name', descKey: 'profBadge4Desc' },
+      { mod: 5, emoji: '🏗️', nameKey: 'profBadge5Name', descKey: 'profBadge5Desc' },
+      { mod: 6, emoji: '🔧', nameKey: 'profBadge6Name', descKey: 'profBadge6Desc' },
+    ];
+
+    /* ── Module short labels ───────────────────────────── */
+    const MODULE_KEYS = [
+      'mod1Title', 'mod2Title', 'mod3Title',
+      'mod4Title', 'mod5Title', 'mod6Title',
+    ];
+
+    /* ── Helpers ───────────────────────────────────────── */
+    function getLang() {
+      return (window.SolarLearn && window.SolarLearn.currentLang) ||
+             document.documentElement.lang || 'es';
+    }
+    function t(key) { return I18n.t(getLang(), key); }
+
+    function getProgress() {
+      try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; }
+      catch { return {}; }
+    }
+
+    function formatTime(totalSeconds) {
+      const h   = Math.floor(totalSeconds / 3600);
+      const m   = Math.floor((totalSeconds % 3600) / 60);
+      return { h, m };
+    }
+
+    /* ── Render ────────────────────────────────────────── */
+    function render() {
+      const data  = getProgress();
+      const done  = Object.values(data).filter(Boolean).length;
+      const pct   = Math.round((done / TOTAL) * 100);
+
+      /* Progress numbers */
+      document.getElementById('profDoneCount').textContent = done;
+      document.getElementById('profPct').textContent       = pct;
+      document.getElementById('profBarFill').style.width   = pct + '%';
+      document.getElementById('profBar').setAttribute('aria-valuenow', pct);
+
+      /* Time */
+      const secs = (window.SolarLearn && window.SolarLearn.getTimeSpent)
+        ? window.SolarLearn.getTimeSpent()
+        : parseInt(localStorage.getItem('solarlearn_time') || '0', 10);
+      const { h, m } = formatTime(secs);
+      const timeMain = document.getElementById('profTimeMain');
+      const timeUnit = document.getElementById('profTimeUnit');
+      if (h >= 1) {
+        timeMain.textContent = h + (m > 0 ? '.' + Math.round(m / 6) : '');
+        timeUnit.textContent = t('profTimeHours');
+      } else {
+        timeMain.textContent = m;
+        timeUnit.textContent = t('profTimeMinutes');
+      }
+
+      /* Module list */
+      const listEl = document.getElementById('profModuleList');
+      listEl.innerHTML = '';
+      for (let i = 0; i < TOTAL; i++) {
+        const modNum  = i + 1;
+        const isDone  = !!data[modNum];
+        const name    = t(MODULE_KEYS[i]);
+        const pillTxt = isDone ? t('pillDone') : t('pillLocked');
+        const item    = document.createElement('div');
+        item.className = 'prof-module-item';
+        item.innerHTML = `
+          <div class="prof-module-item__icon prof-module-item__icon--${isDone ? 'done' : 'pending'}"
+               aria-hidden="true">${isDone ? '✓' : modNum}</div>
+          <span class="prof-module-item__name${isDone ? '' : ' prof-module-item__name--pending'}">${name}</span>
+          <span class="prof-module-item__pill prof-module-item__pill--${isDone ? 'done' : 'pending'}">${pillTxt}</span>`;
+        listEl.appendChild(item);
+      }
+
+      /* Badges */
+      const gridEl = document.getElementById('profBadgesGrid');
+      gridEl.innerHTML = '';
+      BADGES.forEach(badge => {
+        const earned  = !!data[badge.mod];
+        const card    = document.createElement('div');
+        card.className = `badge-card ${earned ? 'badge-card--earned' : 'badge-card--locked'}`;
+        card.setAttribute('aria-label', `${t(badge.nameKey)} — ${earned ? t('pillDone') : t('profBadgeLocked')}`);
+        card.innerHTML = `
+          <div class="badge-icon" aria-hidden="true">${badge.emoji}</div>
+          <span class="badge-name">${t(badge.nameKey)}</span>
+          <span class="badge-desc">${t(badge.descKey)}</span>
+          <span class="badge-status">${earned ? t('pillDone') : t('profBadgeLocked')}</span>`;
+        gridEl.appendChild(card);
+      });
+    }
+
+    /* ── Reset button ──────────────────────────────────── */
+    document.getElementById('profResetBtn').addEventListener('click', () => {
+      if (!window.confirm(t('profResetConfirm'))) return;
+      if (window.SolarLearn && window.SolarLearn.resetAllProgress) {
+        window.SolarLearn.resetAllProgress();
+      } else {
+        localStorage.removeItem(STORAGE_KEY);
+        localStorage.removeItem('solarlearn_time');
+      }
+      render();
+      showToast(t('profResetDone'));
+    });
+
+    /* ── Toast ─────────────────────────────────────────── */
+    function showToast(msg) {
+      const el = document.getElementById('profToast');
+      el.textContent = msg;
+      el.classList.add('prof-toast--visible');
+      setTimeout(() => el.classList.remove('prof-toast--visible'), 2500);
+    }
+
+    /* ── Live session timer display (updates every minute) ── */
+    setInterval(() => {
+      const timeMain = document.getElementById('profTimeMain');
+      const timeUnit = document.getElementById('profTimeUnit');
+      if (!timeMain) return;
+      const secs = (window.SolarLearn && window.SolarLearn.getTimeSpent)
+        ? window.SolarLearn.getTimeSpent()
+        : parseInt(localStorage.getItem('solarlearn_time') || '0', 10);
+      const { h, m } = formatTime(secs);
+      if (h >= 1) {
+        timeMain.textContent = h + (m > 0 ? '.' + Math.round(m / 6) : '');
+        timeUnit.textContent = t('profTimeHours');
+      } else {
+        timeMain.textContent = m;
+        timeUnit.textContent = t('profTimeMinutes');
+      }
+    }, 60000);
+
+    /* ── Language change ───────────────────────────────── */
+    document.addEventListener('SolarLearnLangChange', render);
+
+    /* ── Init ──────────────────────────────────────────── */
+    document.addEventListener('SolarLearnReady', render);
+    if (document.readyState !== 'loading') render();
+
+  })();
+  </script>
+</body>
+</html>

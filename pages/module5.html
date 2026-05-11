@@ -5,135 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title data-i18n="mod5PageTitle">Module 5 — System Design</title>
   <link rel="stylesheet" href="../css/styles.css" />
-  <style>
-    /* ── Module-5 local styles ─────────────────────── */
-
-    /* Battery sizing formula display */
-    .formula-box {
-      background: var(--clr-amber-bg);
-      border: 1.5px solid var(--clr-amber);
-      border-radius: var(--r-lg);
-      padding: var(--sp-5);
-      margin-bottom: var(--sp-5);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: var(--sp-4);
-    }
-    .formula-box__eq {
-      font-size: var(--fs-xl);
-      font-weight: var(--fw-medium);
-      color: var(--clr-amber-text);
-      letter-spacing: 0.04em;
-    }
-    .formula-box__vars {
-      display: flex;
-      gap: var(--sp-5);
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-    .formula-box__var {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: var(--sp-1);
-    }
-    .formula-box__sym {
-      font-size: var(--fs-md);
-      font-weight: var(--fw-medium);
-      color: var(--clr-amber-text);
-    }
-    .formula-box__desc {
-      font-size: var(--fs-xs);
-      color: var(--clr-text-3);
-      text-align: center;
-    }
-    .formula-box__divider {
-      width: 100%;
-      height: 1px;
-      background: var(--clr-amber);
-      opacity: 0.3;
-    }
-
-    /* Calculation example block */
-    .calc-example {
-      border-left: 3px solid var(--clr-amber);
-      background: var(--clr-amber-bg);
-      border-radius: 0 var(--r-md) var(--r-md) 0;
-      padding: var(--sp-4) var(--sp-5);
-      margin-bottom: var(--sp-5);
-      font-size: var(--fs-sm);
-      color: var(--clr-text-2);
-      line-height: var(--lh-snug);
-    }
-
-    /* PWM vs MPPT comparison grid */
-    .controller-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: var(--sp-4);
-      margin-bottom: var(--sp-5);
-    }
-    @media (max-width: 500px) { .controller-grid { grid-template-columns: 1fr; } }
-
-    .controller-card {
-      background: var(--clr-surface);
-      border: .5px solid var(--clr-border-card);
-      border-radius: var(--r-lg);
-      padding: var(--sp-4);
-      display: flex;
-      flex-direction: column;
-      gap: var(--sp-2);
-    }
-    .controller-card--pwm  { border-top: 3px solid #185FA5; }
-    .controller-card--mppt { border-top: 3px solid #1D9E75; }
-
-    .controller-card__label {
-      font-size: var(--fs-xs);
-      font-weight: var(--fw-medium);
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      color: var(--clr-text-3);
-    }
-    .controller-card--pwm  .controller-card__label { color: #185FA5; }
-    .controller-card--mppt .controller-card__label { color: #1D9E75; }
-
-    .controller-card__name {
-      font-size: var(--fs-sm);
-      font-weight: var(--fw-medium);
-      color: var(--clr-text);
-    }
-    .controller-card__note {
-      font-size: var(--fs-xs);
-      color: var(--clr-text-2);
-      line-height: var(--lh-snug);
-    }
-
-    /* Key terms */
-    .key-terms {
-      display: flex;
-      flex-direction: column;
-      gap: var(--sp-3);
-      margin-bottom: var(--sp-6);
-    }
-    .term-row {
-      display: flex;
-      gap: var(--sp-4);
-      align-items: flex-start;
-    }
-    .term-row__name {
-      min-width: 140px;
-      font-size: var(--fs-sm);
-      font-weight: var(--fw-medium);
-      color: var(--clr-amber-text);
-      flex-shrink: 0;
-    }
-    .term-row__def {
-      font-size: var(--fs-sm);
-      color: var(--clr-text-2);
-      line-height: var(--lh-snug);
-    }
-  </style>
+  <link rel="stylesheet" href="../css/module5.css" />
 </head>
 <body>
 
@@ -501,12 +373,12 @@
       </svg>
       <span data-i18n="navCalc">Calc</span>
     </button>
-    <button type="button" class="bottom-nav__item" aria-label="Profile">
+    <a href="profile.html" class="bottom-nav__item" aria-label="Profile">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
         <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
       </svg>
       <span data-i18n="navProfile">Profile</span>
-    </button>
+    </a>
   </nav>
 
   <script src="../js/i18n.js"></script>
