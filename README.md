@@ -1,5 +1,7 @@
 # Learn How to Use Solar Energy
 
+**🌐 Demo en vivo → [yamicueto.github.io/learn-how-to-use-solar-energy](https://yamicueto.github.io/learn-how-to-use-solar-energy/)**
+
 Curso interactivo sobre energía solar — aplicación web educativa, sin dependencias, con soporte bilingüe (ES / EN) y seguimiento de progreso local.
 
 ## Vista general
@@ -21,6 +23,8 @@ Módulo 6 — Mantenimiento                        🔒 bloqueado
 - **Bilingüe en tiempo real** — toggle EN / ES sin recargar la página; archivos JSON en `locales/`.
 - **Progreso persistente** — guardado en `localStorage`; barra de progreso global en la navbar.
 - **Diagramas interactivos** — Canvas API para circuitos DC y AC con componentes etiquetados.
+- **Simulador solar** — ajusta paneles, potencia, horas de sol y batería; diagrama del sistema en tiempo real.
+- **Calculadora solar** — dos modos: "¿Qué necesito?" (lista de electrodomésticos → sistema requerido) y "¿Qué puedo alimentar?" (especificaciones existentes → tiempos de uso por aparato).
 - **Quiz modal** — preguntas con feedback inmediato, trap de foco y reintentos ilimitados.
 - **Accesibilidad WCAG** — roles ARIA, manejo de foco, `.sr-only`, `prefers-reduced-motion`.
 - **Responsive mobile-first** — sidebar para desktop, bottom nav para móvil (< 768 px).
@@ -38,15 +42,21 @@ learn-how-to-use-solar-energy/
 │   ├── canvas.js         # Diagramas de circuitos DC / AC con Canvas API
 │   └── i18n.js           # Sistema de localización asíncrono con caché
 ├── locales/
-│   ├── en.json           # Cadenas en inglés (~400 claves)
-│   └── es.json           # Cadenas en español (~400 claves)
+│   ├── en/
+│   │   ├── common.json   # Cadenas globales en inglés
+│   │   └── module1–6.json
+│   └── es/
+│       ├── common.json   # Cadenas globales en español
+│       └── module1–6.json
 └── pages/
     ├── module1.html      # Intro, timeline histórica, glosario, quiz
     ├── module2.html      # Celda PV, p-n junction, tipos de panel, parámetros
     ├── module3.html      # Circuitos DC
     ├── module4.html      # AC e inversores (bloqueado)
     ├── module5.html      # Diseño de sistemas (bloqueado)
-    └── module6.html      # Mantenimiento (bloqueado)
+    ├── module6.html      # Mantenimiento (bloqueado)
+    ├── simulator.html    # Simulador interactivo de sistema solar
+    └── calculator.html   # Calculadora solar (dos modos)
 ```
 
 ## Cómo ejecutar
@@ -80,11 +90,11 @@ Abre `http://localhost:8080` en el navegador.
 
 ## Sistema de i18n
 
-Las traducciones se cargan de forma asíncrona desde `locales/{lang}.json` y se cachean en memoria. Para añadir una clave nueva:
+Las traducciones se cargan de forma asíncrona desde `locales/{lang}/common.json` y los archivos de módulo, y se cachean en memoria. Para añadir una clave nueva:
 
-1. Agrega la clave en ambos archivos (`en.json` y `es.json`).
+1. Agrega la clave en ambos archivos (`locales/en/common.json` y `locales/es/common.json`).
 2. Añade el atributo `data-i18n="clave"` al elemento HTML.
-3. Las páginas de módulos deben declarar `data-i18n-base=".."` en la etiqueta `<html>` para que las rutas sean relativas correctas.
+3. Las páginas dentro de `pages/` deben declarar `data-i18n-base=".."` en la etiqueta `<html>` para que las rutas sean correctas.
 
 ## Design system
 
